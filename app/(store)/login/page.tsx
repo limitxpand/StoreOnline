@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import styles from '@/app/auth.module.css';
 
 export default function Login() {
-  const [role, setRole] = useState<'customer' | 'contributor' | 'admin'>('customer');
   const router = useRouter();
   const [error, setError] = useState('');
 
@@ -17,23 +16,26 @@ export default function Login() {
     e.preventDefault();
     setError('');
     
-    // For local testing convenience, if user types "test" we'll use "test@test.com"
-    const finalEmail = login === 'test' ? 'test@test.com' : login;
-
     const res = await signIn('credentials', {
       redirect: false,
-      email: finalEmail,
+      email: login,
       password: password,
-      role: role,
     });
 
     if (res?.error) {
       setError('Invalid email or password');
     } else {
-      // Route based on role
-      if (role === 'customer') router.push('/customer/dashboard');
-      else if (role === 'admin') router.push('/admin');
-      else router.push('/dashboard');
+      // Need to fetch session to know the role for routing
+      const sessionRes = await fetch('/api/auth/session');
+      const session = await sessionRes.json();
+
+      if (session?.user?.role) {
+        if (session.user.role === 'customer') router.push('/customer/dashboard');
+        else if (session.user.role === 'admin') router.push('/admin/dashboard');
+        else router.push('/dashboard'); // developer
+      } else {
+        router.push('/');
+      }
     }
   };
 
@@ -52,21 +54,6 @@ export default function Login() {
 
         {error && <div style={{ color: 'var(--danger)', marginBottom: '1rem', textAlign: 'center', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '4px' }}>{error}</div>}
 
-        <div className={styles.roleToggle}>
-          <div 
-            className={`${styles.roleBtn} ${role === 'customer' ? styles.roleBtnActive : ''}`}
-            onClick={() => setRole('customer')}
-          >
-            Customer
-          </div>
-          <div 
-            className={`${styles.roleBtn} ${role === 'contributor' ? styles.roleBtnActive : ''}`}
-            onClick={() => setRole('contributor')}
-          >
-            Developer
-          </div>
-        </div>
-
         <form onSubmit={handleLogin}>
           <div className={styles.formGroup}>
             <label htmlFor="login">Email Address</label>
@@ -74,7 +61,7 @@ export default function Login() {
               type="email" 
               id="login" 
               className={styles.input} 
-              placeholder="e.g. test@test.com" 
+              placeholder="e.g. user@example.com" 
               value={login}
               onChange={(e) => setLogin(e.target.value)}
               required 
@@ -87,7 +74,7 @@ export default function Login() {
               type="password" 
               id="password" 
               className={styles.input} 
-              placeholder="e.g. test" 
+              placeholder="••••••••" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required 
@@ -95,7 +82,7 @@ export default function Login() {
           </div>
 
           <button type="submit" className={styles.submitBtn}>
-            Login as {role === 'customer' ? 'Customer' : 'Developer'}
+            Login
           </button>
         </form>
 

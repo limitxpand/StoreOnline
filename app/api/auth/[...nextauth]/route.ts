@@ -17,42 +17,19 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const requestedRole = credentials.role || "customer";
-
         // Check if user exists
-        let user = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
 
         if (!user) {
-          // Auto-create test users for testing convenience
-          if (credentials.email === "test@test.com" && credentials.password === "test") {
-            const hashedPassword = await bcrypt.hash("test", 10);
-            user = await prisma.user.create({
-              data: {
-                email: "test@test.com",
-                password: hashedPassword,
-                name: "Test User",
-                role: requestedRole
-              }
-            });
-          } else {
-            return null;
-          }
-        } else {
-          // Compare password
-          const isMatch = await bcrypt.compare(credentials.password, user.password);
-          if (!isMatch) {
-            return null;
-          }
+          return null;
+        }
 
-          // For testing convenience: update the role to whatever they selected on the login page
-          if (user.role !== requestedRole) {
-            user = await prisma.user.update({
-              where: { id: user.id },
-              data: { role: requestedRole }
-            });
-          }
+        // Compare password
+        const isMatch = await bcrypt.compare(credentials.password, user.password);
+        if (!isMatch) {
+          return null;
         }
 
         return {
