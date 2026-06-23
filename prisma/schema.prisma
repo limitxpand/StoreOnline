@@ -28,6 +28,7 @@ model User {
   transactions Transaction[]
   licenses     License[]
   withdrawals  Withdrawal[]
+  royalties    Royalty[]
 }
 
 model Category {
@@ -73,6 +74,21 @@ model Transaction {
 
   user    User    @relation(fields: [userId], references: [id])
   product Product @relation(fields: [productId], references: [id])
+  royalty Royalty?
+}
+
+model Royalty {
+  id              String   @id @default(cuid())
+  transactionId   String   @unique
+  developerId     String
+  saleAmount      Float
+  platformFee     Float
+  royaltyAmount   Float
+  status          String   @default("pending") // pending, paid
+  createdAt       DateTime @default(now())
+
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  developer   User        @relation(fields: [developerId], references: [id])
 }
 
 model License {

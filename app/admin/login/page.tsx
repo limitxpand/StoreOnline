@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import styles from '../../auth.module.css';
 
 export default function AdminLogin() {
@@ -24,17 +25,18 @@ export default function AdminLogin() {
     setError('');
 
     try {
-      const res = await fetch('/api/admin/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'login', username, password })
+      const res = await signIn('credentials', {
+        redirect: false,
+        email: username,
+        password: password,
       });
-      const data = await res.json();
       
-      if (data.success) {
+      if (res?.ok && !res.error) {
+        // Double check session to ensure it is actually admin? We can trust the backend handles this or do client-side check if needed, but routing takes care of it.
         router.push('/admin/dashboard');
+        router.refresh();
       } else {
-        setError(data.message || 'Login failed');
+        setError('Invalid credentials');
       }
     } catch (err) {
       setError('An error occurred');

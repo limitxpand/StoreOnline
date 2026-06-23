@@ -1,12 +1,17 @@
 import Link from 'next/link';
 import AdBanner from '../../components/AdBanner';
 import styles from './dashboard.module.css';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(authOptions);
+  const userName = session?.user?.name || "Developer";
+
   return (
     <div className={styles.layout}>
       {/* Dashboard Sidebar */}
@@ -50,8 +55,8 @@ export default function DashboardLayout({
         <header className={styles.topbar}>
           <div className={styles.pageTitle}>Dashboard</div>
           <div className={styles.userMenu}>
-            <div className={styles.avatar}>C</div>
-            <span>Contributor User</span>
+            <div className={styles.avatar}>{userName.charAt(0).toUpperCase()}</div>
+            <span>{userName}</span>
           </div>
         </header>
 

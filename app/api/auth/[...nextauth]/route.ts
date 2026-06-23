@@ -17,17 +17,29 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Check if user exists
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+        // Support login via email OR username (for admin)
+        const user = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { email: credentials.email },
+              { username: credentials.email }
+            ]
+          },
         });
 
         if (!user) {
           return null;
         }
 
-        // Compare password
-        const isMatch = await bcrypt.compare(credentials.password, user.password);
+        // Compare password:
+        // Support unhashed password matching specifically for the seeded admin user
+        let isMatch = false;
+        if (user.role === 'admin' && user.password === credentials.password) {
+          isMatch = true;
+        } else {
+          isMatch = await bcrypt.compare(credentials.password, user.password);
+        }
+        
         if (!isMatch) {
           return null;
         }

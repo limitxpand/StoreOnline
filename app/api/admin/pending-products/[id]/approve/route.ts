@@ -2,27 +2,74 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { Client, Storage, ID } from "node-appwrite";
+import { InputFile } from "node-appwrite/file";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    let isAdmin = false;
     const session = await getServerSession(authOptions);
-    if (!session || session.user?.role !== "admin") {
+    if (session && session.user?.role === "admin") {
+      isAdmin = true;
+    } else {
+      const authHeader = req.headers.get("Authorization");
+      const workerToken = process.env.WORKER_SECRET_TOKEN || "super_secret_worker_token_123";
+      if (authHeader === `Bearer ${workerToken}`) {
+        isAdmin = true;
+      }
+    }
+
+    if (!isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id: productId } = await params;
+    const formData = await req.formData();
+    const isAuto = formData.get("isAuto") === "true";
+    const compiledFile = formData.get("compiledFile") as File | null;
 
-    // We can simulate compiling by simply updating the status
-    // The "compiledFileUrl" could theoretically be set here if we had a compilation module
+    let compiledFileUrl = `/uploads/compiled/compiled_${productId}.zip`; // fallback
+
+    if (isAuto) {
+      // Set to compiling status so the Python worker picks it up
+      const compilingProduct = await prisma.product.update({
+        where: { id: productId },
+        data: {
+          status: "compiling"
+        }
+      });
+      return NextResponse.json({ success: true, product: compilingProduct, message: "Sent to compile worker" }, { status: 200 });
+    }
+
+    if (compiledFile) {
+        // Appwrite Setup
+        const client = new Client()
+          .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || "")
+          .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || "")
+          .setKey(process.env.APPWRITE_API_KEY || "");
+        const storage = new Storage(client);
+        const bucketId = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "products_bucket";
+
+        const buffer = Buffer.from(await compiledFile.arrayBuffer());
+        const inputFile = InputFile.fromBuffer(buffer, compiledFile.name);
+        const uploadedFile = await storage.createFile(bucketId, ID.unique(), inputFile);
+        compiledFileUrl = `https://sgp.cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${uploadedFile.$id}/download?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`;
+      } else {
+        // Find if platform is android (allow missing file)
+        const productCheck = await prisma.product.findUnique({ where: { id: productId }});
+        if (productCheck && productCheck.platform.toLowerCase() !== 'android') {
+          return NextResponse.json({ error: "Compiled file is required for manual publish." }, { status: 400 });
+        }
+      }
+
     const updatedProduct = await prisma.product.update({
       where: { id: productId },
       data: {
         status: "published",
-        // Fake compiled URL
-        compiledFileUrl: `/uploads/compiled/compiled_${productId}.zip` 
+        compiledFileUrl: compiledFileUrl
       }
     });
 

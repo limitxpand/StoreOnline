@@ -1,0 +1,376 @@
+// +------------------------------------------------------------------+
+// |                  INJECTED LICENSE CONTROL MODULE                 |
+// +------------------------------------------------------------------+
+#import "wininet.dll"
+int InternetOpenW(string sAgent, int lAccessType, string sProxyName, string sProxyBypass, uint lFlags);
+int InternetOpenUrlW(int hInternetSession, string sUrl, string sHeaders, int lHeadersLength, uint lFlags, int lContext);
+int InternetReadFile(int hFile, uchar &sBuffer[], int lNumBytesToRead, int &lNumberOfBytesRead);
+int InternetCloseHandle(int hInet);
+#import
+#import "shell32.dll"
+int ShellExecuteW(int hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
+#import
+
+string License_Server_URL = "https://dashboard-git-main-limit-xpand.vercel.app/api/license/check";
+string EA_Name = "new ea";
+bool is_license_valid = false;
+string license_status_msg = "Checking...";
+string expiry_msg = "";
+datetime last_license_check = 0;
+
+// Chat Variables
+int chat_unread_count = 0;
+string chat_token = "";
+
+string URLEncode(string str) {
+    StringReplace(str, " ", "%20");
+    StringReplace(str, "&", "%26");
+    StringReplace(str, "=", "%3D");
+    return str;
+}
+
+void DrawLicenseLabels() {
+    string obj_status = "AdminStatusLabel";
+    string obj_expiry = "AdminExpiryLabel";
+
+    if(ObjectFind(0, obj_status) < 0) {
+        ObjectCreate(0, obj_status, OBJ_LABEL, 0, 0, 0);
+        ObjectSetInteger(0, obj_status, OBJPROP_CORNER, CORNER_RIGHT_LOWER);
+        ObjectSetInteger(0, obj_status, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        ObjectSetInteger(0, obj_status, OBJPROP_XDISTANCE, 10);
+        ObjectSetInteger(0, obj_status, OBJPROP_YDISTANCE, 45);
+        ObjectSetInteger(0, obj_status, OBJPROP_FONTSIZE, 10);
+        ObjectSetString(0, obj_status, OBJPROP_FONT, "Arial");
+    }
+    ObjectSetString(0, obj_status, OBJPROP_TEXT, license_status_msg);
+    if(is_license_valid) ObjectSetInteger(0, obj_status, OBJPROP_COLOR, clrLimeGreen);
+    else ObjectSetInteger(0, obj_status, OBJPROP_COLOR, clrRed);
+
+    if(ObjectFind(0, obj_expiry) < 0) {
+        ObjectCreate(0, obj_expiry, OBJ_LABEL, 0, 0, 0);
+        ObjectSetInteger(0, obj_expiry, OBJPROP_CORNER, CORNER_RIGHT_LOWER);
+        ObjectSetInteger(0, obj_expiry, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+        ObjectSetInteger(0, obj_expiry, OBJPROP_XDISTANCE, 10);
+        ObjectSetInteger(0, obj_expiry, OBJPROP_YDISTANCE, 30);
+        ObjectSetInteger(0, obj_expiry, OBJPROP_FONTSIZE, 10);
+        ObjectSetString(0, obj_expiry, OBJPROP_FONT, "Arial");
+    }
+    ObjectSetString(0, obj_expiry, OBJPROP_TEXT, expiry_msg);
+    ObjectSetInteger(0, obj_expiry, OBJPROP_COLOR, clrGold);
+
+    DrawChatButton();
+    ChartRedraw();
+}
+
+void DrawChatButton() {
+    string btn_chat = "ChatBtn_" + EA_Name;
+    if (StringFind(license_status_msg, "Not Found") >= 0) {
+        ObjectDelete(0, btn_chat);
+        return;
+    }
+    if(ObjectFind(0, btn_chat) < 0) {
+        ObjectCreate(0, btn_chat, OBJ_BUTTON, 0, 0, 0);
+        ObjectSetInteger(0, btn_chat, OBJPROP_CORNER, CORNER_RIGHT_LOWER);
+        // Note: Buttons do not natively support ANCHOR_RIGHT_LOWER, they anchor TOP_LEFT relative to the corner.
+        // For RIGHT_LOWER corner, X is distance from right to right-edge. Y is distance from bottom to bottom-edge.
+        // Wait, for OBJ_BUTTON with CORNER_RIGHT_LOWER, X is distance from right edge to the RIGHT edge of the button.
+        // Y is distance from bottom edge to TOP-LEFT edge of the button.
+        ObjectSetInteger(0, btn_chat, OBJPROP_XDISTANCE, 130);
+        ObjectSetInteger(0, btn_chat, OBJPROP_YDISTANCE, 85); 
+        ObjectSetInteger(0, btn_chat, OBJPROP_XSIZE, 120);
+        ObjectSetInteger(0, btn_chat, OBJPROP_YSIZE, 22);
+        ObjectSetInteger(0, btn_chat, OBJPROP_FONTSIZE, 9);
+        ObjectSetString(0, btn_chat, OBJPROP_FONT, "Arial");
+        ObjectSetInteger(0, btn_chat, OBJPROP_COLOR, clrWhite);
+    }
+    string btn_text = "💬 Live Chat";
+    if (chat_unread_count > 0) {
+        btn_text = "💬 Live Chat (" + IntegerToString(chat_unread_count) + ")";
+        ObjectSetInteger(0, btn_chat, OBJPROP_BGCOLOR, clrCrimson);
+    } else {
+        ObjectSetInteger(0, btn_chat, OBJPROP_BGCOLOR, clrDodgerBlue);
+    }
+    ObjectSetString(0, btn_chat, OBJPROP_TEXT, btn_text);
+}
+
+string HTTPGet(string url) {
+    string res_str = "";
+    int hSession = InternetOpenW("MT5", 0, "", "", 0);
+    if(hSession > 0) {
+        int hReq = InternetOpenUrlW(hSession, url, "", 0, 0x84000000, 0);
+        if(hReq > 0) {
+            uchar buffer[1024];
+            int read_len = 0;
+            while(InternetReadFile(hReq, buffer, 1024, read_len) && read_len > 0) {
+                res_str += CharArrayToString(buffer, 0, read_len);
+            }
+            InternetCloseHandle(hReq);
+        }
+        InternetCloseHandle(hSession);
+    }
+    return res_str;
+}
+
+void OpenWebPortal() {
+    if (chat_token == "") {
+        MessageBox("Please wait for license check or contact Admin.");
+        return;
+    }
+    string url = "https://dashboard-git-main-limit-xpand.vercel.app/chat?token=" + chat_token;
+    ShellExecuteW(0, "open", url, "", "", 1);
+    
+    // Optimistically reset unread count
+    chat_unread_count = 0;
+    DrawChatButton();
+    ChartRedraw();
+}
+
+bool HandleChatEvents(const int id, const long &lparam, const double &dparam, const string &sparam) {
+    if (id == CHARTEVENT_OBJECT_CLICK) {
+        if (sparam == "ChatBtn_" + EA_Name) {
+            ObjectSetInteger(0, sparam, OBJPROP_STATE, false); // Reset button pressed state
+            OpenWebPortal();
+            return true;
+        }
+    }
+    return false;
+}
+
+void CheckLicense(bool create_new=false, bool is_demo=false) {
+    datetime current_time = TimeCurrent();
+    if (!create_new && current_time - last_license_check < 5) return; // Check every 5 seconds
+    last_license_check = current_time;
+
+    string url = License_Server_URL + 
+        "?software_type=EA&account=" + IntegerToString(AccountInfoInteger(ACCOUNT_LOGIN)) +
+        "&name=" + URLEncode(AccountInfoString(ACCOUNT_NAME)) +
+        "&balance=" + DoubleToString(AccountInfoDouble(ACCOUNT_BALANCE), 2) +
+        "&equity=" + DoubleToString(AccountInfoDouble(ACCOUNT_EQUITY), 2) +
+        "&currency=" + URLEncode(AccountInfoString(ACCOUNT_CURRENCY)) +
+        "&type=" + IntegerToString(AccountInfoInteger(ACCOUNT_TRADE_MODE)) +
+        "&broker=" + URLEncode(AccountInfoString(ACCOUNT_COMPANY)) +
+        "&ea_name=" + URLEncode(EA_Name);
+        
+    int total_deals = HistoryDealsTotal();
+    static int global_last_deals_count = -1;
+    string trade_params = "";
+
+    double total_profit = 0, total_loss = 0, today_profit = 0, today_loss = 0, deposits = 0, withdrawals = 0;
+    
+    HistorySelect(0, TimeCurrent());
+    for(int i = 0; i < total_deals; i++) {
+        ulong ticket = HistoryDealGetTicket(i);
+        if(ticket > 0) {
+            double profit = HistoryDealGetDouble(ticket, DEAL_PROFIT) + HistoryDealGetDouble(ticket, DEAL_SWAP) + HistoryDealGetDouble(ticket, DEAL_COMMISSION);
+            long deal_type = HistoryDealGetInteger(ticket, DEAL_TYPE);
+            if (deal_type == DEAL_TYPE_BALANCE) {
+                if (profit > 0) deposits += profit;
+                else withdrawals -= profit;
+            } else {
+                string d_symbol = HistoryDealGetString(ticket, DEAL_SYMBOL);
+                if (d_symbol == _Symbol) {
+                    if (profit > 0) total_profit += profit;
+                    else total_loss -= profit;
+                    datetime deal_time = (datetime)HistoryDealGetInteger(ticket, DEAL_TIME);
+                    if (deal_time >= TimeCurrent() - (TimeCurrent() % 86400)) {
+                       if (profit > 0) today_profit += profit;
+                       else today_loss -= profit;
+                    }
+                }
+            }
+        }
+    }
+    
+    if (global_last_deals_count != -1 && total_deals > global_last_deals_count) {
+        ulong last_ticket = HistoryDealGetTicket(total_deals - 1);
+        if (last_ticket > 0) {
+            long entry = HistoryDealGetInteger(last_ticket, DEAL_ENTRY);
+            string t_symbol = HistoryDealGetString(last_ticket, DEAL_SYMBOL);
+            if ((entry == DEAL_ENTRY_OUT || entry == DEAL_ENTRY_INOUT) && t_symbol == _Symbol) {
+                double t_profit = HistoryDealGetDouble(last_ticket, DEAL_PROFIT) + HistoryDealGetDouble(last_ticket, DEAL_SWAP) + HistoryDealGetDouble(last_ticket, DEAL_COMMISSION);
+                long t_type = HistoryDealGetInteger(last_ticket, DEAL_TYPE);
+                long pos_id = HistoryDealGetInteger(last_ticket, DEAL_POSITION_ID);
+                datetime close_time = (datetime)HistoryDealGetInteger(last_ticket, DEAL_TIME);
+                datetime open_time = 0;
+                string t_type_str = "OTHER";
+
+                if (HistorySelectByPosition(pos_id)) {
+                    int pos_deals = HistoryDealsTotal();
+                    for(int j=0; j<pos_deals; j++) {
+                        ulong in_ticket = HistoryDealGetTicket(j);
+                        if (HistoryDealGetInteger(in_ticket, DEAL_ENTRY) == DEAL_ENTRY_IN) {
+                            open_time = (datetime)HistoryDealGetInteger(in_ticket, DEAL_TIME);
+                            long in_type = HistoryDealGetInteger(in_ticket, DEAL_TYPE);
+                            t_type_str = (in_type == DEAL_TYPE_BUY) ? "BUY" : (in_type == DEAL_TYPE_SELL ? "SELL" : "OTHER");
+                            break;
+                        }
+                    }
+                    HistorySelect(0, TimeCurrent());
+                } else {
+                    t_type_str = (t_type == DEAL_TYPE_BUY) ? "SELL_CLOSE" : (t_type == DEAL_TYPE_SELL ? "BUY_CLOSE" : "OTHER");
+                }
+
+                trade_params = "&trade_ticket=" + IntegerToString(last_ticket) + 
+                               "&trade_symbol=" + URLEncode(t_symbol) + 
+                               "&trade_profit=" + DoubleToString(t_profit, 2) + 
+                               "&trade_type=" + t_type_str + 
+                               "&open_time=" + IntegerToString(open_time) + 
+                               "&close_time=" + IntegerToString(close_time);
+            }
+        }
+    }
+    global_last_deals_count = total_deals;
+
+    url += "&profit=" + DoubleToString(total_profit, 2) +
+           "&loss=" + DoubleToString(total_loss, 2) +
+           "&deposits=" + DoubleToString(deposits, 2) +
+           "&withdrawals=" + DoubleToString(withdrawals, 2) +
+           "&today_profit=" + DoubleToString(today_profit, 2) +
+           "&today_loss=" + DoubleToString(today_loss, 2) + trade_params;
+
+    if (create_new) url += "&create=1";
+    if (is_demo) url += "&demo=1";
+
+    string res_str = HTTPGet(url);
+    
+    if (StringLen(res_str) > 0) {
+        // Always try to extract token and unread count if they exist
+        int unread_idx = StringFind(res_str, "\"unread\":");
+        if (unread_idx >= 0) {
+            int start = unread_idx + 9;
+            int end = StringFind(res_str, "}", start);
+            if (end < 0) end = StringFind(res_str, ",", start);
+            string unread_str = StringSubstr(res_str, start, end - start);
+            chat_unread_count = (int)StringToInteger(unread_str);
+        }
+
+        int token_idx = StringFind(res_str, "\"token\":\"");
+        if (token_idx >= 0) {
+            int start = token_idx + 9;
+            int end = StringFind(res_str, "\"", start);
+            if (end > start) {
+                chat_token = StringSubstr(res_str, start, end - start);
+            }
+        }
+
+        if (StringFind(res_str, "\"status\":\"approved\"") >= 0 || StringFind(res_str, "\"status\":\"Approved\"") >= 0) {
+            is_license_valid = true;
+            license_status_msg = "EA Status: Approved By Admin";
+            
+            int exp_idx = StringFind(res_str, "\"expiry\":");
+            if (exp_idx >= 0) {
+                int start = exp_idx + 9;
+                int end = StringFind(res_str, "}", start);
+                if (end < 0) end = StringFind(res_str, ",", start);
+                string exp_str = StringSubstr(res_str, start, end - start);
+                long expiry_time = StringToInteger(exp_str);
+                if (expiry_time > 0) {
+                    long time_left = expiry_time - TimeCurrent();
+                    if (time_left <= 0) {
+                        is_license_valid = false;
+                        license_status_msg = "EA Status: Expired";
+                        expiry_msg = "Expiry: Expired";
+                    } else {
+                        int d = (int)(time_left / 86400);
+                        int h = (int)((time_left % 86400) / 3600);
+                        int m = (int)((time_left % 3600) / 60);
+                        expiry_msg = StringFormat("Expiry: %dd %dh %dm left", d, h, m);
+                    }
+                } else {
+                    expiry_msg = "Expiry: Lifetime";
+                }
+            }
+        } else if (StringFind(res_str, "\"status\":\"disabled\"") >= 0 || StringFind(res_str, "\"status\":\"Disabled\"") >= 0) {
+            is_license_valid = false;
+            license_status_msg = "EA Status: Disabled";
+            expiry_msg = "Expiry: None";
+        } else if (StringFind(res_str, "\"status\":\"not_found\"") >= 0) {
+            is_license_valid = false;
+            license_status_msg = "EA Status: Not Found";
+            expiry_msg = "Expiry: None";
+            chat_token = "";
+        } else {
+            is_license_valid = false;
+            license_status_msg = "EA Status: Approval Pending";
+            expiry_msg = "Expiry: None";
+        }
+    } else {
+        is_license_valid = false;
+        license_status_msg = "EA Status: Server Error / Blocked";
+        expiry_msg = "Expiry: None";
+    }
+}
+// +------------------------------------------------------------------+
+
+int OnInit() {
+
+   CheckLicense();
+   if(StringFind(license_status_msg, "Not Found") >= 0 || StringFind(license_status_msg, "Expired") >= 0) {
+       int msg_flags = MB_YESNO | MB_ICONINFORMATION;
+       string msg_text = "Contact Your Developer: Deepak FX Trader\nContact Email: LimitXpand@gmail.com\n\nDo you want to send a request to the Admin to approve this EA?";
+       
+       if (StringFind(license_status_msg, "Not Found") >= 0) {
+           msg_flags = MB_YESNOCANCEL | MB_ICONINFORMATION;
+           msg_text += "\n\nPress [Yes] to send request, [Cancel] to start 2-Day Demo, [No] to Exit.";
+       } else {
+           msg_text = "Your Demo / License has expired.\n\nDo you want to send a request to the Admin for extension?";
+       }
+       
+       int res = MessageBox(msg_text, "Approval Request", msg_flags);
+       if (res == IDYES) {
+           CheckLicense(true, false);
+       } else if (res == IDCANCEL) {
+           CheckLicense(true, true);
+       } else {
+           ExpertRemove(); return(INIT_FAILED);
+       }
+   }
+   DrawLicenseLabels();
+
+   return(INIT_SUCCEEDED);
+}
+
+
+void OnTick() {
+
+   CheckLicense();
+   if(StringFind(license_status_msg, "Not Found") >= 0 || StringFind(license_status_msg, "Expired") >= 0) {
+       int msg_flags = MB_YESNO | MB_ICONINFORMATION;
+       string msg_text = "Your profile was deleted or not found.\nDo you want to send a request to the Admin to approve this EA?";
+       
+       if (StringFind(license_status_msg, "Not Found") >= 0) {
+           msg_flags = MB_YESNOCANCEL | MB_ICONINFORMATION;
+           msg_text += "\n\nPress [Yes] to send request, [Cancel] to start 2-Day Demo, [No] to Exit.";
+       } else {
+           msg_text = "Your Demo / License has expired.\n\nDo you want to send a request to the Admin for extension?";
+       }
+       
+       int res = MessageBox(msg_text, "Approval Request", msg_flags);
+       if (res == IDYES) {
+           CheckLicense(true, false);
+       } else if (res == IDCANCEL) {
+           CheckLicense(true, true);
+       } else {
+           ExpertRemove(); return;
+       }
+   }
+   DrawLicenseLabels();
+   if(!is_license_valid) return;
+
+}
+
+
+void OnDeinit(const int reason) {
+
+   ObjectDelete(0, "AdminStatusLabel");
+   ObjectDelete(0, "AdminExpiryLabel");
+   ObjectDelete(0, "ChatBtn_" + EA_Name);
+
+}
+
+
+void OnChartEvent(const int id, const long &lparam, const double &dparam, const string &sparam) {
+
+   if (HandleChatEvents(id, lparam, dparam, sparam)) return;
+
+}

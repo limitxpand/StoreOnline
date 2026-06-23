@@ -8,8 +8,8 @@ import { InputFile } from "node-appwrite/file";
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || !session.user || session.user.role !== 'developer') {
+      return NextResponse.json({ error: "Unauthorized. Developer access required." }, { status: 401 });
     }
 
     const formData = await req.formData();

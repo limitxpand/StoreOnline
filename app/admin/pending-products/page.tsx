@@ -43,16 +43,26 @@ export default function PendingProducts() {
   }, []);
 
   const handleApprove = async (id: string, isAuto: boolean) => {
+    let formData = new FormData();
+    formData.append('isAuto', isAuto ? 'true' : 'false');
+
     if (!isAuto) {
       const fileInput = document.getElementById(`upload-${id}`) as HTMLInputElement;
       if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-        alert('Error: Uploading a compiled file (.ex4, .ex5, .zip, .apk) is required before publishing!');
-        return;
-      }
-      const fileName = fileInput.files[0].name.toLowerCase();
-      if (!fileName.endsWith('.ex4') && !fileName.endsWith('.ex5') && !fileName.endsWith('.zip') && !fileName.endsWith('.apk')) {
-        alert('Error: Invalid format! Only .ex4, .ex5, .zip or .apk are allowed.');
-        return;
+        // Find if platform is android, if so it's APK and no file is strictly needed unless we want them to upload signed APK? Wait, for Android it says "No injection needed" but it actually still needs to be published.
+        const product = products.find(p => p.id === id);
+        if (product && product.platform.toLowerCase() !== 'android') {
+          alert('Error: Uploading a compiled file (.ex4, .ex5, .zip, .apk) is required before publishing!');
+          return;
+        }
+      } else {
+        const file = fileInput.files[0];
+        const fileName = file.name.toLowerCase();
+        if (!fileName.endsWith('.ex4') && !fileName.endsWith('.ex5') && !fileName.endsWith('.zip') && !fileName.endsWith('.apk')) {
+          alert('Error: Invalid format! Only .ex4, .ex5, .zip or .apk are allowed.');
+          return;
+        }
+        formData.append('compiledFile', file);
       }
       setApproving(id);
     } else {
@@ -70,13 +80,15 @@ export default function PendingProducts() {
     try {
       const res = await fetch(`/api/admin/pending-products/${id}/approve`, {
         method: 'POST',
+        body: formData
       });
       if (res.ok) {
         alert('Product successfully published to the marketplace!');
         // Remove from list
         setProducts(products.filter(p => p.id !== id));
       } else {
-        alert('Error approving product.');
+        const errorData = await res.json();
+        alert(`Error approving product: ${errorData.error || 'Unknown error'}`);
       }
     } catch (err) {
       alert('An error occurred while publishing.');
