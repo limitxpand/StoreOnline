@@ -8,11 +8,35 @@ import styles from './page.module.css';
 import { getWebsiteSettings } from '@/lib/settings';
 import { prisma } from '@/lib/prisma';
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const settings = getWebsiteSettings();
+  const resolvedParams = await searchParams;
+  const search = typeof resolvedParams?.search === 'string' ? resolvedParams.search : undefined;
+  const filter = typeof resolvedParams?.filter === 'string' ? resolvedParams.filter : 'all';
+
+  const whereClause: any = { status: 'published' };
+  
+  if (search) {
+    whereClause.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { description: { contains: search, mode: 'insensitive' } }
+    ];
+  }
+
+  if (filter === 'free') {
+    whereClause.price = 0;
+  } else if (filter === 'paid') {
+    whereClause.price = { gt: 0 };
+  } else if (filter === 'mt4') {
+    whereClause.platform = 'MT4';
+  } else if (filter === 'mt5') {
+    whereClause.platform = 'MT5';
+  } else if (filter === 'ea') {
+    whereClause.category = { name: 'Expert Advisors' };
+  }
 
   const featuredProducts = await prisma.product.findMany({
-    where: { status: 'published' },
+    where: whereClause,
     include: { category: true, developer: { select: { name: true } } },
     take: 8,
     orderBy: { createdAt: 'desc' }
@@ -42,32 +66,40 @@ export default async function Home() {
 
             {/* Featured Products Section */}
             <div className={styles.sectionHeader}>
-              <h3 className={styles.sectionTitle}>Featured Products</h3>
+              <h3 className={styles.sectionTitle}>
+                {search ? `Search Results for "${search}"` : 'Featured Products'}
+              </h3>
               <div className={styles.tabs}>
-                <button className={`${styles.tab} ${styles.activeTab}`}>All Products</button>
-                <button className={styles.tab}>Free</button>
-                <button className={styles.tab}>Paid</button>
-                <button className={styles.tab}>MT4</button>
-                <button className={styles.tab}>MT5</button>
-                <button className={styles.tab}>EA</button>
+                <Link href="/" className={`${styles.tab} ${filter === 'all' ? styles.activeTab : ''}`}>All Products</Link>
+                <Link href="/?filter=free" className={`${styles.tab} ${filter === 'free' ? styles.activeTab : ''}`}>Free</Link>
+                <Link href="/?filter=paid" className={`${styles.tab} ${filter === 'paid' ? styles.activeTab : ''}`}>Paid</Link>
+                <Link href="/?filter=mt4" className={`${styles.tab} ${filter === 'mt4' ? styles.activeTab : ''}`}>MT4</Link>
+                <Link href="/?filter=mt5" className={`${styles.tab} ${filter === 'mt5' ? styles.activeTab : ''}`}>MT5</Link>
+                <Link href="/?filter=ea" className={`${styles.tab} ${filter === 'ea' ? styles.activeTab : ''}`}>EA</Link>
               </div>
-              <button className={styles.viewAllBtn}>View All</button>
+              <Link href="/categories" className={styles.viewAllBtn}>View All</Link>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
-              {featuredProducts.map((product: any) => (
-                <ProductCard 
-                  key={product.id}
-                  title={product.title}
-                  slug={product.slug}
-                  category={product.category.name}
-                  type={product.platform}
-                  price={product.price}
-                  rating={5.0} // Placeholder until review model exists
-                  reviews={0}
-                  image={product.logoUrl || ''}
-                />
-              ))}
+              {featuredProducts.length === 0 ? (
+                <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1', color: 'var(--text-secondary)' }}>
+                  No products found.
+                </div>
+              ) : (
+                featuredProducts.map((product: any) => (
+                  <ProductCard 
+                    key={product.id}
+                    title={product.title}
+                    slug={product.slug}
+                    category={product.category.name}
+                    type={product.platform}
+                    price={product.price}
+                    rating={5.0} // Placeholder until review model exists
+                    reviews={0}
+                    image={product.logoUrl || ''}
+                  />
+                ))
+              )}
             </div>
 
             {/* Added AdSense banner to the original layout */}

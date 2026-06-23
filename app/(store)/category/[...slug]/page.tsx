@@ -7,24 +7,20 @@ import { prisma } from '@/lib/prisma';
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string[] }> }) {
   const resolvedParams = await params;
-  const slugs = resolvedParams.slug;
-  
-  // Format the name for display
-  const categoryName = slugs.map(s => s.replace(/-/g, ' ').toUpperCase()).join(' > ');
+  const slug = resolvedParams.slug.join('/'); // handle if there are multiple parts somehow, or just take first
+  const catSlug = resolvedParams.slug[resolvedParams.slug.length - 1]; // take the last part as the actual category slug
 
-  // E.g., slugs = ['mt4', 'expert-advisors']
-  const platform = slugs[0]?.toUpperCase();
-  const catSlug = slugs.length > 1 ? `${slugs[0]}-${slugs[1]}` : null;
+  // Try to find the category
+  const category = await prisma.category.findUnique({
+    where: { slug: catSlug }
+  });
 
-  let whereClause: any = { status: 'published' };
-  if (platform) {
-    whereClause.platform = platform;
-  }
+  const categoryName = category ? `${category.platform} > ${category.name}` : catSlug.replace(/-/g, ' ').toUpperCase();
+
+  const whereClause: any = { status: 'published' };
   
-  if (catSlug) {
-    whereClause.category = { slug: catSlug };
-  } else if (slugs.length === 1 && slugs[0] !== 'all') {
-    whereClause.platform = platform;
+  if (category) {
+    whereClause.categoryId = category.id;
   }
 
   const products = await prisma.product.findMany({
@@ -49,7 +45,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             key={product.id}
             title={product.title}
             slug={product.slug}
-            category={product.category?.name || platform}
+            category={product.category?.name || category?.platform || 'Unknown'}
             type={product.platform}
             price={product.price}
             rating={5.0}

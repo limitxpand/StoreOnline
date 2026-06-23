@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import styles from './Header.module.css';
 import { getWebsiteSettings } from '@/lib/settings';
+import SearchBar from './SearchBar';
 
 export default function Header() {
   const settings = getWebsiteSettings();
@@ -21,13 +22,8 @@ export default function Header() {
           </Link>
         </div>
 
-        <div className={styles.searchContainer}>
-          <input 
-            type="text" 
-            placeholder="Search for products, categories, or keywords..." 
-            className={styles.searchInput}
-          />
-          <button className={styles.searchBtn}>Search</button>
+        <div className={styles.searchContainer} style={{ background: 'none', padding: 0, border: 'none' }}>
+          <SearchBar />
         </div>
 
         <div className={styles.actions}>

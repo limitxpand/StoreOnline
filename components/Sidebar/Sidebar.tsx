@@ -1,66 +1,56 @@
 import Link from 'next/link';
 import styles from './Sidebar.module.css';
+import { prisma } from '@/lib/prisma';
 
-export default function Sidebar() {
-  const categories = [
-    {
-      title: 'MT5',
-      icon: '📈',
-      items: ['Expert Advisors', 'Indicators', 'Utilities', 'Libraries']
-    },
-    {
-      title: 'MT4',
-      icon: '📊',
-      items: ['Expert Advisors', 'Indicators', 'Utilities', 'Libraries']
-    }
-  ];
+export default async function Sidebar() {
+  const allCategories = await prisma.category.findMany({
+    orderBy: { name: 'asc' }
+  });
 
-  const extraCategories = [
-    { title: 'Android Game APK', icon: '📱' },
-    { title: 'Software APK', icon: '💻' },
-    { title: 'Scripts & Tools', icon: '⚙️' },
-    { title: 'Templates', icon: '🎨' },
-    { title: 'E-books', icon: '📚' }
-  ];
+  // Group by platform
+  const platforms = Array.from(new Set(allCategories.map(c => c.platform).filter(Boolean)));
+  
+  const platformIcons: Record<string, string> = {
+    'MT5': '📈',
+    'MT4': '📊',
+    'Android': '📱',
+    'Windows': '💻',
+    'Web': '🌐'
+  };
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>CATEGORIES</h3>
         
-        {categories.map((cat, idx) => (
-          <div key={idx} className={styles.categoryGroup}>
-            <div className={styles.categoryHeader}>
-              <span className={styles.icon}>{cat.icon}</span>
-              <span className={styles.title}>{cat.title}</span>
+        {platforms.map((platform, idx) => {
+          const catItems = allCategories.filter(c => c.platform === platform);
+          return (
+            <div key={idx} className={styles.categoryGroup}>
+              <div className={styles.categoryHeader}>
+                <span className={styles.icon}>{platformIcons[platform] || '📁'}</span>
+                <span className={styles.title}>{platform}</span>
+              </div>
+              <ul className={styles.subCategoryList}>
+                {catItems.map((item, i) => (
+                  <li key={i}>
+                    <Link href={`/category/${item.slug}`} className={styles.subCategoryItem}>
+                      <span className={styles.bullet}>›</span> {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className={styles.subCategoryList}>
-              {cat.items.map((item, i) => (
-                <li key={i}>
-                  <Link href={`/category/${cat.title.toLowerCase()}/${item.toLowerCase().replace(' ', '-')}`} className={styles.subCategoryItem}>
-                    <span className={styles.bullet}>›</span> {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+          );
+        })}
 
         <div className={styles.divider}></div>
 
         <ul className={styles.extraCategoryList}>
-          {extraCategories.map((cat, idx) => (
-            <li key={idx}>
-              <Link href={`/category/${cat.title.toLowerCase().replace(/ /g, '-')}`} className={styles.extraCategoryItem}>
-                <span className={styles.icon}>{cat.icon}</span>
-                {cat.title}
-              </Link>
-            </li>
-          ))}
           <li>
             <Link href="/categories" className={styles.extraCategoryItem}>
               <span className={styles.icon}>🕒</span>
-              More Categories
+              All Categories
             </Link>
           </li>
         </ul>
