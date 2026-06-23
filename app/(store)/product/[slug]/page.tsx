@@ -1,11 +1,23 @@
 import Link from 'next/link';
 import AdBanner from '@/components/AdBanner';
 import styles from './product.module.css';
+import { prisma } from '@/lib/prisma';
+import { notFound } from 'next/navigation';
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  // Mock data for MVP
-  const productName = params.slug === 'gold-scalper-pro' ? 'Gold Scalper Pro EA' : 'Quantum Indicator';
-  const price = params.slug === 'gold-scalper-pro' ? 129.00 : 89.00;
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  
+  const product = await prisma.product.findUnique({
+    where: { slug: resolvedParams.slug },
+    include: {
+      developer: { select: { name: true } },
+      category: true
+    }
+  });
+
+  if (!product) {
+    notFound();
+  }
 
   return (
     <div className={styles.container}>
@@ -28,7 +40,11 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           {/* Left Column - Images */}
           <div className={styles.imageColumn}>
             <div className={styles.mainImage}>
-              <span style={{ fontSize: '5rem' }}>📈</span>
+              {product.logoUrl ? (
+                <img src={product.logoUrl} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
+              ) : (
+                <span style={{ fontSize: '5rem' }}>📦</span>
+              )}
             </div>
             <div className={styles.thumbnails}>
               <div className={styles.thumb}></div>
@@ -39,26 +55,26 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
           {/* Right Column - Info */}
           <div className={styles.infoColumn}>
-            <span className={styles.categoryBadge}>MT5 Expert Advisor</span>
-            <h1 className={styles.title}>{productName}</h1>
+            <span className={styles.categoryBadge}>{product.platform} {product.category?.name}</span>
+            <h1 className={styles.title}>{product.title}</h1>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>By {product.developer?.name || 'Unknown'}</p>
             
             <div className={styles.reviews}>
               <span style={{ color: 'gold' }}>★★★★★</span>
-              <span style={{ color: 'var(--text-muted)' }}>(24 Reviews)</span>
+              <span style={{ color: 'var(--text-muted)' }}>(0 Reviews)</span>
             </div>
 
             <div className={styles.priceBlock}>
-              <span className={styles.price}>${price.toFixed(2)}</span>
+              <span className={styles.price}>${product.price.toFixed(2)}</span>
             </div>
 
             <p className={styles.description}>
-              The ultimate automated trading system designed for XAUUSD (Gold). Built with advanced price action algorithms and strict risk management. 
-              Purchase includes a lifetime license locked to your account/hardware.
+              {product.description}
             </p>
 
             <ul className={styles.features}>
-              <li>✅ Automated Trading on MT5</li>
-              <li>✅ Built-in Stop Loss & Take Profit</li>
+              <li>✅ Ready for {product.platform}</li>
+              <li>✅ Instant Delivery</li>
               <li>✅ Protected via Custom License Module</li>
               <li>✅ Free Updates</li>
             </ul>

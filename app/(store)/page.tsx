@@ -1,4 +1,5 @@
 import Link from 'next/link';
+export const dynamic = 'force-dynamic';
 import Header from '@/components/Header/Header';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import ProductCard from '@/components/ProductCard/ProductCard';
@@ -53,8 +54,8 @@ export default async function Home() {
               <button className={styles.viewAllBtn}>View All</button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.5rem', width: '100%' }}>
-              {featuredProducts.map(product => (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+              {featuredProducts.map((product: any) => (
                 <ProductCard 
                   key={product.id}
                   title={product.title}

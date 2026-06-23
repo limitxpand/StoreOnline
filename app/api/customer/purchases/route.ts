@@ -39,8 +39,8 @@ export async function GET(req: NextRequest) {
     });
 
     // Map licenses to their corresponding products
-    const purchases = transactions.map(t => {
-      const productLicense = licenses.find(l => l.productId === t.productId);
+    const purchases = transactions.map((t: any) => {
+      const productLicense = licenses.find((l: any) => l.productId === t.productId);
       return {
         id: t.id,
         date: t.createdAt,

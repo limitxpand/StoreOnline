@@ -39,8 +39,8 @@ export default async function CustomerDashboard() {
     where: { userId: session.user.id }
   });
 
-  const purchases = transactions.map(t => {
-    const productLicense = licenses.find(l => l.productId === t.productId);
+  const purchases = transactions.map((t: any) => {
+    const productLicense = licenses.find((l: any) => l.productId === t.productId);
     return {
       id: t.id,
       date: t.createdAt,
@@ -65,7 +65,7 @@ export default async function CustomerDashboard() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
-            {purchases.map(purchase => (
+            {purchases.map((purchase: any) => (
               <div key={purchase.id} style={{ backgroundColor: 'var(--bg-tertiary)', borderRadius: '12px', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
                 <div style={{ height: '150px', backgroundImage: `url(${purchase.product.logoUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {!purchase.product.logoUrl && <span style={{ fontSize: '3rem' }}>📦</span>}

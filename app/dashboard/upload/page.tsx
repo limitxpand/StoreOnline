@@ -19,6 +19,14 @@ export default function UploadCode() {
   const [logo, setLogo] = useState<File | null>(null);
   const [source, setSource] = useState<File | null>(null);
 
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/categories').then(res => res.json()).then(data => {
+      if(data.categories) setCategories(data.categories);
+    }).catch(console.error);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -33,7 +41,7 @@ export default function UploadCode() {
 
     const formData = new FormData();
     formData.append('title', title);
-    formData.append('category', category);
+    formData.append('category', category); // This should pass the slug
     formData.append('price', price);
     formData.append('platform', platform);
     formData.append('description', description);
@@ -85,11 +93,9 @@ export default function UploadCode() {
               <label>Category</label>
               <select value={category} onChange={e => setCategory(e.target.value)} required>
                 <option value="">Select Category</option>
-                <option value="mt5-ea">MT5 Expert Advisor</option>
-                <option value="mt5-indicator">MT5 Indicator</option>
-                <option value="mt4-ea">MT4 Expert Advisor</option>
-                <option value="mt4-indicator">MT4 Indicator</option>
-                <option value="scripts">Scripts & Tools</option>
+                {categories.map((cat: any) => (
+                  <option key={cat.id} value={cat.slug}>{cat.platform} - {cat.name}</option>
+                ))}
               </select>
             </div>
 

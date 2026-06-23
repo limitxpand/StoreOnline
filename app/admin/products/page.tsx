@@ -1,81 +1,61 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../settings/settings.module.css';
 
 export default function ProductManagement() {
-  const [products, setProducts] = useState([
-    { id: 1, title: 'Gold Scalper Pro EA', category: 'MT5 Expert Advisors', price: 149.00, isHidden: false, isFeatured: true },
-    { id: 2, title: 'Advanced Indicator', category: 'MT4 Indicators', price: 29.00, isHidden: false, isFeatured: false },
-    { id: 3, title: 'Utility Script', category: 'Scripts & Tools', price: 19.00, isHidden: true, isFeatured: false }
-  ]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [isAdding, setIsAdding] = useState(false);
-  const [newProduct, setNewProduct] = useState({ title: '', category: '', price: '' });
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-  const handleToggleHide = (id: number) => {
-    setProducts(products.map(p => p.id === id ? { ...p, isHidden: !p.isHidden } : p));
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch('/api/admin/products');
+      const data = await res.json();
+      if (data.products) {
+        setProducts(data.products);
+      }
+    } catch (error) {
+      console.error("Error fetching products", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleToggleFeature = (id: number) => {
-    setProducts(products.map(p => p.id === id ? { ...p, isFeatured: !p.isFeatured } : p));
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      const res = await fetch('/api/admin/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus })
+      });
+      if (res.ok) {
+        setProducts(products.map(p => p.id === id ? { ...p, status: newStatus } : p));
+      }
+    } catch (error) {
+      console.error("Failed to update status", error);
+    }
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to completely delete this product?')) {
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to completely delete this product? (API implementation pending)')) {
+      // API call to delete could go here
       setProducts(products.filter(p => p.id !== id));
     }
   };
 
-  const handleAddSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setProducts([...products, { 
-      id: Date.now(), 
-      title: newProduct.title, 
-      category: newProduct.category, 
-      price: parseFloat(newProduct.price), 
-      isHidden: false, 
-      isFeatured: false 
-    }]);
-    setIsAdding(false);
-    setNewProduct({ title: '', category: '', price: '' });
-  };
+  if (loading) return <div style={{ padding: '2rem' }}>Loading products...</div>;
 
   return (
     <div className={styles.container}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <h2>Product Management</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Full control over all products on the marketplace.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Approve or reject developer uploads.</p>
         </div>
-        <button 
-          onClick={() => setIsAdding(!isAdding)}
-          className={styles.saveBtn}
-          style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
-        >
-          {isAdding ? 'Cancel' : '+ Add New Product'}
-        </button>
       </div>
-
-      {isAdding && (
-        <form onSubmit={handleAddSubmit} className={styles.form} style={{ marginBottom: '2rem', background: 'var(--bg-tertiary)', padding: '2rem', borderRadius: '12px' }}>
-          <h3>Add Product Directly (Super Admin)</h3>
-          <div className={styles.row}>
-            <div className={styles.formGroup}>
-              <label>Product Title</label>
-              <input type="text" required value={newProduct.title} onChange={e => setNewProduct({...newProduct, title: e.target.value})} />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Category</label>
-              <input type="text" required value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Price ($)</label>
-              <input type="number" step="0.01" required value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} />
-            </div>
-          </div>
-          <button type="submit" className={styles.saveBtn} style={{ width: 'auto', padding: '0.75rem 2rem' }}>Publish Product</button>
-        </form>
-      )}
 
       <div className={styles.section}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -83,9 +63,9 @@ export default function ProductManagement() {
             <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
               <th style={{ padding: '1rem 0' }}>Product</th>
               <th style={{ padding: '1rem 0' }}>Category</th>
+              <th style={{ padding: '1rem 0' }}>Developer</th>
               <th style={{ padding: '1rem 0' }}>Price</th>
-              <th style={{ padding: '1rem 0', textAlign: 'center' }}>Featured</th>
-              <th style={{ padding: '1rem 0', textAlign: 'center' }}>Hidden</th>
+              <th style={{ padding: '1rem 0', textAlign: 'center' }}>Status</th>
               <th style={{ padding: '1rem 0', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
@@ -93,15 +73,37 @@ export default function ProductManagement() {
             {products.map(p => (
               <tr key={p.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                 <td style={{ padding: '1rem 0', fontWeight: 500 }}>{p.title}</td>
-                <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{p.category}</td>
+                <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{p.platform} {p.category?.name}</td>
+                <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{p.developer?.name}</td>
                 <td style={{ padding: '1rem 0', color: 'var(--success)' }}>${p.price.toFixed(2)}</td>
                 <td style={{ padding: '1rem 0', textAlign: 'center' }}>
-                  <input type="checkbox" checked={p.isFeatured} onChange={() => handleToggleFeature(p.id)} style={{ cursor: 'pointer' }} />
-                </td>
-                <td style={{ padding: '1rem 0', textAlign: 'center' }}>
-                  <input type="checkbox" checked={p.isHidden} onChange={() => handleToggleHide(p.id)} style={{ cursor: 'pointer' }} />
+                  <span style={{ 
+                    padding: '0.25rem 0.5rem', 
+                    borderRadius: '4px', 
+                    fontSize: '0.8rem',
+                    background: p.status === 'published' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                    color: p.status === 'published' ? '#10b981' : '#f59e0b'
+                  }}>
+                    {p.status.toUpperCase()}
+                  </span>
                 </td>
                 <td style={{ padding: '1rem 0', textAlign: 'right' }}>
+                  {p.status !== 'published' && (
+                    <button 
+                      onClick={() => handleUpdateStatus(p.id, 'published')}
+                      style={{ background: 'var(--success)', color: 'white', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', marginRight: '0.5rem' }}
+                    >
+                      Approve
+                    </button>
+                  )}
+                  {p.status === 'published' && (
+                    <button 
+                      onClick={() => handleUpdateStatus(p.id, 'pending')}
+                      style={{ background: 'var(--text-muted)', color: 'white', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', marginRight: '0.5rem' }}
+                    >
+                      Unpublish
+                    </button>
+                  )}
                   <button 
                     onClick={() => handleDelete(p.id)}
                     style={{ background: 'var(--danger)', color: 'white', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer' }}
