@@ -79,7 +79,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <li>✅ Free Updates</li>
             </ul>
 
-            <Link href={`/checkout/${params.slug}`} className={styles.buyBtn}>
+            <Link href={`/checkout/${resolvedParams.slug}`} className={styles.buyBtn}>
               Buy Now with Crypto
             </Link>
 

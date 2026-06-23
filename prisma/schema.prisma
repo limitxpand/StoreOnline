@@ -14,13 +14,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String?
-  role      String   @default("customer") // customer, developer, admin
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  email      String   @unique
+  username   String?  @unique
+  password   String
+  name       String?
+  role       String   @default("customer") // customer, developer, admin
+  secretCode String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   products     Product[]
   transactions Transaction[]

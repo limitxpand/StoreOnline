@@ -8,6 +8,38 @@ export default function SecuritySettings() {
   
   const [password, setPassword] = useState('');
   const [secretCode, setSecretCode] = useState('');
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+
+  const handleChangeCredentials = async () => {
+    if (!password) {
+      setMessage({ text: 'Current password is required.', type: 'error' });
+      return;
+    }
+    setLoading(true);
+    setMessage({ text: '', type: '' });
+
+    try {
+      const res = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'change_credentials', currentPassword: password, newUsername, newPassword })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage({ text: 'Credentials updated successfully!', type: 'success' });
+        setNewUsername('');
+        setNewPassword('');
+        setPassword('');
+      } else {
+        setMessage({ text: data.message || 'Failed to update credentials.', type: 'error' });
+      }
+    } catch (err) {
+      setMessage({ text: 'An error occurred.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,22 +80,53 @@ export default function SecuritySettings() {
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.section}>
+          <h3>Update Credentials</h3>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+            Change your admin username and password.
+          </p>
+
+          <div className={styles.formGroup}>
+            <label>Current Password</label>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              placeholder="Required to make any changes"
+              required 
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>New Username</label>
+            <input 
+              type="text" 
+              value={newUsername} 
+              onChange={e => setNewUsername(e.target.value)} 
+              placeholder="Leave blank to keep current"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>New Password</label>
+            <input 
+              type="password" 
+              value={newPassword} 
+              onChange={e => setNewPassword(e.target.value)} 
+              placeholder="Leave blank to keep current"
+            />
+          </div>
+
+          <button type="button" onClick={handleChangeCredentials} className={styles.saveBtn} disabled={loading} style={{ marginBottom: '2rem' }}>
+            {loading ? 'Updating...' : 'Update Credentials'}
+          </button>
+        </div>
+
+        <div className={styles.section}>
           <h3>Update Secret Code</h3>
           <p style={{ fontSize: '0.85rem', color: 'var(--danger)', marginBottom: '1rem' }}>
             Warning: Do not lose your secret code. It is the only way to recover your admin account.
           </p>
           
-          <div className={styles.formGroup}>
-            <label>Current Admin Password</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={e => setPassword(e.target.value)} 
-              placeholder="Verify your identity"
-              required 
-            />
-          </div>
-
           <div className={styles.formGroup}>
             <label>New Secret Code</label>
             <input 
@@ -71,14 +134,13 @@ export default function SecuritySettings() {
               value={secretCode} 
               onChange={e => setSecretCode(e.target.value)} 
               placeholder="e.g. 123456"
-              required 
             />
           </div>
-        </div>
 
-        <button type="submit" className={styles.saveBtn} disabled={loading} style={{ background: 'var(--danger)' }}>
-          {loading ? 'Updating...' : 'Update Secret Code'}
-        </button>
+          <button type="submit" className={styles.saveBtn} disabled={loading} style={{ background: 'var(--danger)' }}>
+            {loading ? 'Updating...' : 'Update Secret Code'}
+          </button>
+        </div>
       </form>
     </div>
   );

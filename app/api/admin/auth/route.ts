@@ -1,12 +1,28 @@
 import { NextResponse } from 'next/server';
-import { getSettings, saveSettings } from '@/lib/settings';
+import { prisma } from '@/lib/prisma';
+
+async function getAdminUser() {
+  let admin = await prisma.user.findFirst({ where: { role: 'admin' } });
+  if (!admin) {
+    admin = await prisma.user.create({
+      data: {
+        email: 'admin@system.local',
+        username: 'admin',
+        password: 'admin',
+        role: 'admin',
+        secretCode: '333725',
+        name: 'Super Admin'
+      }
+    });
+  }
+  return admin;
+}
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { action, username, password, secretCode, newPassword } = body;
-    const settings = getSettings();
-    const admin = settings.admin;
+    const { action, username, password, secretCode, newPassword, newUsername } = body;
+    const admin = await getAdminUser();
 
     if (action === 'login') {
       if (username === admin.username && password === admin.password) {
@@ -38,15 +54,14 @@ export async function POST(request: Request) {
 
     if (action === 'reset_password') {
       if (secretCode === admin.secretCode) {
-        // Update password
-        saveSettings({
-          admin: {
-            username: admin.username,
-            secretCode: admin.secretCode,
-            password: newPassword
+        await prisma.user.update({
+          where: { id: admin.id },
+          data: {
+            username: newUsername || 'admin',
+            password: newPassword || 'admin'
           }
         });
-        return NextResponse.json({ success: true, message: 'Password reset successfully' });
+        return NextResponse.json({ success: true, message: 'Credentials reset successfully' });
       }
       return NextResponse.json({ success: false, message: 'Invalid secret code' }, { status: 401 });
     }
@@ -54,16 +69,29 @@ export async function POST(request: Request) {
     if (action === 'change_secret') {
       // Must verify current password to change secret
       if (password === admin.password) {
-        saveSettings({
-          admin: {
-            username: admin.username,
-            password: admin.password,
-            secretCode: secretCode // This is the new secret code
-          }
+        await prisma.user.update({
+          where: { id: admin.id },
+          data: { secretCode }
         });
         return NextResponse.json({ success: true, message: 'Secret code updated successfully' });
       }
       return NextResponse.json({ success: false, message: 'Invalid password' }, { status: 401 });
+    }
+
+    if (action === 'change_credentials') {
+      // Allow changing username and password by verifying the current password
+      const { currentPassword } = body;
+      if (currentPassword === admin.password) {
+        await prisma.user.update({
+          where: { id: admin.id },
+          data: {
+            username: newUsername || admin.username,
+            password: newPassword || admin.password
+          }
+        });
+        return NextResponse.json({ success: true, message: 'Credentials updated successfully' });
+      }
+      return NextResponse.json({ success: false, message: 'Invalid current password' }, { status: 401 });
     }
 
     return NextResponse.json({ success: false, message: 'Invalid action' }, { status: 400 });

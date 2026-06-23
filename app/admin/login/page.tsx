@@ -15,6 +15,7 @@ export default function AdminLogin() {
 
   // Forgot state
   const [secretCode, setSecretCode] = useState('');
+  const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -51,14 +52,15 @@ export default function AdminLogin() {
       const res = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'reset_password', secretCode, newPassword })
+        body: JSON.stringify({ action: 'reset_password', secretCode, newPassword, newUsername })
       });
       const data = await res.json();
       
       if (data.success) {
-        alert('Password reset successfully. Please login.');
+        alert('Credentials reset successfully. Please login with your new credentials.');
         setMode('login');
         setPassword('');
+        setUsername('');
       } else {
         setError(data.message || 'Reset failed');
       }
@@ -133,6 +135,18 @@ export default function AdminLogin() {
                 placeholder="Enter your 6-digit code"
                 value={secretCode}
                 onChange={(e) => setSecretCode(e.target.value)}
+                required 
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="newUsername">New Username</label>
+              <input 
+                type="text" 
+                id="newUsername" 
+                className={styles.input} 
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
                 required 
               />
             </div>
