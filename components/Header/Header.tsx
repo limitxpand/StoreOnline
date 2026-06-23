@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import styles from './Header.module.css';
 import { getWebsiteSettings } from '@/lib/settings';
 import SearchBar from './SearchBar';
@@ -23,7 +24,9 @@ export default function Header() {
         </div>
 
         <div className={styles.searchContainer} style={{ background: 'none', padding: 0, border: 'none' }}>
-          <SearchBar />
+          <Suspense fallback={<div className={styles.searchInput}>Loading search...</div>}>
+            <SearchBar />
+          </Suspense>
         </div>
 
         <div className={styles.actions}>
