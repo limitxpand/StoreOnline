@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("customer") // customer, developer, admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products     Product[]
+  transactions Transaction[]
+  licenses     License[]
+  withdrawals  Withdrawal[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  platform    String    // MT4, MT5, Android
+  icon        String?
+  products    Product[]
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  slug            String   @unique @default(cuid())
+  title           String
+  description     String
+  price           Float
+  logoUrl         String?
+  sourceFileUrl   String?
+  compiledFileUrl String?
+  status          String   @default("pending") // pending, published, rejected
+  platform        String   // MT4, MT5, Android
+  developerId     String
+  categoryId      String
+
+  developer User     @relation(fields: [developerId], references: [id])
+  category  Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions Transaction[]
+  licenses     License[]
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  amount    Float
+  status    String   @default("completed") // completed, pending, failed
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model License {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Withdrawal {
+  id          String   @id @default(cuid())
+  developerId String
+  amount      Float
+  status      String   @default("pending") // pending, completed, rejected
+  createdAt   DateTime @default(now())
+
+  developer   User     @relation(fields: [developerId], references: [id])
+}

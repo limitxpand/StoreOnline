@@ -1,0 +1,16 @@
+{
+  "admin": {
+    "username": "admin",
+    "password": "admin",
+    "secretCode": "333725"
+  },
+  "website": {
+    "siteName": "Store Online",
+    "heroTitle": "Premium Marketplace for Pro Traders & Developers",
+    "heroSubtitle": "Buy and sell highly secure, hardware-locked MT4/MT5 Expert Advisors, Indicators, and Android APKs. Experience instant crypto delivery and unmatched piracy protection.",
+    "theme": "light",
+    "primaryColor": "#3b82f6",
+    "enableAdsense": true,
+    "contactEmail": "support@storeonline.com"
+  }
+}
