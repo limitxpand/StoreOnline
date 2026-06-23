@@ -1,12 +1,19 @@
 'use client';
 import Link from 'next/link';
 import styles from '../dashboard/dashboard.module.css';
+import { usePathname } from 'next/navigation';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  if (pathname === '/admin/login') {
+    return <div style={{ minHeight: '100vh', background: 'var(--bg-dark)' }}>{children}</div>;
+  }
+
   return (
     <div className={styles.layout}>
       {/* Admin Sidebar */}

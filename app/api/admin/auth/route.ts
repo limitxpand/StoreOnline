@@ -61,7 +61,17 @@ export async function POST(request: Request) {
             password: newPassword || 'admin'
           }
         });
-        return NextResponse.json({ success: true, message: 'Credentials reset successfully' });
+        
+        // Auto-login after reset
+        const response = NextResponse.json({ success: true, message: 'Credentials reset successfully' });
+        response.cookies.set({
+          name: 'admin_token',
+          value: 'true',
+          httpOnly: true,
+          path: '/',
+          maxAge: 60 * 60 * 24 // 1 day
+        });
+        return response;
       }
       return NextResponse.json({ success: false, message: 'Invalid secret code' }, { status: 401 });
     }
