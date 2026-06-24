@@ -10,23 +10,25 @@ export default async function AdminDashboard() {
     totalUsers,
     pendingProducts,
     pendingWithdrawalsCount,
-    completedTransactions,
-    allRoyalties
+    totalSalesAgg,
+    platformRevenueAgg
   ] = await Promise.all([
     prisma.user.count({ where: { role: 'customer' } }),
     prisma.user.count({ where: { role: 'developer' } }),
     prisma.user.count(),
     prisma.product.count({ where: { status: 'pending' } }),
     prisma.withdrawal.count({ where: { status: 'pending' } }),
-    prisma.transaction.findMany({ where: { status: 'completed' } }),
-    prisma.royalty.findMany()
+    prisma.transaction.aggregate({
+      where: { status: 'completed' },
+      _sum: { amount: true }
+    }),
+    prisma.royalty.aggregate({
+      _sum: { platformFee: true }
+    })
   ]);
 
-  // Calculate Total Sales
-  const totalSales = completedTransactions.reduce((sum, t) => sum + t.amount, 0);
-
-  // Calculate Platform Revenue
-  const platformRevenue = allRoyalties.reduce((sum, r) => sum + r.platformFee, 0);
+  const totalSales = totalSalesAgg._sum.amount || 0;
+  const platformRevenue = platformRevenueAgg._sum.platformFee || 0;
 
   return (
     <div>

@@ -32,7 +32,7 @@ export default function AdminLogin() {
       const data = await res.json();
       
       if (data.success) {
-        router.push('/admin/dashboard');
+        window.location.href = '/admin/dashboard';
       } else {
         setError(data.message || 'Invalid credentials');
       }
@@ -57,8 +57,7 @@ export default function AdminLogin() {
       const data = await res.json();
       
       if (data.success) {
-        alert('Credentials reset successfully. You are now logged in.');
-        router.push('/admin/dashboard');
+        window.location.href = '/admin/dashboard';
       } else {
         setError(data.message || 'Reset failed');
       }
