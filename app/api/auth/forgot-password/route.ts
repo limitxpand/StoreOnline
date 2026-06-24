@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       try {
         const resetLink = `https://www.storeonline.in/reset-password?token=${resetToken}`;
         await resend.emails.send({
-          from: 'StoreOnline <onboarding@resend.dev>', // In production, use your verified domain
+          from: 'StoreOnline <noreply@storeonline.in>',
           to: user.email,
           subject: 'Reset your StoreOnline password',
           html: `

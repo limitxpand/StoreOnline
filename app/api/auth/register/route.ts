@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       try {
         const verifyLink = `https://www.storeonline.in/verify-email?token=${verificationToken}`;
         await resend.emails.send({
-          from: 'StoreOnline <onboarding@resend.dev>', // In production, use your verified domain e.g. noreply@storeonline.in
+          from: 'StoreOnline <noreply@storeonline.in>',
           to: user.email,
           subject: 'Verify your StoreOnline account',
           html: `
