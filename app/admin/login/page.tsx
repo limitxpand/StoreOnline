@@ -59,8 +59,20 @@ export default function AdminLogin() {
       const data = await res.json();
       
       if (data.success) {
-        alert('Credentials reset successfully. You are now logged in.');
-        router.push('/admin/dashboard');
+        // Sign in using NextAuth to actually establish the session!
+        const signInRes = await signIn('credentials', {
+          redirect: false,
+          email: newUsername,
+          password: newPassword,
+        });
+
+        if (signInRes?.ok && !signInRes.error) {
+          alert('Credentials reset successfully. You are now logged in.');
+          router.push('/admin/dashboard');
+          router.refresh();
+        } else {
+           setError('Password reset successful, but auto-login failed. Please login manually.');
+        }
       } else {
         setError(data.message || 'Reset failed');
       }
