@@ -1,9 +1,23 @@
-import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
+import { notFound } from 'next/navigation';
+import CheckoutButton from './CheckoutButton';
 import styles from '../../product/[slug]/product.module.css';
 
-export default function CheckoutPage({ params }: { params: { id: string } }) {
-  const productName = params.id === 'gold-scalper-pro' ? 'Gold Scalper Pro EA' : 'Quantum Indicator';
-  const price = params.id === 'gold-scalper-pro' ? 129.00 : 89.00;
+export default async function CheckoutPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: productId } = await params;
+
+  const product = await prisma.product.findFirst({
+    where: { 
+      OR: [
+        { id: productId },
+        { slug: productId }
+      ]
+    }
+  });
+
+  if (!product) {
+    notFound();
+  }
 
   return (
     <div className={styles.container}>
@@ -19,8 +33,8 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
           
           <div style={{ background: 'var(--bg-tertiary)', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', color: 'white', fontWeight: '500' }}>
-              <span>{productName}</span>
-              <span>${price.toFixed(2)}</span>
+              <span>{product.title}</span>
+              <span>${product.price.toFixed(2)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
               <span>Lifetime License</span>
@@ -28,7 +42,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'white', fontWeight: '800', fontSize: '1.5rem' }}>
               <span>Total</span>
-              <span className="gradient-text">${price.toFixed(2)}</span>
+              <span className="gradient-text">${product.price.toFixed(2)}</span>
             </div>
           </div>
 
@@ -41,12 +55,10 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
             </div>
           </div>
 
-          {/* Simulate Payment & License Generation */}
-          <Link href="/customer/licenses" style={{ display: 'block', width: '100%', padding: '1.25rem', background: 'var(--success)', color: 'white', textAlign: 'center', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1rem', transition: 'transform 0.2s', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)' }}>
-            Pay Now & Generate License
-          </Link>
+          <CheckoutButton productId={product.id} />
+          
           <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '1rem' }}>
-            By clicking "Pay Now", you will be redirected to the customer dashboard simulating a successful purchase and automatic license injection.
+            By clicking "Pay with Cryptomus", you will be redirected to securely complete your payment.
           </p>
         </div>
       </main>

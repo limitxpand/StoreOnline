@@ -44,6 +44,10 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        if (!user.isVerified && user.role !== 'admin') {
+          throw new Error('Please verify your email address to log in.');
+        }
+
         return {
           id: user.id,
           email: user.email,

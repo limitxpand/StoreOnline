@@ -10,19 +10,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    let isAdmin = false;
     const session = await getServerSession(authOptions);
-    if (session && session.user?.role === "admin") {
-      isAdmin = true;
-    } else {
-      const authHeader = req.headers.get("Authorization");
-      const workerToken = process.env.WORKER_SECRET_TOKEN || "super_secret_worker_token_123";
-      if (authHeader === `Bearer ${workerToken}`) {
-        isAdmin = true;
-      }
-    }
-
-    if (!isAdmin) {
+    if (!session || session.user?.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -31,20 +20,10 @@ export async function POST(
     const isAuto = formData.get("isAuto") === "true";
     const compiledFile = formData.get("compiledFile") as File | null;
 
-    let compiledFileUrl = `/uploads/compiled/compiled_${productId}.zip`; // fallback
+    let compiledFileUrl = `/uploads/compiled/compiled_${productId}.zip`; // fallback for auto
 
-    if (isAuto) {
-      // Set to compiling status so the Python worker picks it up
-      const compilingProduct = await prisma.product.update({
-        where: { id: productId },
-        data: {
-          status: "compiling"
-        }
-      });
-      return NextResponse.json({ success: true, product: compilingProduct, message: "Sent to compile worker" }, { status: 200 });
-    }
-
-    if (compiledFile) {
+    if (!isAuto) {
+      if (compiledFile) {
         // Appwrite Setup
         const client = new Client()
           .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || "")
@@ -64,6 +43,7 @@ export async function POST(
           return NextResponse.json({ error: "Compiled file is required for manual publish." }, { status: 400 });
         }
       }
+    }
 
     const updatedProduct = await prisma.product.update({
       where: { id: productId },

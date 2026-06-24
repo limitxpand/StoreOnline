@@ -8,6 +8,17 @@ export default async function AdminDashboard() {
   const totalSellers = await prisma.user.count({ where: { role: 'developer' } });
   const totalUsers = await prisma.user.count();
   const pendingProducts = await prisma.product.count({ where: { status: 'pending' } });
+  const pendingWithdrawalsCount = await prisma.withdrawal.count({ where: { status: 'pending' } });
+
+  // Calculate Total Sales
+  const completedTransactions = await prisma.transaction.findMany({
+    where: { status: 'completed' }
+  });
+  const totalSales = completedTransactions.reduce((sum, t) => sum + t.amount, 0);
+
+  // Calculate Platform Revenue
+  const allRoyalties = await prisma.royalty.findMany();
+  const platformRevenue = allRoyalties.reduce((sum, r) => sum + r.platformFee, 0);
 
   return (
     <div>
@@ -21,14 +32,14 @@ export default async function AdminDashboard() {
           <div className={styles.statIcon} style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)' }}>🛍️</div>
           <div className={styles.statInfo}>
             <h3>Total Marketplace Sales</h3>
-            <p>$15,400.00</p>
+            <p>${totalSales.toFixed(2)}</p>
           </div>
         </div>
         <div className={styles.statCard}>
           <div className={styles.statIcon} style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)' }}>💵</div>
           <div className={styles.statInfo}>
             <h3>Platform Revenue (30%)</h3>
-            <p>$4,620.00</p>
+            <p>${platformRevenue.toFixed(2)}</p>
           </div>
         </div>
         <div className={styles.statCard}>
@@ -42,7 +53,7 @@ export default async function AdminDashboard() {
           <div className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.1)', color: 'var(--accent-neon)' }}>💸</div>
           <div className={styles.statInfo}>
             <h3>Pending Payouts</h3>
-            <p>2</p>
+            <p>{pendingWithdrawalsCount}</p>
           </div>
         </div>
       </div>

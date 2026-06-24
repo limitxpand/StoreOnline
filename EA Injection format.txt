@@ -11,7 +11,7 @@ int InternetCloseHandle(int hInet);
 int ShellExecuteW(int hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
 #import
 
-string License_Server_URL = "https://dashboard-git-main-limit-xpand.vercel.app/api/license/check";
+string License_Server_URL = "https://YOUR-WEBSITE.com/api/license/check";
 string EA_Name = "new ea";
 bool is_license_valid = false;
 string license_status_msg = "Checking...";

@@ -28,63 +28,54 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Mock Payment Success -> Generate License Key
-    const licenseKey = `LIC-${crypto.randomBytes(8).toString('hex').toUpperCase()}`;
-
-    // Create Transaction
+    // Create pending Transaction
     const transaction = await prisma.transaction.create({
       data: {
         userId: session.user.id,
         productId: product.id,
         amount: product.price,
-        status: "completed"
+        status: "pending"
       }
     });
 
-    // Create License
-    const license = await prisma.license.create({
-      data: {
-        key: licenseKey,
-        userId: session.user.id,
-        productId: product.id,
-      }
+    const baseUrl = process.env.NEXTAUTH_URL || `https://${req.headers.get('host')}`;
+
+    // Prepare Cryptomus Payload
+    const payload = {
+      amount: product.price.toString(),
+      currency: "USD",
+      order_id: transaction.id,
+      url_return: `${baseUrl}/customer/dashboard`,
+      url_callback: `${baseUrl}/api/webhooks/cryptomus`,
+      is_payment_multiple: false,
+      lifetime: 3600 // 1 hour
+    };
+
+    const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString('base64');
+    const sign = crypto.createHash('md5').update(payloadBase64 + process.env.CRYPTOMUS_API_KEY).digest('hex');
+
+    // Call Cryptomus API
+    const cryptomusResponse = await fetch('https://api.cryptomus.com/v1/payment', {
+      method: 'POST',
+      headers: {
+        'merchant': process.env.CRYPTOMUS_MERCHANT_ID || '',
+        'sign': sign,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
     });
 
-    // Send Email via Resend
-    if (process.env.RESEND_API_KEY) {
-      try {
-        await resend.emails.send({
-          from: 'StoreOnline <onboarding@resend.dev>', // Usually requires verified domain, but onboarding@resend.dev works for testing
-          to: session.user.email as string,
-          subject: `Your Purchase Receipt: ${product.title}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-              <h2>Thank you for your purchase!</h2>
-              <p>You have successfully purchased <strong>${product.title}</strong>.</p>
-              
-              <div style="background-color: #f4f4f4; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                <h3 style="margin-top: 0;">Your License Details</h3>
-                <p><strong>License Key:</strong> <code style="background: #e2e2e2; padding: 3px 6px; border-radius: 3px;">${licenseKey}</code></p>
-              </div>
-              
-              <p>You can download your product files from your Customer Dashboard.</p>
-              
-              <hr style="border: 1px solid #eee; margin: 20px 0;" />
-              <p style="font-size: 12px; color: #777;">Order ID: ${transaction.id}</p>
-              <p style="font-size: 12px; color: #777;">StoreOnline Market</p>
-            </div>
-          `
-        });
-      } catch (emailError) {
-        console.error("Failed to send email:", emailError);
-        // Continue even if email fails
-      }
+    const cryptomusData = await cryptomusResponse.json();
+
+    if (!cryptomusResponse.ok || cryptomusData.state !== 0) {
+      console.error("Cryptomus API Error:", cryptomusData);
+      return NextResponse.json({ error: "Failed to create payment with Cryptomus" }, { status: 500 });
     }
 
+    // cryptomusData.result.url contains the checkout URL
     return NextResponse.json({ 
       success: true, 
-      message: "Purchase successful!",
-      licenseKey,
+      paymentUrl: cryptomusData.result.url,
       transactionId: transaction.id
     }, { status: 200 });
 
