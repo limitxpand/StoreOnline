@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const adminToken = cookies().get('admin_token');
+    const cookieStore = await cookies();
+    const adminToken = cookieStore.get('admin_token');
     if (!adminToken) {
       return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 401 });
     }
@@ -23,7 +24,8 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const adminToken = cookies().get('admin_token');
+    const cookieStore = await cookies();
+    const adminToken = cookieStore.get('admin_token');
     if (!adminToken) {
       return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 401 });
     }
