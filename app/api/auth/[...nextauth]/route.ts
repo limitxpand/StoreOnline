@@ -34,8 +34,8 @@ export const authOptions: NextAuthOptions = {
         // Compare password:
         // Support unhashed password matching specifically for the seeded admin user
         let isMatch = false;
-        if (user.role === 'admin' && user.password === credentials.password) {
-          isMatch = true;
+        if (user.role === 'admin') {
+          isMatch = user.password === credentials.password;
         } else {
           isMatch = await bcrypt.compare(credentials.password, user.password);
         }
