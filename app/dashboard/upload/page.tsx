@@ -79,10 +79,16 @@ export default function UploadCode() {
       </div>
 
       <div className={styles.panel}>
-        {error && <div style={{ color: 'var(--danger)', marginBottom: '1rem', padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '4px' }}>{error}</div>}
-        {success && <div style={{ color: 'var(--success)', marginBottom: '1rem', padding: '1rem', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '4px' }}>{success}</div>}
-
-        <form className={uploadStyles.form} onSubmit={handleSubmit}>
+        {error && <div style={{ color: 'var(--danger)', marginBottom: '2rem', padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>{error}</div>}
+        
+        {success ? (
+          <div className={uploadStyles.successCard}>
+            <div className={uploadStyles.successIcon}>✅</div>
+            <h2 className={uploadStyles.successTitle}>Successfully Uploaded!</h2>
+            <p className={uploadStyles.successText}>{success}</p>
+          </div>
+        ) : (
+          <form className={uploadStyles.form} onSubmit={handleSubmit}>
           <div className={uploadStyles.grid}>
             <div className={uploadStyles.inputGroup}>
               <label>Product Name</label>
@@ -146,6 +152,7 @@ export default function UploadCode() {
             {loading ? 'Uploading...' : 'Submit for Review'}
           </button>
         </form>
+        )}
       </div>
     </div>
   );
