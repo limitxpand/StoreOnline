@@ -9,7 +9,7 @@ import { getWebsiteSettings } from '@/lib/settings';
 import { prisma } from '@/lib/prisma';
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
-  const settings = getWebsiteSettings();
+  const settings = await getWebsiteSettings();
   const resolvedParams = await searchParams;
   const search = typeof resolvedParams?.search === 'string' ? resolvedParams.search : undefined;
   const filter = typeof resolvedParams?.filter === 'string' ? resolvedParams.filter : 'all';

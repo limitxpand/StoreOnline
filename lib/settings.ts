@@ -1,7 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const SETTINGS_PATH = path.join(process.cwd(), 'database', 'mock_settings.json');
+import { prisma } from '@/lib/prisma';
 
 export interface WebsiteSettings {
   siteName: string;
@@ -13,64 +10,63 @@ export interface WebsiteSettings {
   contactEmail: string;
 }
 
-export interface AdminCredentials {
-  username: string;
-  password?: string;
-  secretCode?: string;
-}
-
 export interface AppSettings {
-  admin: AdminCredentials;
   website: WebsiteSettings;
 }
 
-export function getSettings(): AppSettings {
+const defaultSettings: AppSettings = {
+  website: {
+    siteName: "Store Online",
+    heroTitle: "Premium Marketplace",
+    heroSubtitle: "Buy and sell highly secure MT4/MT5 EA.",
+    theme: "light",
+    primaryColor: "#3b82f6",
+    enableAdsense: true,
+    contactEmail: "support@storeonline.com"
+  }
+};
+
+export async function getSettings(): Promise<AppSettings> {
   try {
-    const data = fs.readFileSync(SETTINGS_PATH, 'utf-8');
-    return JSON.parse(data);
+    const setting = await prisma.setting.findUnique({
+      where: { id: 'global' }
+    });
+    
+    if (setting && setting.data) {
+      return setting.data as unknown as AppSettings;
+    }
+    
+    return defaultSettings;
   } catch (error) {
-    console.error('Error reading settings, using fallback:', error);
-    // Return fallback settings to prevent 500 error in Vercel production
-    return {
-      admin: {
-        username: "admin",
-        password: "admin",
-        secretCode: "333725"
-      },
-      website: {
-        siteName: "Store Online",
-        heroTitle: "Premium Marketplace",
-        heroSubtitle: "Buy and sell highly secure MT4/MT5 EA.",
-        theme: "light",
-        primaryColor: "#3b82f6",
-        enableAdsense: true,
-        contactEmail: "support@storeonline.com"
-      }
-    };
+    console.error('Error reading settings from DB, using fallback:', error);
+    return defaultSettings;
   }
 }
 
-export function getWebsiteSettings(): WebsiteSettings {
-  return getSettings().website;
+export async function getWebsiteSettings(): Promise<WebsiteSettings> {
+  const settings = await getSettings();
+  return settings.website;
 }
 
-export function saveSettings(newSettings: Partial<AppSettings>) {
+export async function saveSettings(newSettings: Partial<AppSettings>) {
   try {
-    const current = getSettings();
+    const current = await getSettings();
     const updated = {
-      admin: { ...current.admin, ...newSettings.admin },
       website: { ...current.website, ...newSettings.website }
     };
-    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(updated, null, 2), 'utf-8');
+    
+    await prisma.setting.upsert({
+      where: { id: 'global' },
+      update: { data: updated as any },
+      create: {
+        id: 'global',
+        data: updated as any
+      }
+    });
+    
     return updated;
   } catch (error) {
-    console.error('Error saving settings:', error);
-    // In production Vercel, the file system is read-only, so this will fail.
-    // For now, return the updated object so the UI doesn't crash, even though it's not persisted.
-    const current = getSettings();
-    return {
-      admin: { ...current.admin, ...newSettings.admin },
-      website: { ...current.website, ...newSettings.website }
-    } as AppSettings;
+    console.error('Error saving settings to DB:', error);
+    return defaultSettings;
   }
 }

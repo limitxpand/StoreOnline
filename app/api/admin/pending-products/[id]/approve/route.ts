@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { cookies } from "next/headers";
 import { Client, Storage, ID } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user?.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const adminToken = (await cookies()).get('admin_token');
+    if (!adminToken) {
+      return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 401 });
     }
 
     const { id: productId } = await params;

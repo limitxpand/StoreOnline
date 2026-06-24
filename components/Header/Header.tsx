@@ -6,21 +6,27 @@ import SearchBar from './SearchBar';
 
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { cookies } from 'next/headers';
 import LogoutButton from './LogoutButton';
+import AdminLogoutButton from './AdminLogoutButton';
 
 export default async function Header() {
-  const settings = getWebsiteSettings();
+  const settings = await getWebsiteSettings();
   const siteNameParts = settings.siteName.split(' ');
   const firstPart = siteNameParts[0] || 'Store';
   const secondPart = siteNameParts.slice(1).join(' ') || 'Online';
   
   const session = await getServerSession(authOptions);
   
+  const cookieStore = await cookies();
+  const adminToken = cookieStore.get('admin_token');
+  const isAdmin = !!adminToken;
+  
   let dashboardLink = '/dashboard';
-  if (session?.user?.role === 'customer') {
-    dashboardLink = '/customer/dashboard';
-  } else if (session?.user?.role === 'admin') {
+  if (isAdmin) {
     dashboardLink = '/admin/dashboard';
+  } else if (session?.user?.role === 'customer') {
+    dashboardLink = '/customer/dashboard';
   }
 
   return (
@@ -54,7 +60,14 @@ export default async function Header() {
             <span className={styles.cartBadge}>3</span>
           </div>
           
-          {session ? (
+          {isAdmin ? (
+            <>
+              <Link href={dashboardLink} className={styles.registerBtn} style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                <span style={{ fontSize: '1.2rem' }}>🛡️</span> Admin Profile
+              </Link>
+              <AdminLogoutButton />
+            </>
+          ) : session ? (
             <>
               <Link href={dashboardLink} className={styles.registerBtn} style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
                 <span style={{ fontSize: '1.2rem' }}>👤</span> Profile

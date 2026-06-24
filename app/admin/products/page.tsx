@@ -40,9 +40,19 @@ export default function ProductManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to completely delete this product? (API implementation pending)')) {
-      // API call to delete could go here
-      setProducts(products.filter(p => p.id !== id));
+    if (confirm('Are you sure you want to completely delete this product? This will also remove related transactions.')) {
+      try {
+        const res = await fetch(`/api/admin/products?id=${id}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          setProducts(products.filter(p => p.id !== id));
+        } else {
+          alert('Failed to delete product.');
+        }
+      } catch (error) {
+        console.error("Failed to delete", error);
+      }
     }
   };
 

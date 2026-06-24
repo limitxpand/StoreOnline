@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const categories = await prisma.category.findMany({
+    const adminToken = cookies().get('admin_token');
+    if (!adminToken) {
+      return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 401 });
+    }
+
+    const cats = await prisma.category.findMany({
       orderBy: { name: 'asc' }
     });
 
-    return NextResponse.json({ categories }, { status: 200 });
+    return NextResponse.json({ categories: cats }, { status: 200 });
+
   } catch (error: any) {
     console.error("Admin fetch categories error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -18,8 +23,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || (session.user as any).role !== 'admin') {
+    const adminToken = cookies().get('admin_token');
+    if (!adminToken) {
       return NextResponse.json({ error: "Unauthorized. Admin access required." }, { status: 401 });
     }
 

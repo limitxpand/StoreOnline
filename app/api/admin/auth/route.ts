@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
 
 async function getAdminUser() {
   let admin = await prisma.user.findFirst({ where: { role: 'admin' } });
@@ -25,7 +26,14 @@ export async function POST(request: Request) {
     const admin = await getAdminUser();
 
     if (action === 'login') {
-      if (username === admin.username && password === admin.password) {
+      let isMatch = false;
+      if (admin.password.startsWith('$2a$') || admin.password.startsWith('$2b$')) {
+        isMatch = await bcrypt.compare(password, admin.password);
+      } else {
+        isMatch = password === admin.password;
+      }
+      
+      if (username === admin.username && isMatch) {
         // Successful login
         const response = NextResponse.json({ success: true, message: 'Logged in successfully' });
         response.cookies.set({
