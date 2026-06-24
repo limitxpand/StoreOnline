@@ -4,20 +4,28 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
-  const totalBuyers = await prisma.user.count({ where: { role: 'customer' } });
-  const totalSellers = await prisma.user.count({ where: { role: 'developer' } });
-  const totalUsers = await prisma.user.count();
-  const pendingProducts = await prisma.product.count({ where: { status: 'pending' } });
-  const pendingWithdrawalsCount = await prisma.withdrawal.count({ where: { status: 'pending' } });
+  const [
+    totalBuyers,
+    totalSellers,
+    totalUsers,
+    pendingProducts,
+    pendingWithdrawalsCount,
+    completedTransactions,
+    allRoyalties
+  ] = await Promise.all([
+    prisma.user.count({ where: { role: 'customer' } }),
+    prisma.user.count({ where: { role: 'developer' } }),
+    prisma.user.count(),
+    prisma.product.count({ where: { status: 'pending' } }),
+    prisma.withdrawal.count({ where: { status: 'pending' } }),
+    prisma.transaction.findMany({ where: { status: 'completed' } }),
+    prisma.royalty.findMany()
+  ]);
 
   // Calculate Total Sales
-  const completedTransactions = await prisma.transaction.findMany({
-    where: { status: 'completed' }
-  });
   const totalSales = completedTransactions.reduce((sum, t) => sum + t.amount, 0);
 
   // Calculate Platform Revenue
-  const allRoyalties = await prisma.royalty.findMany();
   const platformRevenue = allRoyalties.reduce((sum, r) => sum + r.platformFee, 0);
 
   return (

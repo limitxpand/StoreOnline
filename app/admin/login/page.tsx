@@ -34,7 +34,6 @@ export default function AdminLogin() {
       if (res?.ok && !res.error) {
         // Double check session to ensure it is actually admin? We can trust the backend handles this or do client-side check if needed, but routing takes care of it.
         router.push('/admin/dashboard');
-        router.refresh();
       } else {
         setError('Invalid credentials');
       }
@@ -69,7 +68,6 @@ export default function AdminLogin() {
         if (signInRes?.ok && !signInRes.error) {
           alert('Credentials reset successfully. You are now logged in.');
           router.push('/admin/dashboard');
-          router.refresh();
         } else {
            setError('Password reset successful, but auto-login failed. Please login manually.');
         }
