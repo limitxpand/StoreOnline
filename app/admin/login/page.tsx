@@ -35,10 +35,10 @@ export default function AdminLogin() {
         // Double check session to ensure it is actually admin? We can trust the backend handles this or do client-side check if needed, but routing takes care of it.
         router.push('/admin/dashboard');
       } else {
-        setError('Invalid credentials');
+        setError(res?.error || 'Invalid credentials');
       }
-    } catch (err) {
-      setError('An error occurred');
+    } catch (err: any) {
+      setError(err?.message || 'An error occurred');
     } finally {
       setLoading(false);
     }
