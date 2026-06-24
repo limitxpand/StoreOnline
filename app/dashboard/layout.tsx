@@ -3,6 +3,7 @@ import AdBanner from '../../components/AdBanner';
 import styles from './dashboard.module.css';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import DashboardLogoutButton from "./DashboardLogoutButton";
 
 export default async function DashboardLayout({
   children,
@@ -38,9 +39,7 @@ export default async function DashboardLayout({
           <Link href="/" className={styles.navLink}>
             <span className={styles.icon}>🔙</span> Back to Store
           </Link>
-          <Link href="/login" className={`${styles.navLink} ${styles.logoutBtn}`}>
-            <span className={styles.icon}>🚪</span> Logout
-          </Link>
+          <DashboardLogoutButton />
         </nav>
 
         {/* Sidebar Ad Placement */}

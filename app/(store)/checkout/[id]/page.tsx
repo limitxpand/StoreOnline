@@ -21,11 +21,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className={styles.container}>
-      <header className={styles.navbar}>
-        <div className={styles.logo}>
-          <h2><span className="gradient-text">Secure Checkout</span></h2>
-        </div>
-      </header>
+
 
       <main className={styles.main} style={{ display: 'flex', justifyContent: 'center', paddingTop: '4rem' }}>
         <div style={{ background: 'var(--bg-secondary)', padding: '3rem', borderRadius: '16px', border: '1px solid var(--border-color)', maxWidth: '600px', width: '100%' }}>

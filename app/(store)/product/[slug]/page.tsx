@@ -21,18 +21,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className={styles.container}>
-      {/* Top Navbar */}
-      <header className={styles.navbar}>
-        <div className={styles.logo}>
-          <span style={{ fontSize: '1.5rem' }}>🛒</span>
-          <h2>Store <span className="gradient-text">Online</span></h2>
-        </div>
-        <nav className={styles.navLinks}>
-          <Link href="/">Home</Link>
-          <Link href="/dashboard">Contributor Portal</Link>
-          <Link href="/customer/dashboard" className={styles.loginBtn}>Customer Login</Link>
-        </nav>
-      </header>
+
 
       {/* Product Details Section */}
       <main className={styles.main}>

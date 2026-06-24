@@ -30,11 +30,11 @@ export default function Login() {
       const session = await sessionRes.json();
 
       if (session?.user?.role) {
-        if (session.user.role === 'customer') router.push('/customer/dashboard');
-        else if (session.user.role === 'admin') router.push('/admin/dashboard');
-        else router.push('/dashboard'); // developer
+        if (session.user.role === 'customer') window.location.href = '/customer/dashboard';
+        else if (session.user.role === 'admin') window.location.href = '/admin/dashboard';
+        else window.location.href = '/dashboard'; // developer
       } else {
-        router.push('/');
+        window.location.href = '/';
       }
     }
   };

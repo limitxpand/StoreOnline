@@ -56,8 +56,7 @@ export default async function Header() {
           </div>
           <button className={styles.iconBtn}>🌙</button>
           <div className={styles.cartContainer}>
-            <button className={styles.iconBtn}>🛒</button>
-            <span className={styles.cartBadge}>3</span>
+            <button className={styles.iconBtn} title="Cart coming soon">🛒</button>
           </div>
           
           {isAdmin ? (

@@ -1,60 +1,11 @@
 .container {
-  min-height: 100vh;
-  background-color: var(--bg-primary);
   display: flex;
   flex-direction: column;
 }
 
-.navbar {
-  height: 80px;
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 5%;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.logo h2 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: white;
-}
-
-.navLinks {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.navLinks a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color var(--transition-speed);
-}
-
-.navLinks a:hover {
-  color: white;
-}
-
-.loginBtn {
-  background: var(--accent-secondary);
-  color: white !important;
-  padding: 0.5rem 1.25rem;
-  border-radius: 8px;
-  font-weight: 600 !important;
-}
-
 .main {
   flex: 1;
-  padding: 4rem 5%;
+  padding: 2rem 5%;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
