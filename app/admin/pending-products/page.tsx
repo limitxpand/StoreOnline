@@ -49,12 +49,8 @@ export default function PendingProducts() {
     if (!isAuto) {
       const fileInput = document.getElementById(`upload-${id}`) as HTMLInputElement;
       if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-        // Find if platform is android, if so it's APK and no file is strictly needed unless we want them to upload signed APK? Wait, for Android it says "No injection needed" but it actually still needs to be published.
-        const product = products.find(p => p.id === id);
-        if (product && product.platform.toLowerCase() !== 'android') {
-          alert('Error: Uploading a compiled file (.ex4, .ex5, .zip, .apk) is required before publishing!');
-          return;
-        }
+        alert('Error: Uploading a compiled file (.ex4, .ex5, .zip, .apk) is required before publishing!');
+        return;
       } else {
         const file = fileInput.files[0];
         const fileName = file.name.toLowerCase();
@@ -128,7 +124,6 @@ export default function PendingProducts() {
             </thead>
             <tbody>
               {products.map(product => {
-                const isApk = product.platform.toLowerCase() === 'android';
                 return (
                   <tr key={product.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                     <td style={{ padding: '1rem 0' }}>
@@ -155,7 +150,6 @@ export default function PendingProducts() {
                     </td>
                     <td style={{ padding: '1rem 0' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                        {!isApk && (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', paddingBottom: '0.8rem', borderBottom: '1px solid var(--border-color)' }}>
                             <button 
                               onClick={() => handleApprove(product.id, true)}
@@ -169,21 +163,19 @@ export default function PendingProducts() {
                               {autoInjecting === product.id ? `⚙️ ${autoStatus}` : '⚡ Auto Inject & Publish'}
                             </button>
                           </div>
-                        )}
                         
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          {!isApk && <input type="file" id={`upload-${product.id}`} accept=".ex4,.ex5,.zip" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }} required />}
-                          {isApk && <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>(No injection needed)</span>}
+                          <input type="file" id={`upload-${product.id}`} accept=".ex4,.ex5,.zip,.apk" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }} required />
                           <button 
                             onClick={() => handleApprove(product.id, false)}
                             style={{ 
-                              background: isApk ? 'transparent' : 'var(--success)', 
+                              background: 'var(--success)', 
                               color: 'white', 
-                              border: isApk ? '1px solid var(--success)' : 'none', 
+                              border: 'none', 
                               padding: '0.4rem 0.8rem', 
                               borderRadius: '6px', fontWeight: '600', cursor: 'pointer' 
                             }}>
-                            {approving === product.id ? 'Publishing...' : (isApk ? 'Approve & Publish' : 'Publish Protected File')}
+                            {approving === product.id ? 'Publishing...' : 'Publish Protected File'}
                           </button>
                         </div>
                       </div>
