@@ -4,11 +4,24 @@ import styles from './Header.module.css';
 import { getWebsiteSettings } from '@/lib/settings';
 import SearchBar from './SearchBar';
 
-export default function Header() {
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import LogoutButton from './LogoutButton';
+
+export default async function Header() {
   const settings = getWebsiteSettings();
   const siteNameParts = settings.siteName.split(' ');
   const firstPart = siteNameParts[0] || 'Store';
   const secondPart = siteNameParts.slice(1).join(' ') || 'Online';
+  
+  const session = await getServerSession(authOptions);
+  
+  let dashboardLink = '/dashboard';
+  if (session?.user?.role === 'customer') {
+    dashboardLink = '/customer/dashboard';
+  } else if (session?.user?.role === 'admin') {
+    dashboardLink = '/admin/dashboard';
+  }
 
   return (
     <header className={styles.header}>
@@ -40,8 +53,20 @@ export default function Header() {
             <button className={styles.iconBtn}>🛒</button>
             <span className={styles.cartBadge}>3</span>
           </div>
-          <Link href="/login" className={styles.loginBtn}>Login</Link>
-          <Link href="/register" className={styles.registerBtn}>Register</Link>
+          
+          {session ? (
+            <>
+              <Link href={dashboardLink} className={styles.registerBtn} style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                <span style={{ fontSize: '1.2rem' }}>👤</span> Profile
+              </Link>
+              <LogoutButton />
+            </>
+          ) : (
+            <>
+              <Link href="/login" className={styles.loginBtn}>Login</Link>
+              <Link href="/register" className={styles.registerBtn}>Register</Link>
+            </>
+          )}
         </div>
       </div>
     </header>
