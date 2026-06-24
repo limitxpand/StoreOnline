@@ -2,8 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import styles from '../auth.module.css';
+import authStyles from '../auth.module.css';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -17,11 +16,7 @@ function ResetPasswordForm() {
   const [success, setSuccess] = useState('');
 
   if (!token) {
-    return (
-      <div className={styles.authCard}>
-        <div style={{ color: 'var(--danger)', textAlign: 'center' }}>Invalid or missing token.</div>
-      </div>
-    );
+    return <div style={{ color: '#ef4444', textAlign: 'center' }}>Invalid or missing token.</div>;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,7 +46,7 @@ function ResetPasswordForm() {
       if (res.ok) {
         setSuccess('Password reset successfully!');
         setTimeout(() => {
-          window.location.href = '/login';
+          router.push('/login');
         }, 2000);
       } else {
         setError(data.error || 'Failed to reset password');
@@ -64,45 +59,38 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div className={styles.authCard}>
-      <Link href="/" className={styles.logo}>
-        <span style={{ fontSize: '2rem' }}>🛒</span>
-        <h2>Store <span className="gradient-text">Online</span></h2>
-      </Link>
-      
-      <h1 className={styles.title}>Set New Password</h1>
-      <p className={styles.subtitle}>Enter your new password below</p>
+    <div className={authStyles.authBox}>
+      <div className={authStyles.logoArea}>
+        <h2>StoreOnline</h2>
+        <p>Set a new password</p>
+      </div>
 
-      {error && <div style={{ color: 'var(--danger)', marginBottom: '1rem', textAlign: 'center', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '4px' }}>{error}</div>}
-      {success && <div style={{ color: 'var(--success)', marginBottom: '1rem', textAlign: 'center', background: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem', borderRadius: '4px' }}>{success}</div>}
+      {error && <div style={{ color: '#ef4444', marginBottom: '1rem', textAlign: 'center' }}>{error}</div>}
+      {success && <div style={{ color: '#10b981', marginBottom: '1rem', textAlign: 'center' }}>{success}</div>}
 
       {!success && (
-        <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label htmlFor="password">New Password</label>
+        <form onSubmit={handleSubmit} className={authStyles.authForm}>
+          <div className={authStyles.inputGroup}>
+            <label>New Password</label>
             <input 
               type="password" 
-              id="password"
-              className={styles.input} 
               placeholder="Enter new password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="confirmPassword">Confirm Password</label>
+          <div className={authStyles.inputGroup}>
+            <label>Confirm Password</label>
             <input 
               type="password" 
-              id="confirmPassword"
-              className={styles.input} 
               placeholder="Confirm new password" 
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
           </div>
-          <button type="submit" className={styles.submitBtn} disabled={loading}>
+          <button type="submit" className={authStyles.submitBtn} disabled={loading}>
             {loading ? 'Resetting...' : 'Reset Password'}
           </button>
         </form>
@@ -113,8 +101,7 @@ function ResetPasswordForm() {
 
 export default function ResetPassword() {
   return (
-    <div className={styles.container}>
-      <div className={styles.background}></div>
+    <div className={authStyles.authContainer}>
       <Suspense fallback={<div style={{color: 'white'}}>Loading...</div>}>
         <ResetPasswordForm />
       </Suspense>

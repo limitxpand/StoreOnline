@@ -1,7 +1,5 @@
 .header {
-  background-color: rgba(18, 24, 38, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
   padding: 1rem 0;
   position: sticky;

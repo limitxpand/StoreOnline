@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import styles from '../auth.module.css';
+import authStyles from '../auth.module.css';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -38,41 +38,34 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.background}></div>
-      
-      <div className={styles.authCard}>
-        <Link href="/" className={styles.logo}>
-          <span style={{ fontSize: '2rem' }}>🛒</span>
-          <h2>Store <span className="gradient-text">Online</span></h2>
-        </Link>
-        
-        <h1 className={styles.title}>Reset Password</h1>
-        <p className={styles.subtitle}>Enter your email to receive a reset link</p>
+    <div className={authStyles.authContainer}>
+      <div className={authStyles.authBox}>
+        <div className={authStyles.logoArea}>
+          <h2>StoreOnline</h2>
+          <p>Reset your password</p>
+        </div>
 
-        {message && <div style={{ color: 'var(--success)', marginBottom: '1rem', textAlign: 'center', background: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem', borderRadius: '4px' }}>{message}</div>}
-        {error && <div style={{ color: 'var(--danger)', marginBottom: '1rem', textAlign: 'center', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '4px' }}>{error}</div>}
+        {message && <div style={{ color: '#10b981', marginBottom: '1rem', textAlign: 'center' }}>{message}</div>}
+        {error && <div style={{ color: '#ef4444', marginBottom: '1rem', textAlign: 'center' }}>{error}</div>}
 
-        <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label htmlFor="email">Email Address</label>
+        <form onSubmit={handleSubmit} className={authStyles.authForm}>
+          <div className={authStyles.inputGroup}>
+            <label>Email Address</label>
             <input 
               type="email" 
-              id="email"
-              className={styles.input} 
-              placeholder="e.g. user@example.com" 
+              placeholder="Enter your registered email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required 
+              required
             />
           </div>
-          <button type="submit" className={styles.submitBtn} disabled={loading}>
+          <button type="submit" className={authStyles.submitBtn} disabled={loading}>
             {loading ? 'Sending...' : 'Send Reset Link'}
           </button>
         </form>
 
-        <div className={styles.switchText}>
-          Remember your password? <Link href="/login">Log in here</Link>
+        <div className={authStyles.authFooter}>
+          <p>Remember your password? <Link href="/login">Log in here</Link></p>
         </div>
       </div>
     </div>

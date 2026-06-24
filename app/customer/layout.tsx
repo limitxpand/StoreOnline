@@ -2,18 +2,11 @@ import Link from 'next/link';
 import AdBanner from '../../components/AdBanner';
 import styles from '../dashboard/dashboard.module.css';
 
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import DashboardLogoutButton from "../dashboard/DashboardLogoutButton";
-
-export default async function CustomerLayout({
+export default function CustomerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
-  const userName = session?.user?.name || "Customer";
-  
   return (
     <div className={styles.layout}>
       {/* Customer Sidebar */}
@@ -34,7 +27,9 @@ export default async function CustomerLayout({
           <Link href="/" className={styles.navLink}>
             <span className={styles.icon}>🔙</span> Back to Store
           </Link>
-          <DashboardLogoutButton />
+          <Link href="/login" className={`${styles.navLink} ${styles.logoutBtn}`}>
+            <span className={styles.icon}>🚪</span> Logout
+          </Link>
         </nav>
 
         {/* Sidebar Ad Placement */}
@@ -48,8 +43,8 @@ export default async function CustomerLayout({
         <header className={styles.topbar}>
           <div className={styles.pageTitle}>Customer Portal</div>
           <div className={styles.userMenu}>
-            <div className={styles.avatar} style={{ background: 'var(--accent-secondary)' }}>{userName.charAt(0).toUpperCase()}</div>
-            <span>{userName}</span>
+            <div className={styles.avatar} style={{ background: 'var(--accent-secondary)' }}>U</div>
+            <span>John Doe</span>
           </div>
         </header>
 

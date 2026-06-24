@@ -9,7 +9,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       <main className="container" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div className="global-main-layout" style={{ flex: 1, width: '100%' }}>
           <Sidebar />
-          <div className="global-content-area" style={{ flex: 1, width: '100%' }}>
+          <div className="global-content-area" style={{ flex: 1, width: '100%', minWidth: '800px' }}>
             {children}
           </div>
         </div>

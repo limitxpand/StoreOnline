@@ -45,9 +45,9 @@ export default function Register() {
       }
 
       if (role === 'customer') {
-        window.location.href = '/customer/dashboard';
+        router.push('/customer/dashboard');
       } else {
-        window.location.href = '/dashboard';
+        router.push('/dashboard');
       }
     } catch (err: any) {
       setError(err.message);
