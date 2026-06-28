@@ -24,7 +24,11 @@ export default function Login() {
     });
 
     if (res?.error) {
-      setError('Invalid email or password');
+      if (res.error === 'CredentialsSignin') {
+        setError('Invalid email or password');
+      } else {
+        setError(res.error || 'Invalid email or password');
+      }
     } else {
       // Need to fetch session to know the role for routing
       const sessionRes = await fetch('/api/auth/session');

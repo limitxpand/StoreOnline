@@ -16,8 +16,7 @@ export async function POST(req: Request) {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      // Don't reveal if user exists or not for security reasons
-      return NextResponse.json({ success: true });
+      return NextResponse.json({ error: 'No account found with this email address' }, { status: 404 });
     }
 
     // Generate reset token (expires in 1 hour)
