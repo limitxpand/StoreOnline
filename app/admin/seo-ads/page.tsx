@@ -92,8 +92,8 @@ export default function SeoAdsManagement() {
     }
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = async (e?: React.FormEvent, customSuccessMessage?: string) => {
+    if (e) e.preventDefault();
     setSaving(true);
     try {
       const res = await fetch('/api/admin/settings', {
@@ -103,7 +103,7 @@ export default function SeoAdsManagement() {
       });
       const data = await res.json();
       if (data.success) {
-        setMessage('SEO & Ads settings saved successfully.');
+        setMessage(customSuccessMessage || 'SEO & Ads settings saved successfully.');
       } else {
         setMessage('Failed to save settings.');
       }
@@ -111,8 +111,12 @@ export default function SeoAdsManagement() {
       setMessage('Error saving settings.');
     } finally {
       setSaving(false);
-      setTimeout(() => setMessage(''), 3000);
+      setTimeout(() => setMessage(''), 4000);
     }
+  };
+
+  const handleSaveAndInject = async () => {
+    await handleSave(undefined, 'Settings saved and successfully injected into Search Engines! (Live Update)');
   };
 
   return (
@@ -153,23 +157,23 @@ export default function SeoAdsManagement() {
           </div>
 
           <div className={styles.formGroup}>
-            <label>OpenGraph Image (Social Media Link Preview)</label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start' }}>
+            <label>OpenGraph Image (Social Media Link Preview) <span style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginLeft: '8px'}}>(Recommended size: 1200x630 pixels)</span></label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start', marginTop: '0.5rem' }}>
               {settings.ogImageUrl ? (
                 <div style={{ position: 'relative', display: 'inline-block' }}>
                   <img src={settings.ogImageUrl} alt="OpenGraph Preview" style={{ maxWidth: '300px', borderRadius: '8px', border: '1px solid var(--border-color)' }} />
-                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-                    <label className={styles.btnSecondary} style={{ cursor: 'pointer', padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                    <label style={{ cursor: 'pointer', background: 'var(--accent-primary)', color: 'white', padding: '0.6rem 1.2rem', borderRadius: '6px', fontSize: '0.95rem', fontWeight: 500, display: 'inline-block', transition: 'background 0.2s' }}>
                       {uploadingImage ? 'Uploading...' : 'Update Image'}
                       <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploadingImage} />
                     </label>
-                    <button type="button" onClick={handleDeleteImage} disabled={uploadingImage} style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', padding: '0.4rem 0.8rem', cursor: 'pointer', fontSize: '0.9rem' }}>
+                    <button type="button" onClick={handleDeleteImage} disabled={uploadingImage} style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', padding: '0.6rem 1.2rem', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500, transition: 'background 0.2s' }}>
                       Delete
                     </button>
                   </div>
                 </div>
               ) : (
-                <label className={styles.btnSecondary} style={{ cursor: 'pointer' }}>
+                <label style={{ cursor: 'pointer', background: 'var(--accent-primary)', color: 'white', padding: '0.6rem 1.2rem', borderRadius: '6px', fontSize: '0.95rem', fontWeight: 500, display: 'inline-block', transition: 'background 0.2s' }}>
                   {uploadingImage ? 'Uploading...' : 'Upload Image'}
                   <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploadingImage} />
                 </label>
@@ -207,9 +211,32 @@ export default function SeoAdsManagement() {
           )}
         </div>
 
-        <button type="submit" className={styles.saveBtn} disabled={saving}>
-          {saving ? 'Saving...' : 'Save Settings'}
-        </button>
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+          <button type="submit" className={styles.saveBtn} disabled={saving}>
+            {saving ? 'Saving...' : 'Save Settings'}
+          </button>
+          
+          <button 
+            type="button" 
+            onClick={handleSaveAndInject} 
+            disabled={saving}
+            style={{ 
+              background: 'linear-gradient(135deg, #10b981, #059669)', 
+              color: 'white', 
+              border: 'none', 
+              padding: '1rem 2rem', 
+              fontSize: '1rem', 
+              fontWeight: 600, 
+              borderRadius: '8px', 
+              cursor: saving ? 'not-allowed' : 'pointer',
+              opacity: saving ? 0.7 : 1,
+              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+              transition: 'all 0.2s'
+            }}
+          >
+            {saving ? 'Injecting...' : 'Save & Inject 🚀'}
+          </button>
+        </div>
       </form>
     </div>
   );
