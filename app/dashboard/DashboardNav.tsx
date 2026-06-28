@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { signOut } from 'next-auth/react';
 
 export default function DashboardNav({ styles }: { styles: any }) {
   const [notifications, setNotifications] = useState({ openTickets: 0, pendingProducts: 0, pendingWithdrawals: 0, total: 0 });
@@ -52,9 +53,9 @@ export default function DashboardNav({ styles }: { styles: any }) {
       <Link href="/" className={styles.navLink}>
         <span className={styles.icon}>🔙</span> Back to Store
       </Link>
-      <Link href="/login" className={`${styles.navLink} ${styles.logoutBtn}`}>
+      <button onClick={() => signOut({ callbackUrl: '/' })} className={`${styles.navLink} ${styles.logoutBtn}`} style={{ width: '100%', textAlign: 'left', border: 'none', background: 'transparent', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}>
         <span className={styles.icon}>🚪</span> Logout
-      </Link>
+      </button>
     </nav>
   );
 }
