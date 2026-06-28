@@ -21,6 +21,7 @@ model User {
   password   String
   name       String?
   role       String   @default("customer") // customer, developer, admin
+  isBanned   Boolean  @default(false)
   secretCode String?
   isVerified Boolean  @default(false)
   verificationToken String? @unique
@@ -64,7 +65,7 @@ model Product {
   developerId     String
   categoryId      String
 
-  developer User     @relation(fields: [developerId], references: [id])
+  developer User     @relation(fields: [developerId], references: [id], onDelete: Cascade)
   category  Category @relation(fields: [categoryId], references: [id])
 
   createdAt DateTime @default(now())
@@ -82,8 +83,8 @@ model Transaction {
   status    String   @default("completed") // completed, pending, failed
   createdAt DateTime @default(now())
 
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   royalty Royalty?
 }
 
@@ -97,8 +98,8 @@ model Royalty {
   status          String   @default("pending") // pending, paid
   createdAt       DateTime @default(now())
 
-  transaction Transaction @relation(fields: [transactionId], references: [id])
-  developer   User        @relation(fields: [developerId], references: [id])
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  developer   User        @relation(fields: [developerId], references: [id], onDelete: Cascade)
 }
 
 model License {
@@ -108,8 +109,8 @@ model License {
   productId String
   createdAt DateTime @default(now())
 
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Withdrawal {
@@ -119,7 +120,7 @@ model Withdrawal {
   status      String   @default("pending") // pending, completed, rejected
   createdAt   DateTime @default(now())
 
-  developer   User     @relation(fields: [developerId], references: [id])
+  developer   User     @relation(fields: [developerId], references: [id], onDelete: Cascade)
 }
 
 model Setting {
@@ -132,7 +133,7 @@ model Ticket {
   subject   String
   status    String   @default("open") // open, resolved
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages  TicketMessage[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -144,7 +145,7 @@ model TicketMessage {
   ticketId  String
   ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   senderId  String   
-  sender    User     @relation(fields: [senderId], references: [id])
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
   isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
 }

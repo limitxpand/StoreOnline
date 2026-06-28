@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import AdminSearch from '@/components/AdminSearch';
 import DeleteUserButton from './DeleteUserButton';
 import ImpersonateButton from './ImpersonateButton';
+import BanToggle from './BanToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,9 +57,12 @@ export default async function UserManagement({
                 <td colSpan={5} style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--text-muted)' }}>No users found.</td>
               </tr>
             ) : users.map(u => (
-              <tr key={u.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+              <tr key={u.id} style={{ borderBottom: '1px solid var(--border-color)', opacity: u.isBanned ? 0.6 : 1 }}>
                 <td style={{ padding: '1rem 0' }}>
-                  <div style={{ fontWeight: 500 }}>{u.name || u.username || 'Unnamed'}</div>
+                  <div style={{ fontWeight: 500 }}>
+                    {u.name || u.username || 'Unnamed'} 
+                    {u.isBanned && <span style={{ color: 'var(--danger)', fontSize: '0.8rem', marginLeft: '0.5rem', fontWeight: 'bold' }}>BANNED</span>}
+                  </div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{u.email}</div>
                 </td>
                 <td style={{ padding: '1rem 0' }}>
@@ -76,7 +80,8 @@ export default async function UserManagement({
                   </span>
                 </td>
                 <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{u._count.transactions} items</td>
-                <td style={{ padding: '1rem 0', textAlign: 'right' }}>
+                <td style={{ padding: '1rem 0', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                  {u.role !== 'admin' && <BanToggle userId={u.id} isBanned={u.isBanned} />}
                   {u.role !== 'admin' && <ImpersonateButton userId={u.id} role={u.role} />}
                   <DeleteUserButton userId={u.id} />
                 </td>
