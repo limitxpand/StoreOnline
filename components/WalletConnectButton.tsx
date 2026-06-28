@@ -34,12 +34,14 @@ function InnerWalletButton({
   price,
   cryptoCurrency,
   adminWalletAddress, 
-  onSuccess 
+  onSuccess,
+  onInteractionStart
 }: { 
   price: number;
   cryptoCurrency: string;
   adminWalletAddress: string;
   onSuccess: (txHash: string) => void;
+  onInteractionStart?: () => void;
 }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const { open } = useWeb3Modal();
@@ -47,6 +49,7 @@ function InnerWalletButton({
   const { walletProvider } = useWeb3ModalProvider();
 
   const handlePay = async () => {
+    if (onInteractionStart) onInteractionStart();
     if (!isConnected) {
       open();
       return;
@@ -153,13 +156,15 @@ export default function WalletConnectButton({
   cryptoCurrency, 
   adminWalletAddress, 
   walletConnectProjectId,
-  onSuccess 
+  onSuccess,
+  onInteractionStart
 }: { 
   price: number;
   cryptoCurrency: string;
   adminWalletAddress: string;
   walletConnectProjectId: string;
   onSuccess: (txHash: string) => void;
+  onInteractionStart?: () => void;
 }) {
   const [initialized, setInitialized] = useState(false);
 
@@ -214,6 +219,7 @@ export default function WalletConnectButton({
       cryptoCurrency={cryptoCurrency}
       adminWalletAddress={adminWalletAddress}
       onSuccess={onSuccess}
+      onInteractionStart={onInteractionStart}
     />
   );
 }
