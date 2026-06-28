@@ -8,6 +8,7 @@ export default function PaymentSettings() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [showProjectId, setShowProjectId] = useState(false);
   const [settings, setSettings] = useState<IPSettings>({
     enableCrypto: false,
     walletConnectProjectId: '',
@@ -86,7 +87,7 @@ export default function PaymentSettings() {
     }
   };
 
-  if (loading) return <div style={{ color: 'white', padding: '2rem' }}>Loading settings...</div>;
+  if (loading) return <div style={{ color: 'var(--text-primary)', padding: '2rem' }}>Loading settings...</div>;
 
   return (
     <div className={styles.container}>
@@ -117,52 +118,64 @@ export default function PaymentSettings() {
           </div>
 
           {settings.enableCrypto && (
-            <div className={styles.formGroup}>
+            <div className={styles.formGroup} style={{ marginTop: '1.5rem' }}>
               <label>WalletConnect Project ID</label>
-              <input 
-                type="text" 
-                name="walletConnectProjectId" 
-                value={settings.walletConnectProjectId} 
-                onChange={handleChange} 
-                placeholder="e.g., fa5abff71a69afa78..."
-                className={styles.input}
-              />
-              <span className={styles.hint}>Required for "Smart Contract" payment methods.</span>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <input 
+                  type={showProjectId ? "text" : "password"} 
+                  name="walletConnectProjectId" 
+                  value={settings.walletConnectProjectId} 
+                  onChange={handleChange} 
+                  placeholder="e.g., fa5abff71a69afa78..."
+                  style={{ width: '100%', paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowProjectId(!showProjectId)}
+                  style={{
+                    position: 'absolute', right: '10px', background: 'transparent',
+                    border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-muted)'
+                  }}
+                  title={showProjectId ? "Hide Project ID" : "Show Project ID"}
+                >
+                  {showProjectId ? '🙈' : '👁️'}
+                </button>
+              </div>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Required for "Smart Contract" payment methods.</span>
             </div>
           )}
         </div>
 
         {settings.enableCrypto && (
           <div className={styles.section}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
               <h3>Payment Methods</h3>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="button" onClick={() => addMethod('smart_contract')} style={{ padding: '0.5rem 1rem', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ Smart Contract (Auto)</button>
-                <button type="button" onClick={() => addMethod('deposit_address')} style={{ padding: '0.5rem 1rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ Deposit Address (Manual)</button>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <button type="button" onClick={() => addMethod('smart_contract')} style={{ padding: '0.5rem 1rem', background: 'var(--accent-primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ Smart Contract (Auto)</button>
+                <button type="button" onClick={() => addMethod('deposit_address')} style={{ padding: '0.5rem 1rem', background: 'var(--success)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ Deposit Address (Manual)</button>
               </div>
             </div>
 
             {settings.paymentMethods.length === 0 && (
-              <p style={{ color: '#9ca3af', fontStyle: 'italic' }}>No payment methods added. Click above to add one.</p>
+              <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>No payment methods added. Click above to add one.</p>
             )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               {settings.paymentMethods.map((method, index) => (
-                <div key={method.id} style={{ background: '#1f2937', padding: '1.5rem', borderRadius: '8px', border: '1px solid #374151' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h4 style={{ margin: 0, color: method.type === 'smart_contract' ? '#60a5fa' : '#34d399' }}>
+                <div key={method.id} style={{ background: 'var(--bg-primary)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <h4 style={{ margin: 0, color: method.type === 'smart_contract' ? 'var(--accent-secondary)' : 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       {method.type === 'smart_contract' ? '⚡ Smart Contract (WalletConnect)' : '🏦 Manual Deposit Address'}
                     </h4>
-                    <button type="button" onClick={() => removeMethod(index)} style={{ background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', padding: '0.3rem 0.8rem', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
+                    <button type="button" onClick={() => removeMethod(index)} style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', padding: '0.3rem 0.8rem', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
                   </div>
                   
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
                     <div className={styles.formGroup} style={{ marginBottom: 0 }}>
                       <label>Network</label>
                       <select 
                         value={method.network} 
                         onChange={(e) => handleMethodChange(index, 'network', e.target.value)}
-                        className={styles.input}
                       >
                         <option value="BEP20">Binance Smart Chain (BEP20)</option>
                         {method.type === 'deposit_address' && <option value="TRC20">Tron (TRC20)</option>}
@@ -176,7 +189,6 @@ export default function PaymentSettings() {
                         value={method.address} 
                         onChange={(e) => handleMethodChange(index, 'address', e.target.value)}
                         placeholder="0x..."
-                        className={styles.input}
                         required
                       />
                     </div>

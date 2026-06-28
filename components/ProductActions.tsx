@@ -28,6 +28,7 @@ export default function ProductActions({
   const [showAdModal, setShowAdModal] = useState(false);
   const [adWatched, setAdWatched] = useState(false);
   const [timeLeft, setTimeLeft] = useState(demoAdTimer);
+  const [modalKey, setModalKey] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -118,7 +119,10 @@ export default function ProductActions({
             paymentSettings?.enableCrypto && paymentSettings?.paymentMethods?.length > 0 ? (
               <>
                 <button 
-                  onClick={() => setShowPaymentModal(true)}
+                  onClick={() => {
+                    setModalKey(Date.now());
+                    setShowPaymentModal(true);
+                  }}
                   className={styles.buyBtn} 
                   style={{
                     background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
@@ -130,6 +134,7 @@ export default function ProductActions({
                   Buy Now with Crypto
                 </button>
                 <CryptoPaymentModal
+                  key={modalKey}
                   isOpen={showPaymentModal}
                   onClose={() => setShowPaymentModal(false)}
                   price={price}
