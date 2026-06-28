@@ -22,6 +22,14 @@
   --border-radius: 12px;
   
   --transition-speed: 0.3s;
+
+  /* Hero Banner Variables (Dark Mode) */
+  --hero-bg: linear-gradient(135deg, rgba(10, 14, 23, 0.9) 0%, rgba(18, 24, 38, 0.9) 100%);
+  --hero-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  --hero-glow: radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
+  --badge-bg: rgba(255, 255, 255, 0.1);
+  --badge-border: rgba(255, 255, 255, 0.2);
+  --badge-text: white;
 }
 
 * {
@@ -149,4 +157,27 @@ button {
   --danger: #dc2626;
 
   --border-color: rgba(15, 23, 42, 0.1);
+
+  /* Hero Banner Variables (Light Mode) */
+  --hero-bg: linear-gradient(135deg, rgba(240, 244, 250, 0.9) 0%, rgba(226, 232, 240, 0.9) 100%);
+  --hero-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  --hero-glow: radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 50%);
+  --badge-bg: rgba(0, 0, 0, 0.05);
+  --badge-border: rgba(0, 0, 0, 0.1);
+  --badge-text: #0f172a;
+}
+
+/* Theme Logos */
+html[data-theme='light'] .theme-logo-dark {
+  display: none !important;
+}
+html[data-theme='light'] .theme-logo-light {
+  display: block !important;
+}
+
+html:not([data-theme='light']) .theme-logo-light {
+  display: none !important;
+}
+html:not([data-theme='light']) .theme-logo-dark {
+  display: block !important;
 }

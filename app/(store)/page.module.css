@@ -66,8 +66,7 @@
   font-size: 3.5rem;
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 1rem;
-  color: white;
+  color: var(--text-primary);
 }
 
 .bannerSubtitle {
