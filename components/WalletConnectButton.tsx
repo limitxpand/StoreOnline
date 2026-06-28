@@ -29,37 +29,20 @@ const metadata = {
 
 let web3ModalInitialized = false;
 
-export default function WalletConnectButton({ 
+// Inner component to safely use hooks after initialization
+function InnerWalletButton({ 
   price, 
-  cryptoCurrency, 
   adminWalletAddress, 
-  walletConnectProjectId,
   onSuccess 
 }: { 
   price: number;
-  cryptoCurrency: string;
   adminWalletAddress: string;
-  walletConnectProjectId: string;
   onSuccess: (txHash: string) => void;
 }) {
-  const [isClient, setIsClient] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { open } = useWeb3Modal();
-  const { address, isConnected } = useWeb3ModalAccount();
+  const { isConnected } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
-
-  useEffect(() => {
-    setIsClient(true);
-    if (!web3ModalInitialized && walletConnectProjectId) {
-      createWeb3Modal({
-        ethersConfig: defaultConfig({ metadata }),
-        chains: [mainnet, bsc],
-        projectId: walletConnectProjectId,
-        enableAnalytics: false
-      });
-      web3ModalInitialized = true;
-    }
-  }, [walletConnectProjectId]);
 
   const handlePay = async () => {
     if (!isConnected) {
@@ -74,10 +57,7 @@ export default function WalletConnectButton({
       const provider = new BrowserProvider(walletProvider as any);
       const signer = await provider.getSigner();
 
-      // Basic calculation: send native token equivalent to USD price.
-      // In a real app, use an oracle for price conversion or send ERC20 USDT.
-      // For this demo, we assume price is in the native token unit (e.g. 0.05 ETH).
-      // If price > 10, we'll divide by a large number for demo safety.
+      // Basic calculation
       let demoPriceStr = price.toString();
       if (price > 10) {
         demoPriceStr = (price / 1000).toFixed(4); // just for safe demo purposes
@@ -89,10 +69,7 @@ export default function WalletConnectButton({
       });
 
       console.log('Transaction sent:', tx.hash);
-      
-      // Wait for confirmation
       await tx.wait(1);
-      
       onSuccess(tx.hash);
     } catch (err: any) {
       console.error("Payment failed", err);
@@ -101,8 +78,6 @@ export default function WalletConnectButton({
       setIsProcessing(false);
     }
   };
-
-  if (!isClient || !walletConnectProjectId) return null;
 
   return (
     <button 
@@ -130,5 +105,75 @@ export default function WalletConnectButton({
       <span style={{ fontSize: '1.2rem' }}>💎</span> 
       {isProcessing ? 'Processing Transaction...' : (isConnected ? `Pay $${price} with Crypto` : `Buy Now with Crypto`)}
     </button>
+  );
+}
+
+// Outer wrapper to handle initialization
+export default function WalletConnectButton({ 
+  price, 
+  cryptoCurrency, 
+  adminWalletAddress, 
+  walletConnectProjectId,
+  onSuccess 
+}: { 
+  price: number;
+  cryptoCurrency: string;
+  adminWalletAddress: string;
+  walletConnectProjectId: string;
+  onSuccess: (txHash: string) => void;
+}) {
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    if (!walletConnectProjectId) return;
+    
+    if (!web3ModalInitialized) {
+      try {
+        createWeb3Modal({
+          ethersConfig: defaultConfig({ metadata }),
+          chains: [mainnet, bsc],
+          projectId: walletConnectProjectId,
+          enableAnalytics: false
+        });
+        web3ModalInitialized = true;
+      } catch (err) {
+        console.error("Failed to initialize Web3Modal", err);
+      }
+    }
+    setInitialized(true);
+  }, [walletConnectProjectId]);
+
+  if (!initialized) {
+    return (
+      <button 
+        disabled
+        style={{
+          background: '#374151',
+          color: 'white',
+          border: 'none',
+          padding: '1rem 2rem',
+          fontSize: '1rem',
+          fontWeight: 'bold',
+          borderRadius: '8px',
+          cursor: 'not-allowed',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '0.5rem',
+          width: '100%',
+          marginTop: '1rem'
+        }}
+      >
+        <span style={{ fontSize: '1.2rem' }}>⏳</span> Loading Crypto Gateway...
+      </button>
+    );
+  }
+
+  return (
+    <InnerWalletButton 
+      price={price}
+      adminWalletAddress={adminWalletAddress}
+      onSuccess={onSuccess}
+    />
   );
 }
