@@ -166,32 +166,14 @@ function RegisterForm() {
       </div>
 
       {showPopup && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.8)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 9999
-        }}>
-          <div style={{
-            background: 'var(--bg-card)',
-            padding: '2.5rem',
-            borderRadius: '16px',
-            maxWidth: '650px',
-            width: '90%',
-            position: 'relative',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-            border: '1px solid var(--border-color)'
-          }}>
+        <div className="popupOverlay">
+          <div className="popupContent">
             <button 
               onClick={() => setShowPopup(false)}
               style={{ 
                 position: 'absolute', 
                 top: '15px', right: '15px', 
-                background: 'var(--bg-main)', 
+                background: 'var(--bg-primary)', 
                 border: '1px solid var(--border-color)', 
                 fontSize: '1.2rem', 
                 cursor: 'pointer', 
@@ -210,16 +192,8 @@ function RegisterForm() {
               <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>Choose your account type to get started</p>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-              <div style={{ 
-                padding: '2rem 1.5rem', 
-                background: 'var(--bg-main)',
-                border: '1px solid var(--border-color)', 
-                borderRadius: '12px', 
-                textAlign: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-              }}>
+            <div className="popupGrid">
+              <div className="popupCard">
                 <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛍️</div>
                 <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-primary)', fontSize: '1.4rem' }}>I want to Buy</h3>
                 <ul style={{ textAlign: 'left', margin: '0 0 2rem 0', paddingLeft: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.95rem', flex: 1 }}>
@@ -248,15 +222,7 @@ function RegisterForm() {
                 </Link>
               </div>
 
-              <div style={{ 
-                padding: '2rem 1.5rem', 
-                background: 'var(--bg-main)',
-                border: '1px solid var(--border-color)', 
-                borderRadius: '12px', 
-                textAlign: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-              }}>
+              <div className="popupCard">
                 <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💻</div>
                 <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-primary)', fontSize: '1.4rem' }}>I want to Sell</h3>
                 <ul style={{ textAlign: 'left', margin: '0 0 2rem 0', paddingLeft: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.95rem', flex: 1 }}>

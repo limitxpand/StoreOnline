@@ -3,16 +3,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './MobileNav.module.css';
 
-export default function MobileNav({ isAdmin, isCustomer }: { isAdmin: boolean, isCustomer: boolean }) {
+export default function MobileNav({ dashboardLink }: { dashboardLink: string }) {
   const pathname = usePathname();
   
-  let dashboardLink = '/login';
-  if (isAdmin) {
-    dashboardLink = '/admin/dashboard';
-  } else if (isCustomer) {
-    dashboardLink = '/customer/dashboard';
-  }
-
   const navItems = [
     { name: 'Home', href: '/', icon: '🏠' },
     { name: 'Search', href: '/search', icon: '🔍' },

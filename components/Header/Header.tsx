@@ -118,7 +118,7 @@ export default async function Header() {
           </div>
         </div>
       </div>
-      <MobileNav isAdmin={isAdmin} isCustomer={session?.user?.role === 'customer'} />
+      <MobileNav dashboardLink={(!session && !isAdmin) ? '/login' : dashboardLink} />
     </header>
   );
 }

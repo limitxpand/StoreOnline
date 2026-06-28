@@ -3,26 +3,8 @@ import Link from 'next/link';
 
 export default function AccountTypePopup({ onClose }: { onClose: () => void }) {
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0,0,0,0.8)',
-      backdropFilter: 'blur(4px)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 9999
-    }}>
-      <div style={{
-        background: 'var(--bg-secondary)',
-        padding: '2.5rem',
-        borderRadius: '16px',
-        maxWidth: '650px',
-        width: '90%',
-        position: 'relative',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-        border: '1px solid var(--border-color)'
-      }}>
+    <div className="popupOverlay">
+      <div className="popupContent">
         <button 
           onClick={onClose}
           style={{ 
@@ -47,18 +29,9 @@ export default function AccountTypePopup({ onClose }: { onClose: () => void }) {
           <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>Choose your account type to get started</p>
         </div>
         
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div className="popupGrid">
           {/* Buyer Card */}
-          <div style={{ 
-            padding: '2rem 1.5rem', 
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)', 
-            borderRadius: '12px', 
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            transition: 'transform 0.2s',
-          }}>
+          <div className="popupCard" style={{ transition: 'transform 0.2s' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛍️</div>
             <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-primary)', fontSize: '1.4rem' }}>I want to Buy</h3>
             
@@ -90,15 +63,7 @@ export default function AccountTypePopup({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Seller Card */}
-          <div style={{ 
-            padding: '2rem 1.5rem', 
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)', 
-            borderRadius: '12px', 
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-          }}>
+          <div className="popupCard">
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💻</div>
             <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-primary)', fontSize: '1.4rem' }}>I want to Sell</h3>
             

@@ -194,3 +194,58 @@ html:not([data-theme='light']) .theme-logo-dark {
   min-width: 600px;
 }
 @media (max-width: 768px) { body { padding-bottom: 70px; } }
+
+/* Popup Styles */
+.popupOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 3rem 1rem;
+}
+
+.popupContent {
+  background: var(--bg-secondary);
+  padding: 2.5rem;
+  border-radius: 16px;
+  max-width: 650px;
+  width: 100%;
+  position: relative;
+  margin: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-color);
+}
+
+.popupGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.popupCard {
+  padding: 2rem 1.5rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .popupGrid {
+    grid-template-columns: 1fr;
+  }
+  .popupContent {
+    padding: 1.5rem;
+  }
+  .popupOverlay {
+    padding: 1rem;
+  }
+}
+
