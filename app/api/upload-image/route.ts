@@ -60,3 +60,36 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    }
+
+    const { fileUrl } = await req.json();
+
+    if (!fileUrl) {
+      return NextResponse.json({ error: "No fileUrl provided" }, { status: 400 });
+    }
+
+    const client = new Client()
+      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || "")
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || "")
+      .setKey(process.env.APPWRITE_API_KEY || "");
+    const storage = new Storage(client);
+    const bucketId = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "products_bucket";
+
+    const fileIdMatch = fileUrl.match(/\/files\/([a-zA-Z0-9_\-]+)\/view/);
+    if (fileIdMatch && fileIdMatch[1]) {
+      await storage.deleteFile(bucketId, fileIdMatch[1]);
+      return NextResponse.json({ success: true }, { status: 200 });
+    } else {
+      return NextResponse.json({ error: "Invalid file URL" }, { status: 400 });
+    }
+  } catch (error: any) {
+    console.error("Delete error:", error);
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+  }
+}
