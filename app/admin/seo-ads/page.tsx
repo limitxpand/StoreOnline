@@ -10,7 +10,8 @@ export default function SeoAdsManagement() {
     metaKeywords: '',
     ogImageUrl: '',
     adsenseClientId: '',
-    enableAdsense: false
+    enableAdsense: false,
+    demoVideoAdUrl: ''
   });
   const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -24,7 +25,8 @@ export default function SeoAdsManagement() {
             metaKeywords: data.settings.metaKeywords || '',
             ogImageUrl: data.settings.ogImageUrl || '',
             adsenseClientId: data.settings.adsenseClientId || '',
-            enableAdsense: data.settings.enableAdsense || false
+            enableAdsense: data.settings.enableAdsense || false,
+            demoVideoAdUrl: data.settings.demoVideoAdUrl || ''
           });
         }
       });
@@ -211,7 +213,24 @@ export default function SeoAdsManagement() {
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+        <div className={styles.section}>
+          <h3>Video Ads (Pre-Download Demo Ad)</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+            Enter the URL of an MP4 video or a YouTube embed link. This video will play when a user clicks "Watch a short ad to unlock your Free Demo".
+          </p>
+          <div className={styles.formGroup}>
+            <label>Video Ad URL</label>
+            <input 
+              type="text" 
+              name="demoVideoAdUrl" 
+              value={settings.demoVideoAdUrl} 
+              onChange={handleChange} 
+              placeholder="e.g. https://example.com/ad.mp4 or YouTube Embed URL" 
+            />
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
           <button type="submit" className={styles.saveBtn} disabled={saving}>
             {saving ? 'Saving...' : 'Save Settings'}
           </button>
