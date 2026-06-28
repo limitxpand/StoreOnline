@@ -34,11 +34,17 @@ export default async function Header() {
       <div className={styles.container}>
         <div className={styles.logo}>
           <Link href="/">
-            <span className={styles.logoIcon}>🛒</span>
-            <div>
-              <h1 className={styles.logoText}>{firstPart} <span className={styles.logoHighlight}>{secondPart}</span></h1>
-              <span className={styles.logoSubtext}>Digital Product Marketplace</span>
-            </div>
+            {settings.logoUrl ? (
+              <img src={settings.logoUrl} alt={settings.siteName} style={{ maxHeight: '45px', objectFit: 'contain' }} />
+            ) : (
+              <>
+                <span className={styles.logoIcon}>🛒</span>
+                <div>
+                  <h1 className={styles.logoText}>{firstPart} <span className={styles.logoHighlight}>{secondPart}</span></h1>
+                  <span className={styles.logoSubtext}>Digital Product Marketplace</span>
+                </div>
+              </>
+            )}
           </Link>
         </div>
 

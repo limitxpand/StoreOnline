@@ -12,6 +12,9 @@ export interface WebsiteSettings {
   metaKeywords?: string;
   ogImageUrl?: string;
   adsenseClientId?: string;
+  logoUrl?: string;
+  faviconUrl?: string;
+  floatingLogoUrl?: string;
 }
 
 export interface AppSettings {
@@ -30,7 +33,10 @@ const defaultSettings: AppSettings = {
     metaDescription: "The Ultimate Marketplace for MT4, MT5 Experts, Indicators, Utilities and Android APKs. Download secure, license-protected software.",
     metaKeywords: "MT4, MT5, Expert Advisor, Trading Bot, MQL5, Android APK, Buy Software",
     ogImageUrl: "https://storeonline.in/og-image.jpg",
-    adsenseClientId: ""
+    adsenseClientId: "",
+    logoUrl: "",
+    faviconUrl: "",
+    floatingLogoUrl: ""
   }
 };
 

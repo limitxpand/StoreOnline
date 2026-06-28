@@ -31,6 +31,11 @@ export async function generateMetadata(): Promise<Metadata> {
       title: settings.siteName || 'Store Online Marketplace',
       description: settings.metaDescription || 'Buy and sell premium license-protected software.',
     },
+    icons: settings.faviconUrl ? {
+      icon: settings.faviconUrl,
+      shortcut: settings.faviconUrl,
+      apple: settings.faviconUrl,
+    } : undefined,
   };
 }
 

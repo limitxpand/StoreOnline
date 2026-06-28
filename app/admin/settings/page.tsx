@@ -14,8 +14,12 @@ export default function WebsiteSettings() {
     theme: 'dark',
     primaryColor: '#3b82f6',
     enableAdsense: true,
-    contactEmail: ''
+    contactEmail: '',
+    logoUrl: '',
+    faviconUrl: '',
+    floatingLogoUrl: ''
   });
+  const [uploading, setUploading] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetch('/api/admin/settings')
@@ -30,6 +34,96 @@ export default function WebsiteSettings() {
     const { name, value, type } = e.target;
     const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
     setSettings(prev => ({ ...prev, [name]: val }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setUploading(prev => ({ ...prev, [fieldName]: true }));
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      if (settings[fieldName as keyof typeof settings]) {
+        formData.append('oldFileUrl', settings[fieldName as keyof typeof settings] as string);
+      }
+
+      try {
+        const res = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.success) {
+          setSettings({ ...settings, [fieldName]: data.url });
+          setMessage({ text: 'Image uploaded successfully.', type: 'success' });
+        } else {
+          setMessage({ text: 'Failed to upload image.', type: 'error' });
+        }
+      } catch (error) {
+        setMessage({ text: 'Error uploading image.', type: 'error' });
+      } finally {
+        setUploading(prev => ({ ...prev, [fieldName]: false }));
+        setTimeout(() => setMessage({ text: '', type: '' }), 4000);
+      }
+    }
+  };
+
+  const handleDeleteImage = async (fieldName: string) => {
+    const fileUrl = settings[fieldName as keyof typeof settings] as string;
+    if (!fileUrl) return;
+    
+    setUploading(prev => ({ ...prev, [fieldName]: true }));
+    try {
+      const res = await fetch('/api/upload-image', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileUrl })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSettings({ ...settings, [fieldName]: '' });
+        setMessage({ text: 'Image deleted successfully.', type: 'success' });
+      } else {
+        setMessage({ text: 'Failed to delete image.', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Error deleting image.', type: 'error' });
+    } finally {
+      setUploading(prev => ({ ...prev, [fieldName]: false }));
+      setTimeout(() => setMessage({ text: '', type: '' }), 4000);
+    }
+  };
+
+  const renderImageUploader = (label: string, fieldName: string, recommendedSize: string) => {
+    const isUploading = uploading[fieldName];
+    const imageUrl = settings[fieldName as keyof typeof settings] as string;
+
+    return (
+      <div className={styles.formGroup} style={{ marginBottom: '2rem' }}>
+        <label>{label} <span style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginLeft: '8px'}}>({recommendedSize})</span></label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start', marginTop: '0.5rem' }}>
+          {imageUrl ? (
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <img src={imageUrl} alt={`${label} Preview`} style={{ maxWidth: '250px', maxHeight: '120px', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', padding: '0.5rem' }} />
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <label style={{ cursor: 'pointer', background: 'var(--accent-primary)', color: 'white', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 500, display: 'inline-block', transition: 'background 0.2s' }}>
+                  {isUploading ? 'Uploading...' : 'Update'}
+                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, fieldName)} style={{ display: 'none' }} disabled={isUploading} />
+                </label>
+                <button type="button" onClick={() => handleDeleteImage(fieldName)} disabled={isUploading} style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 500, transition: 'background 0.2s' }}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          ) : (
+            <label style={{ cursor: 'pointer', background: 'var(--accent-primary)', color: 'white', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 500, display: 'inline-block', transition: 'background 0.2s' }}>
+              {isUploading ? 'Uploading...' : 'Upload Image'}
+              <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, fieldName)} style={{ display: 'none' }} disabled={isUploading} />
+            </label>
+          )}
+        </div>
+      </div>
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,6 +176,14 @@ export default function WebsiteSettings() {
             <label>Contact Email</label>
             <input type="email" name="contactEmail" value={settings.contactEmail} onChange={handleChange} required />
           </div>
+        </div>
+
+        <div className={styles.section}>
+          <h3>Logos and Branding</h3>
+          
+          {renderImageUploader('Main Website Logo', 'logoUrl', 'Recommended height: 40-60px')}
+          {renderImageUploader('Website Favicon', 'faviconUrl', 'Recommended size: 32x32 pixels (PNG/ICO)')}
+          {renderImageUploader('Hero Floating Logo (Optional)', 'floatingLogoUrl', 'Recommended size: 200x200 pixels')}
         </div>
 
         <div className={styles.section}>

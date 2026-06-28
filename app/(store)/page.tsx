@@ -62,7 +62,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               </div>
               <div className={styles.bannerGraphic}>
                 <div className={styles.glowCircle}></div>
-                <div className={styles.floatingCart}>🛒</div>
+                {settings.floatingLogoUrl ? (
+                  <img src={settings.floatingLogoUrl} alt="Hero Banner Logo" style={{ width: '180px', height: '180px', objectFit: 'contain', zIndex: 2, position: 'relative' }} className={styles.floatingCart} />
+                ) : (
+                  <div className={styles.floatingCart}>🛒</div>
+                )}
               </div>
             </div>
 
