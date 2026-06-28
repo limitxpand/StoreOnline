@@ -101,7 +101,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               downloadUrl={product.compiledFileUrl || product.sourceFileUrl || '#'} 
               productTitle={product.title} 
               isLoggedIn={!!session}
-              demoAdsenseCode={settings.demoAdsenseCode}
+              demoAdsenseCode={settings.enableDemoAd ? settings.demoAdsenseCode : undefined}
               demoAdTimer={settings.demoAdTimer}
             />
 

@@ -12,7 +12,8 @@ export default function SeoAdsManagement() {
     adsenseClientId: '',
     enableAdsense: false,
     demoAdsenseCode: '',
-    demoAdTimer: 15
+    demoAdTimer: 15,
+    enableDemoAd: false
   });
   const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -28,7 +29,8 @@ export default function SeoAdsManagement() {
             adsenseClientId: data.settings.adsenseClientId || '',
             enableAdsense: data.settings.enableAdsense || false,
             demoAdsenseCode: data.settings.demoAdsenseCode || '',
-            demoAdTimer: data.settings.demoAdTimer || 15
+            demoAdTimer: data.settings.demoAdTimer || 15,
+            enableDemoAd: data.settings.enableDemoAd || false
           });
         }
       });
@@ -220,28 +222,44 @@ export default function SeoAdsManagement() {
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>
             Enter your AdSense Ad Unit Code (HTML) here. Users will be required to view this ad for the specified timer duration before they can download a Demo product.
           </p>
-          <div className={styles.formGroup}>
-            <label>AdSense Ad Unit Code (HTML)</label>
-            <textarea 
-              name="demoAdsenseCode" 
-              value={settings.demoAdsenseCode} 
-              onChange={handleChange} 
-              placeholder="<ins class='adsbygoogle' ...></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>" 
-              rows={5}
-            />
-          </div>
-          <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
-            <label>Timer Duration (Seconds)</label>
+
+          <div className={styles.checkboxGroup}>
             <input 
-              type="number" 
-              name="demoAdTimer" 
-              value={settings.demoAdTimer} 
+              type="checkbox" 
+              id="enableDemoAd" 
+              name="enableDemoAd" 
+              checked={settings.enableDemoAd} 
               onChange={handleChange} 
-              min="1"
-              max="120"
-              placeholder="15" 
             />
+            <label htmlFor="enableDemoAd">Enable Ad-Locked Downloads</label>
           </div>
+
+          {settings.enableDemoAd && (
+            <>
+              <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
+                <label>AdSense Ad Unit Code (HTML)</label>
+                <textarea 
+                  name="demoAdsenseCode" 
+                  value={settings.demoAdsenseCode} 
+                  onChange={handleChange} 
+                  placeholder="<ins class='adsbygoogle' ...></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>" 
+                  rows={5}
+                />
+              </div>
+              <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
+                <label>Timer Duration (Seconds)</label>
+                <input 
+                  type="number" 
+                  name="demoAdTimer" 
+                  value={settings.demoAdTimer} 
+                  onChange={handleChange} 
+                  min="1"
+                  max="120"
+                  placeholder="15" 
+                />
+              </div>
+            </>
+          )}
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>

@@ -22,6 +22,7 @@ export interface WebsiteSettings {
   floatingLogoShadow?: boolean;
   demoAdsenseCode?: string;
   demoAdTimer?: number;
+  enableDemoAd?: boolean;
 }
 
 export interface AppSettings {
@@ -50,7 +51,8 @@ const defaultSettings: AppSettings = {
     floatingLogoRemoveBg: false,
     floatingLogoShadow: false,
     demoAdsenseCode: "",
-    demoAdTimer: 15
+    demoAdTimer: 15,
+    enableDemoAd: false
   }
 };
 
