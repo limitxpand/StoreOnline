@@ -48,6 +48,7 @@
 }
 
 .formGroup input[type="text"],
+.formGroup input[type="url"],
 .formGroup input[type="email"],
 .formGroup input[type="password"],
 .formGroup input[type="number"],
