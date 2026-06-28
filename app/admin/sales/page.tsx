@@ -13,7 +13,7 @@ export default async function SalesManagement({
 
   const transactions = await prisma.transaction.findMany({
     where: {
-      status: 'completed',
+      status: { in: ['completed', 'demo'] },
       ...(q ? {
         OR: [
           { product: { title: { contains: q, mode: 'insensitive' } } },
@@ -49,13 +49,14 @@ export default async function SalesManagement({
                 <th style={{ padding: '1rem 0' }}>Product</th>
                 <th style={{ padding: '1rem 0' }}>Buyer</th>
                 <th style={{ padding: '1rem 0' }}>Amount</th>
+                <th style={{ padding: '1rem 0' }}>Type</th>
                 <th style={{ padding: '1rem 0' }}>Platform Revenue (30%)</th>
               </tr>
             </thead>
             <tbody>
               {transactions.length === 0 ? (
                 <tr>
-                  <td colSpan={5} style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--text-muted)' }}>No sales found.</td>
+                  <td colSpan={6} style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--text-muted)' }}>No sales or downloads found.</td>
                 </tr>
               ) : transactions.map(tx => (
                 <tr key={tx.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
@@ -73,8 +74,15 @@ export default async function SalesManagement({
                   <td style={{ padding: '1rem 0', color: 'var(--success)' }}>
                     ${tx.amount.toFixed(2)}
                   </td>
+                  <td style={{ padding: '1rem 0' }}>
+                    {tx.status === 'demo' ? (
+                      <span style={{ padding: '4px 12px', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--accent-secondary)', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 600 }}>Demo</span>
+                    ) : (
+                      <span style={{ padding: '4px 12px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 600 }}>Purchase</span>
+                    )}
+                  </td>
                   <td style={{ padding: '1rem 0', color: 'var(--accent-neon)' }}>
-                    ${(tx.royalty?.platformFee || (tx.amount * 0.3)).toFixed(2)}
+                    ${(tx.royalty?.platformFee || 0).toFixed(2)}
                   </td>
                 </tr>
               ))}

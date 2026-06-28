@@ -18,7 +18,7 @@ export default async function ContributorSales() {
   const transactions = await prisma.transaction.findMany({
     where: { 
       product: { developerId },
-      status: 'completed'
+      status: { in: ['completed', 'demo'] }
     },
     include: {
       product: true,
@@ -26,7 +26,8 @@ export default async function ContributorSales() {
         select: {
           name: true,
           email: true,
-          id: true // This is the UID
+          uid: true, // This is the custom UID
+          id: true // fallback
         }
       },
       royalty: true
@@ -60,18 +61,18 @@ export default async function ContributorSales() {
                   <tr key={tx.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                     <td style={{ padding: '1rem 0' }}>
                       <div style={{ fontWeight: 'bold' }}>{tx.product.title}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>PID: {tx.product.id}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>PID: {tx.product.pid || tx.product.id}</div>
                     </td>
                     <td style={{ padding: '1rem 0' }}>
                       <div style={{ fontWeight: 'bold' }}>{tx.user.name || 'Unknown User'}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>UID: {tx.user.id}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>UID: {tx.user.uid || tx.user.id}</div>
                     </td>
                     <td style={{ padding: '1rem 0' }}>{tx.createdAt.toLocaleDateString()}</td>
                     <td style={{ padding: '1rem 0' }}>
-                      {tx.amount > 0 ? (
-                        <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>Purchase</span>
+                      {tx.status === 'demo' ? (
+                        <span style={{ color: 'var(--accent-secondary)', fontWeight: 'bold' }}>Demo Download</span>
                       ) : (
-                        <span style={{ color: 'var(--text-muted)', fontWeight: 'bold' }}>Free Download</span>
+                        <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>Purchase</span>
                       )}
                     </td>
                     <td style={{ padding: '1rem 0' }}>${tx.amount.toFixed(2)}</td>

@@ -28,6 +28,10 @@ export default async function ContributorDashboard() {
     where: { developerId }
   });
 
+  const totalDemos = await prisma.transaction.count({
+    where: { product: { developerId }, status: 'demo' }
+  });
+
   const earningsData = await prisma.royalty.aggregate({
     _sum: { royaltyAmount: true },
     where: { developerId, status: 'paid' }
@@ -39,12 +43,12 @@ export default async function ContributorDashboard() {
   const recentSales = await prisma.transaction.findMany({
     where: { 
       product: { developerId },
-      status: 'completed'
+      status: { in: ['completed', 'demo'] }
     },
     include: {
       product: true,
       user: {
-        select: { name: true, id: true }
+        select: { name: true, id: true, uid: true }
       },
       royalty: true
     },
@@ -96,6 +100,15 @@ export default async function ContributorDashboard() {
             </div>
           </div>
         </Link>
+        <Link href="/dashboard/sales" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s' }}>
+            <div className={styles.statIcon}>⬇️</div>
+            <div className={styles.statInfo}>
+              <h3>Demo Downloads</h3>
+              <p>{totalDemos}</p>
+            </div>
+          </div>
+        </Link>
       </div>
 
       <div className={styles.panel}>
@@ -123,7 +136,7 @@ export default async function ContributorDashboard() {
                   <tr key={sale.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                     <td style={{ padding: '1rem 0' }}>
                       <div style={{ fontWeight: 'bold' }}>{sale.product.title}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>UID: {sale.user?.id || 'Unknown'}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>UID: {sale.user?.uid || sale.user?.id || 'Unknown'}</div>
                     </td>
                     <td style={{ padding: '1rem 0' }}>{sale.createdAt.toLocaleDateString()}</td>
                     <td style={{ padding: '1rem 0' }}>${sale.amount.toFixed(2)}</td>
@@ -135,10 +148,10 @@ export default async function ContributorDashboard() {
                         padding: '4px 8px', 
                         borderRadius: '4px', 
                         fontSize: '0.8rem',
-                        backgroundColor: sale.amount > 0 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(156, 163, 175, 0.1)',
-                        color: sale.amount > 0 ? 'var(--success)' : 'var(--text-muted)'
+                        backgroundColor: sale.status === 'demo' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+                        color: sale.status === 'demo' ? 'var(--accent-secondary)' : 'var(--success)'
                       }}>
-                        {sale.amount > 0 ? 'Purchase' : 'Download'}
+                        {sale.status === 'demo' ? 'Demo' : 'Purchase'}
                       </span>
                     </td>
                   </tr>

@@ -13,7 +13,8 @@ export default async function AdminDashboard() {
     pendingWithdrawalsCount,
     openTicketsCount,
     totalSalesAgg,
-    platformRevenueAgg
+    platformRevenueAgg,
+    totalDemos
   ] = await Promise.all([
     prisma.user.count({ where: { role: 'customer' } }),
     prisma.user.count({ where: { role: 'developer' } }),
@@ -27,7 +28,8 @@ export default async function AdminDashboard() {
     }),
     prisma.royalty.aggregate({
       _sum: { platformFee: true }
-    })
+    }),
+    prisma.transaction.count({ where: { status: 'demo' } })
   ]);
 
   const totalSales = totalSalesAgg._sum.amount || 0;
@@ -56,6 +58,15 @@ export default async function AdminDashboard() {
             <div className={styles.statInfo}>
               <h3>Platform Revenue (30%)</h3>
               <p>${platformRevenue.toFixed(2)}</p>
+            </div>
+          </div>
+        </Link>
+        <Link href="/admin/sales" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', ...({ ':hover': { transform: 'scale(1.02)' } } as any) }}>
+            <div className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.1)', color: 'var(--accent-secondary)' }}>⬇️</div>
+            <div className={styles.statInfo}>
+              <h3>Demo Downloads</h3>
+              <p>{totalDemos}</p>
             </div>
           </div>
         </Link>

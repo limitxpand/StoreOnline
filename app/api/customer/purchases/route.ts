@@ -66,17 +66,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { productId } = await req.json();
+    const { productId, txHash } = await req.json();
     if (!productId) {
       return NextResponse.json({ error: "Product ID required" }, { status: 400 });
     }
+
+    const isDemo = !txHash;
 
     // Check if transaction already exists
     const existing = await prisma.transaction.findFirst({
       where: {
         userId: session.user.id,
         productId: productId,
-        status: "completed"
+        status: isDemo ? "demo" : "completed"
       }
     });
 
@@ -97,12 +99,13 @@ export async function POST(req: NextRequest) {
       data: {
         userId: session.user.id,
         productId: productId,
-        amount: product.price || 0,
-        status: "completed"
+        amount: isDemo ? 0 : (product.price || 0),
+        status: isDemo ? "demo" : "completed",
+        txHash: txHash || null
       }
     });
 
-    if (product.price > 0 && product.developerId) {
+    if (!isDemo && product.price > 0 && product.developerId) {
       const royaltySettings = await getRoyaltySettings();
       const platformFeePct = royaltySettings.platformCommission / 100;
       const platformFee = product.price * platformFeePct;
