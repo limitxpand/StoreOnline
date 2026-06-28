@@ -1,17 +1,33 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../settings/settings.module.css';
 
 export default function SeoAdsManagement() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [settings, setSettings] = useState({
-    metaDescription: 'The Ultimate Marketplace for MT4, MT5 Experts, Indicators, Utilities and Android APKs. Download secure, license-protected software.',
-    keywords: 'MT4, MT5, Expert Advisor, Trading Bot, MQL5, Android APK, Buy Software',
-    ogImageUrl: 'https://storeonline.com/og-image.jpg',
-    adsenseClientId: 'ca-pub-XXXXXXXXXXXXXXXX',
-    adsEnabled: true
+    metaDescription: '',
+    metaKeywords: '',
+    ogImageUrl: '',
+    adsenseClientId: '',
+    enableAdsense: false
   });
+
+  useEffect(() => {
+    fetch('/api/admin/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.settings) {
+          setSettings({
+            metaDescription: data.settings.metaDescription || '',
+            metaKeywords: data.settings.metaKeywords || '',
+            ogImageUrl: data.settings.ogImageUrl || '',
+            adsenseClientId: data.settings.adsenseClientId || '',
+            enableAdsense: data.settings.enableAdsense || false
+          });
+        }
+      });
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -19,14 +35,27 @@ export default function SeoAdsManagement() {
     setSettings({ ...settings, [name]: val });
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage('SEO & Ads settings saved successfully.');
+      } else {
+        setMessage('Failed to save settings.');
+      }
+    } catch (error) {
+      setMessage('Error saving settings.');
+    } finally {
       setSaving(false);
-      setMessage('SEO & Ads settings saved successfully.');
       setTimeout(() => setMessage(''), 3000);
-    }, 800);
+    }
   };
 
   return (
@@ -59,8 +88,8 @@ export default function SeoAdsManagement() {
             <label>Meta Keywords (Comma separated)</label>
             <input 
               type="text" 
-              name="keywords" 
-              value={settings.keywords} 
+              name="metaKeywords" 
+              value={settings.metaKeywords} 
               onChange={handleChange} 
               required 
             />
@@ -84,15 +113,15 @@ export default function SeoAdsManagement() {
           <div className={styles.checkboxGroup}>
             <input 
               type="checkbox" 
-              id="adsEnabled" 
-              name="adsEnabled" 
-              checked={settings.adsEnabled} 
+              id="enableAdsense" 
+              name="enableAdsense" 
+              checked={settings.enableAdsense} 
               onChange={handleChange} 
             />
-            <label htmlFor="adsEnabled">Enable AdSense Sitewide</label>
+            <label htmlFor="enableAdsense">Enable AdSense Sitewide</label>
           </div>
 
-          {settings.adsEnabled && (
+          {settings.enableAdsense && (
             <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
               <label>AdSense Client ID (Publisher ID)</label>
               <input 

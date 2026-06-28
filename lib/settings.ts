@@ -8,6 +8,10 @@ export interface WebsiteSettings {
   primaryColor: string;
   enableAdsense: boolean;
   contactEmail: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  ogImageUrl?: string;
+  adsenseClientId?: string;
 }
 
 export interface AppSettings {
@@ -21,8 +25,12 @@ const defaultSettings: AppSettings = {
     heroSubtitle: "Buy and sell highly secure MT4/MT5 EA.",
     theme: "light",
     primaryColor: "#3b82f6",
-    enableAdsense: true,
-    contactEmail: "support@storeonline.com"
+    enableAdsense: false,
+    contactEmail: "support@storeonline.com",
+    metaDescription: "The Ultimate Marketplace for MT4, MT5 Experts, Indicators, Utilities and Android APKs. Download secure, license-protected software.",
+    metaKeywords: "MT4, MT5, Expert Advisor, Trading Bot, MQL5, Android APK, Buy Software",
+    ogImageUrl: "https://storeonline.in/og-image.jpg",
+    adsenseClientId: ""
   }
 };
 

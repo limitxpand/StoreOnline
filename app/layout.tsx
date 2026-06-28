@@ -2,42 +2,58 @@ import type { Metadata } from 'next';
 import './globals.css';
 import AuthProvider from '@/components/AuthProvider';
 
-export const metadata: Metadata = {
-  title: 'Store Online - Digital Product Marketplace',
-  description: 'The Ultimate Marketplace for MT4, MT5 Experts, Indicators, Utilities and Android APKs. Download secure, license-protected software.',
-  keywords: 'MT4, MT5, Expert Advisor, Trading Bot, MQL5, Android APK, Buy Software, Store Online',
-  openGraph: {
-    title: 'Store Online - Premium Marketplace',
-    description: 'Buy and sell premium license-protected trading bots, indicators, and software.',
-    url: 'https://storeonline.com',
-    siteName: 'Store Online',
-    images: [
-      {
-        url: 'https://storeonline.com/og-image.jpg',
-        width: 1200,
-        height: 630,
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Store Online Marketplace',
-    description: 'Buy and sell premium license-protected software.',
-  },
-};
+import { getWebsiteSettings } from '@/lib/settings';
 
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getWebsiteSettings();
+  
+  return {
+    title: settings.siteName || 'Store Online - Digital Product Marketplace',
+    description: settings.metaDescription || 'The Ultimate Marketplace for MT4, MT5 Experts, Indicators, Utilities and Android APKs. Download secure, license-protected software.',
+    keywords: settings.metaKeywords || 'MT4, MT5, Expert Advisor, Trading Bot, MQL5, Android APK, Buy Software, Store Online',
+    openGraph: {
+      title: settings.siteName || 'Store Online - Premium Marketplace',
+      description: settings.metaDescription || 'Buy and sell premium license-protected trading bots, indicators, and software.',
+      url: 'https://storeonline.in',
+      siteName: settings.siteName || 'Store Online',
+      images: [
+        {
+          url: settings.ogImageUrl || 'https://storeonline.in/og-image.jpg',
+          width: 1200,
+          height: 630,
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: settings.siteName || 'Store Online Marketplace',
+      description: settings.metaDescription || 'Buy and sell premium license-protected software.',
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getWebsiteSettings();
+
   return (
     <html lang="en">
       <head>
-        {/* Google Analytics & AdSense scripts would be injected here in production */}
-        <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX" />
+        {settings.enableAdsense && settings.adsenseClientId && (
+          <script 
+            async 
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${settings.adsenseClientId}`}
+            crossOrigin="anonymous"
+          ></script>
+        )}
+        {settings.adsenseClientId && (
+          <meta name="google-adsense-account" content={settings.adsenseClientId} />
+        )}
       </head>
       <body>
         <AuthProvider>
