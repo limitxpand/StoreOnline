@@ -1,4 +1,5 @@
 import styles from './dashboard.module.css';
+import Link from 'next/link';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
@@ -34,15 +35,18 @@ export default async function ContributorDashboard() {
 
   const totalEarnings = earningsData._sum.royaltyAmount || 0;
 
-  // Fetch recent sales (Royalties)
-  const recentSales = await prisma.royalty.findMany({
-    where: { developerId },
+  // Fetch recent sales and downloads (Transactions)
+  const recentSales = await prisma.transaction.findMany({
+    where: { 
+      product: { developerId },
+      status: 'completed'
+    },
     include: {
-      transaction: {
-        include: {
-          product: true
-        }
-      }
+      product: true,
+      user: {
+        select: { name: true, id: true }
+      },
+      royalty: true
     },
     orderBy: { createdAt: 'desc' },
     take: 10
@@ -56,38 +60,51 @@ export default async function ContributorDashboard() {
       </div>
 
       <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>💰</div>
-          <div className={styles.statInfo}>
-            <h3>Total Earnings</h3>
-            <p>${totalEarnings.toFixed(2)}</p>
+        <Link href="/dashboard/earnings" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', ...{ ':hover': { transform: 'translateY(-2px)' } } as any }}>
+            <div className={styles.statIcon}>💰</div>
+            <div className={styles.statInfo}>
+              <h3>Total Earnings</h3>
+              <p>${totalEarnings.toFixed(2)}</p>
+            </div>
           </div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>📦</div>
-          <div className={styles.statInfo}>
-            <h3>Active Products</h3>
-            <p>{activeProducts}</p>
+        </Link>
+        <Link href="/dashboard/products?status=active" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s' }}>
+            <div className={styles.statIcon}>📦</div>
+            <div className={styles.statInfo}>
+              <h3>Active Products</h3>
+              <p>{activeProducts}</p>
+            </div>
           </div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>⏳</div>
-          <div className={styles.statInfo}>
-            <h3>Pending Review</h3>
-            <p>{pendingProducts}</p>
+        </Link>
+        <Link href="/dashboard/products?status=pending" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s' }}>
+            <div className={styles.statIcon}>⏳</div>
+            <div className={styles.statInfo}>
+              <h3>Pending Review</h3>
+              <p>{pendingProducts}</p>
+            </div>
           </div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>🛒</div>
-          <div className={styles.statInfo}>
-            <h3>Total Sales</h3>
-            <p>{totalSales}</p>
+        </Link>
+        <Link href="/dashboard/sales" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s' }}>
+            <div className={styles.statIcon}>🛒</div>
+            <div className={styles.statInfo}>
+              <h3>Total Sales</h3>
+              <p>{totalSales}</p>
+            </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       <div className={styles.panel}>
-        <h3 className={styles.panelTitle}>Recent Sales</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h3 className={styles.panelTitle} style={{ margin: 0 }}>Recent Sales & Downloads</h3>
+          <Link href="/dashboard/sales" style={{ color: 'var(--primary-color)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 'bold' }}>
+            View All →
+          </Link>
+        </div>
         
         <div style={{ overflowX: 'auto' }}>
           {recentSales.length > 0 ? (
@@ -104,19 +121,24 @@ export default async function ContributorDashboard() {
               <tbody>
                 {recentSales.map((sale) => (
                   <tr key={sale.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                    <td style={{ padding: '1rem 0' }}>{sale.transaction.product.title}</td>
+                    <td style={{ padding: '1rem 0' }}>
+                      <div style={{ fontWeight: 'bold' }}>{sale.product.title}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>UID: {sale.user?.id || 'Unknown'}</div>
+                    </td>
                     <td style={{ padding: '1rem 0' }}>{sale.createdAt.toLocaleDateString()}</td>
-                    <td style={{ padding: '1rem 0' }}>${sale.transaction.amount.toFixed(2)}</td>
-                    <td style={{ padding: '1rem 0', color: 'var(--success)' }}>+${sale.royaltyAmount.toFixed(2)}</td>
+                    <td style={{ padding: '1rem 0' }}>${sale.amount.toFixed(2)}</td>
+                    <td style={{ padding: '1rem 0', color: 'var(--success)' }}>
+                      {sale.royalty ? `+$${sale.royalty.royaltyAmount.toFixed(2)}` : '$0.00'}
+                    </td>
                     <td style={{ padding: '1rem 0' }}>
                       <span style={{ 
                         padding: '4px 8px', 
                         borderRadius: '4px', 
                         fontSize: '0.8rem',
-                        backgroundColor: sale.status === 'paid' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(234, 179, 8, 0.1)',
-                        color: sale.status === 'paid' ? 'var(--success)' : '#eab308'
+                        backgroundColor: sale.amount > 0 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(156, 163, 175, 0.1)',
+                        color: sale.amount > 0 ? 'var(--success)' : 'var(--text-muted)'
                       }}>
-                        {sale.status}
+                        {sale.amount > 0 ? 'Purchase' : 'Download'}
                       </span>
                     </td>
                   </tr>
