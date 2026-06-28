@@ -3,7 +3,7 @@ import AdBanner from '@/components/AdBanner';
 import styles from './product.module.css';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
-import ProductButtons from './ProductButtons';
+import ProductActions from '@/components/ProductActions';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
@@ -65,25 +65,21 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <span style={{ color: 'var(--text-muted)' }}>(0 Reviews)</span>
             </div>
 
-            <div className={styles.priceBlock}>
-              <span className={styles.price}>Free</span>
-              <span style={{ marginLeft: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem', textDecoration: 'line-through' }}>
-                ${product.price.toFixed(2)}
-              </span>
-            </div>
-
             <p className={styles.description}>
               {product.description}
             </p>
 
             <ul className={styles.features}>
               <li>✅ Ready for {product.platform}</li>
-              <li>✅ Instant Direct Download</li>
-              <li>✅ Protected via Custom License Module</li>
+              <li>✅ Instant Download</li>
+              <li>✅ Safe & Verified Source</li>
               <li>✅ Free Updates</li>
             </ul>
 
-            <ProductButtons downloadUrl={product.compiledFileUrl || product.sourceFileUrl || '#'} />
+            <ProductActions 
+              downloadUrl={product.compiledFileUrl || product.sourceFileUrl || '#'} 
+              productTitle={product.title} 
+            />
 
             {/* AdSense Placement */}
             <div style={{ width: '100%', marginTop: '2rem' }}>

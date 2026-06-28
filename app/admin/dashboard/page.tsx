@@ -1,5 +1,6 @@
 import styles from '../../dashboard/dashboard.module.css';
 import { prisma } from '@/lib/prisma';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,13 +77,15 @@ export default async function AdminDashboard() {
             <p>{totalUsers}</p>
           </div>
         </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8' }}>🧑‍💻</div>
-          <div className={styles.statInfo}>
-            <h3>Total Sellers</h3>
-            <p>{totalSellers}</p>
+        <Link href="/admin/sellers" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', ...({ ':hover': { transform: 'scale(1.02)' } } as any) }}>
+            <div className={styles.statIcon} style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8' }}>🧑‍💻</div>
+            <div className={styles.statInfo}>
+              <h3>Total Sellers</h3>
+              <p>{totalSellers}</p>
+            </div>
           </div>
-        </div>
+        </Link>
         <div className={styles.statCard}>
           <div className={styles.statIcon} style={{ background: 'rgba(244, 114, 182, 0.1)', color: '#f472b6' }}>🛒</div>
           <div className={styles.statInfo}>

@@ -25,6 +25,8 @@ model User {
   verificationToken String? @unique
   resetToken String? @unique
   resetTokenExpiry DateTime?
+  bep20Address     String?
+  bep20QrUrl       String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
