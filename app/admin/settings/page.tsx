@@ -17,7 +17,12 @@ export default function WebsiteSettings() {
     contactEmail: '',
     logoUrl: '',
     faviconUrl: '',
-    floatingLogoUrl: ''
+    floatingLogoUrl: '',
+    logoRadius: 'none',
+    logoRemoveBg: false,
+    floatingLogoRadius: 'none',
+    floatingLogoRemoveBg: false,
+    floatingLogoShadow: false
   });
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
 
@@ -94,7 +99,36 @@ export default function WebsiteSettings() {
     }
   };
 
-  const renderImageUploader = (label: string, fieldName: string, recommendedSize: string) => {
+  const getPreviewStyle = (fieldName: string) => {
+    let style: React.CSSProperties = {
+      maxWidth: '250px', 
+      maxHeight: '120px', 
+      objectFit: 'contain', 
+      border: '1px solid var(--border-color)', 
+      background: 'var(--bg-secondary)', 
+      padding: '0.5rem',
+      transition: 'all 0.3s ease'
+    };
+
+    if (fieldName === 'logoUrl') {
+      if (settings.logoRadius === 'rounded') style.borderRadius = '12px';
+      else if (settings.logoRadius === 'circle') style.borderRadius = '50%';
+      else style.borderRadius = '0';
+      if (settings.logoRemoveBg) style.mixBlendMode = 'multiply';
+    } else if (fieldName === 'floatingLogoUrl') {
+      if (settings.floatingLogoRadius === 'rounded') style.borderRadius = '12px';
+      else if (settings.floatingLogoRadius === 'circle') style.borderRadius = '50%';
+      else style.borderRadius = '0';
+      if (settings.floatingLogoRemoveBg) style.mixBlendMode = 'multiply';
+      if (settings.floatingLogoShadow) style.filter = 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))';
+    } else {
+      style.borderRadius = '8px'; // default for favicon
+    }
+
+    return style;
+  };
+
+  const renderImageUploader = (label: string, fieldName: string, recommendedSize: string, hasStyles = false) => {
     const isUploading = uploading[fieldName];
     const imageUrl = settings[fieldName as keyof typeof settings] as string;
 
@@ -103,8 +137,8 @@ export default function WebsiteSettings() {
         <label>{label} <span style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginLeft: '8px'}}>({recommendedSize})</span></label>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start', marginTop: '0.5rem' }}>
           {imageUrl ? (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <img src={imageUrl} alt={`${label} Preview`} style={{ maxWidth: '250px', maxHeight: '120px', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', padding: '0.5rem' }} />
+            <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+              <img src={imageUrl} alt={`${label} Preview`} style={getPreviewStyle(fieldName)} />
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <label style={{ cursor: 'pointer', background: 'var(--accent-primary)', color: 'white', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 500, display: 'inline-block', transition: 'background 0.2s' }}>
                   {isUploading ? 'Uploading...' : 'Update'}
@@ -114,6 +148,37 @@ export default function WebsiteSettings() {
                   Delete
                 </button>
               </div>
+              
+              {hasStyles && (
+                <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(0,0,0,0.15)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                   <h4 style={{marginBottom: '1rem', fontSize: '0.9rem', color: 'var(--text-secondary)'}}>Styling Options (Live Preview)</h4>
+                   <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                      <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                         <label style={{fontSize: '0.85rem', color: 'var(--text-secondary)'}}>Edge Style</label>
+                         <select 
+                           name={fieldName === 'logoUrl' ? 'logoRadius' : 'floatingLogoRadius'} 
+                           value={settings[fieldName === 'logoUrl' ? 'logoRadius' : 'floatingLogoRadius'] as string} 
+                           onChange={handleChange}
+                           style={{ padding: '0.5rem', borderRadius: '4px', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
+                         >
+                            <option value="none">Square (Default)</option>
+                            <option value="rounded">Rounded</option>
+                            <option value="circle">Circle</option>
+                         </select>
+                      </div>
+                      <div className={styles.checkboxGroup} style={{marginTop: '1.8rem'}}>
+                         <input type="checkbox" id={`${fieldName}-bg`} name={fieldName === 'logoUrl' ? 'logoRemoveBg' : 'floatingLogoRemoveBg'} checked={settings[fieldName === 'logoUrl' ? 'logoRemoveBg' : 'floatingLogoRemoveBg'] as boolean} onChange={handleChange} />
+                         <label htmlFor={`${fieldName}-bg`}>Remove Background (Multiply)</label>
+                      </div>
+                      {fieldName === 'floatingLogoUrl' && (
+                        <div className={styles.checkboxGroup} style={{marginTop: '1.8rem'}}>
+                           <input type="checkbox" id={`${fieldName}-shadow`} name="floatingLogoShadow" checked={settings.floatingLogoShadow as boolean} onChange={handleChange} />
+                           <label htmlFor={`${fieldName}-shadow`}>Add 3D Shadow</label>
+                        </div>
+                      )}
+                   </div>
+                </div>
+              )}
             </div>
           ) : (
             <label style={{ cursor: 'pointer', background: 'var(--accent-primary)', color: 'white', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 500, display: 'inline-block', transition: 'background 0.2s' }}>
@@ -181,9 +246,9 @@ export default function WebsiteSettings() {
         <div className={styles.section}>
           <h3>Logos and Branding</h3>
           
-          {renderImageUploader('Main Website Logo', 'logoUrl', 'Recommended height: 40-60px')}
-          {renderImageUploader('Website Favicon', 'faviconUrl', 'Recommended size: 32x32 pixels (PNG/ICO)')}
-          {renderImageUploader('Hero Floating Logo (Optional)', 'floatingLogoUrl', 'Recommended size: 200x200 pixels')}
+          {renderImageUploader('Main Website Logo', 'logoUrl', 'Recommended height: 40-60px', true)}
+          {renderImageUploader('Website Favicon', 'faviconUrl', 'Recommended size: 32x32 pixels (PNG/ICO)', false)}
+          {renderImageUploader('Hero Floating Logo (Optional)', 'floatingLogoUrl', 'Recommended size: 200x200 pixels', true)}
         </div>
 
         <div className={styles.section}>

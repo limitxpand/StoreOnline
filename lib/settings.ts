@@ -15,6 +15,11 @@ export interface WebsiteSettings {
   logoUrl?: string;
   faviconUrl?: string;
   floatingLogoUrl?: string;
+  logoRadius?: 'none' | 'rounded' | 'circle';
+  logoRemoveBg?: boolean;
+  floatingLogoRadius?: 'none' | 'rounded' | 'circle';
+  floatingLogoRemoveBg?: boolean;
+  floatingLogoShadow?: boolean;
 }
 
 export interface AppSettings {
@@ -36,7 +41,12 @@ const defaultSettings: AppSettings = {
     adsenseClientId: "",
     logoUrl: "",
     faviconUrl: "",
-    floatingLogoUrl: ""
+    floatingLogoUrl: "",
+    logoRadius: "none",
+    logoRemoveBg: false,
+    floatingLogoRadius: "none",
+    floatingLogoRemoveBg: false,
+    floatingLogoShadow: false
   }
 };
 
