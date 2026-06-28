@@ -20,7 +20,8 @@ export interface WebsiteSettings {
   floatingLogoRadius?: 'none' | 'rounded' | 'circle';
   floatingLogoRemoveBg?: boolean;
   floatingLogoShadow?: boolean;
-  demoVideoAdUrl?: string;
+  demoAdsenseCode?: string;
+  demoAdTimer?: number;
 }
 
 export interface AppSettings {
@@ -48,7 +49,8 @@ const defaultSettings: AppSettings = {
     floatingLogoRadius: "none",
     floatingLogoRemoveBg: false,
     floatingLogoShadow: false,
-    demoVideoAdUrl: ""
+    demoAdsenseCode: "",
+    demoAdTimer: 15
   }
 };
 

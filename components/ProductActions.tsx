@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../app/(store)/product/[slug]/product.module.css';
 
@@ -8,19 +8,31 @@ export default function ProductActions({
   downloadUrl, 
   productTitle, 
   isLoggedIn,
-  demoVideoAdUrl
+  demoAdsenseCode,
+  demoAdTimer = 15
 }: { 
   productId: string, 
   downloadUrl: string, 
   productTitle: string, 
   isLoggedIn?: boolean,
-  demoVideoAdUrl?: string
+  demoAdsenseCode?: string,
+  demoAdTimer?: number
 }) {
   const [copied, setCopied] = useState(false);
   const [showAdModal, setShowAdModal] = useState(false);
   const [adWatched, setAdWatched] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(demoAdTimer);
   const router = useRouter();
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showAdModal && timeLeft > 0) {
+      timer = setTimeout(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [showAdModal, timeLeft]);
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -35,8 +47,9 @@ export default function ProductActions({
       return;
     }
     
-    if (demoVideoAdUrl && !adWatched) {
+    if (demoAdsenseCode && !adWatched) {
       setShowAdModal(true);
+      setTimeLeft(demoAdTimer);
       return;
     }
     
@@ -60,21 +73,25 @@ export default function ProductActions({
     }
   };
 
-  const handleVideoEnded = () => {
+  const handleAdFinished = () => {
     setAdWatched(true);
     setShowAdModal(false);
     triggerDownload();
   };
 
-  const getYoutubeEmbedUrl = (url: string) => {
-    if (url.includes('youtube.com/watch?v=')) {
-      return url.replace('watch?v=', 'embed/') + '?autoplay=1&controls=0&modestbranding=1';
-    }
-    if (url.includes('youtu.be/')) {
-      return url.replace('youtu.be/', 'youtube.com/embed/') + '?autoplay=1&controls=0&modestbranding=1';
-    }
-    return url;
-  };
+  const adFrameSource = demoAdsenseCode ? `
+    <html>
+      <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR_CLIENT_ID" crossorigin="anonymous"></script>
+        <style>body { margin: 0; display: flex; justify-content: center; align-items: center; background: #000; height: 100vh; overflow: hidden; color: white; font-family: sans-serif; }</style>
+      </head>
+      <body>
+        <div style="width: 100%; text-align: center;">
+          ${demoAdsenseCode}
+        </div>
+      </body>
+    </html>
+  ` : '';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
@@ -84,7 +101,7 @@ export default function ProductActions({
           className={styles.buyBtn} 
           style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer', color: 'white' }}
         >
-          {demoVideoAdUrl && !adWatched ? '📺 Watch a short ad to unlock your Free Demo' : '⬇️ Direct Download'}
+          {demoAdsenseCode && !adWatched ? '🎁 View our Sponsor to unlock your Free Demo' : '⬇️ Direct Download'}
         </button>
       ) : (
         <button 
@@ -118,45 +135,44 @@ export default function ProductActions({
       </div>
 
       {showAdModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.9)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ maxWidth: '800px', width: '90%', position: 'relative' }}>
-            <h3 style={{ color: 'white', marginBottom: '1rem', textAlign: 'center' }}>Please watch this short ad to support our platform...</h3>
+            <h3 style={{ color: 'white', marginBottom: '1rem', textAlign: 'center' }}>
+              {timeLeft > 0 ? `Your download will be ready in ${timeLeft} seconds...` : 'Your download is ready!'}
+            </h3>
             
-            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', background: '#000', borderRadius: '12px' }}>
-              {demoVideoAdUrl?.includes('youtube.com') || demoVideoAdUrl?.includes('youtu.be') ? (
-                <iframe 
-                  src={getYoutubeEmbedUrl(demoVideoAdUrl)} 
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
-                  allow="autoplay; encrypted-media"
-                  allowFullScreen
-                />
-              ) : (
-                <video 
-                  src={demoVideoAdUrl} 
-                  autoPlay 
-                  controls={false}
-                  onEnded={handleVideoEnded}
-                  onPlay={() => setIsVideoPlaying(true)}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                />
-              )}
+            <div style={{ position: 'relative', height: '400px', overflow: 'hidden', background: '#111', borderRadius: '12px', border: '1px solid #333' }}>
+              <iframe 
+                srcDoc={adFrameSource}
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
+                sandbox="allow-scripts allow-same-origin allow-popups"
+              />
             </div>
 
             <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
               <button 
                 onClick={() => setShowAdModal(false)}
-                style={{ padding: '0.8rem 1.5rem', background: '#374151', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                style={{ padding: '0.8rem 1.5rem', background: '#374151', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
               >
                 Cancel
               </button>
-              {(demoVideoAdUrl?.includes('youtube.com') || demoVideoAdUrl?.includes('youtu.be')) && (
-                <button 
-                  onClick={handleVideoEnded}
-                  style={{ padding: '0.8rem 1.5rem', background: 'var(--accent-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
-                >
-                  I've finished watching (Download Now)
-                </button>
-              )}
+              <button 
+                onClick={handleAdFinished}
+                disabled={timeLeft > 0}
+                style={{ 
+                  padding: '0.8rem 1.5rem', 
+                  background: timeLeft > 0 ? '#4b5563' : 'linear-gradient(90deg, #10b981, #047857)', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '8px', 
+                  cursor: timeLeft > 0 ? 'not-allowed' : 'pointer',
+                  fontWeight: 'bold',
+                  boxShadow: timeLeft > 0 ? 'none' : '0 4px 12px rgba(16, 185, 129, 0.4)',
+                  transition: 'all 0.3s'
+                }}
+              >
+                {timeLeft > 0 ? `Wait ${timeLeft}s` : 'Download Now ⬇️'}
+              </button>
             </div>
           </div>
         </div>

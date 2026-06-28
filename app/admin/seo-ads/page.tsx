@@ -11,7 +11,8 @@ export default function SeoAdsManagement() {
     ogImageUrl: '',
     adsenseClientId: '',
     enableAdsense: false,
-    demoVideoAdUrl: ''
+    demoAdsenseCode: '',
+    demoAdTimer: 15
   });
   const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -26,7 +27,8 @@ export default function SeoAdsManagement() {
             ogImageUrl: data.settings.ogImageUrl || '',
             adsenseClientId: data.settings.adsenseClientId || '',
             enableAdsense: data.settings.enableAdsense || false,
-            demoVideoAdUrl: data.settings.demoVideoAdUrl || ''
+            demoAdsenseCode: data.settings.demoAdsenseCode || '',
+            demoAdTimer: data.settings.demoAdTimer || 15
           });
         }
       });
@@ -214,18 +216,30 @@ export default function SeoAdsManagement() {
         </div>
 
         <div className={styles.section}>
-          <h3>Video Ads (Pre-Download Demo Ad)</h3>
+          <h3>Ad-Locked Downloads (Pre-Download Demo Ad)</h3>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-            Enter the URL of an MP4 video or a YouTube embed link. This video will play when a user clicks "Watch a short ad to unlock your Free Demo".
+            Enter your AdSense Ad Unit Code (HTML) here. Users will be required to view this ad for the specified timer duration before they can download a Demo product.
           </p>
           <div className={styles.formGroup}>
-            <label>Video Ad URL</label>
-            <input 
-              type="text" 
-              name="demoVideoAdUrl" 
-              value={settings.demoVideoAdUrl} 
+            <label>AdSense Ad Unit Code (HTML)</label>
+            <textarea 
+              name="demoAdsenseCode" 
+              value={settings.demoAdsenseCode} 
               onChange={handleChange} 
-              placeholder="e.g. https://example.com/ad.mp4 or YouTube Embed URL" 
+              placeholder="<ins class='adsbygoogle' ...></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>" 
+              rows={5}
+            />
+          </div>
+          <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
+            <label>Timer Duration (Seconds)</label>
+            <input 
+              type="number" 
+              name="demoAdTimer" 
+              value={settings.demoAdTimer} 
+              onChange={handleChange} 
+              min="1"
+              max="120"
+              placeholder="15" 
             />
           </div>
         </div>
