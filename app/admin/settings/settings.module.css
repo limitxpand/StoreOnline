@@ -1,8 +1,5 @@
 .container {
-  background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 2rem;
-  border: 1px solid var(--border-color);
+  padding: 0;
 }
 
 .container h2 {
@@ -19,16 +16,18 @@
 .section {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  padding: 1.5rem;
-  border-radius: 8px;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
 }
 
 .section h3 {
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-  color: var(--accent-secondary);
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+  font-weight: 700;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
 }
 
 .formGroup {
@@ -51,14 +50,16 @@
 .formGroup input[type="text"],
 .formGroup input[type="email"],
 .formGroup input[type="password"],
+.formGroup input[type="number"],
 .formGroup select,
 .formGroup textarea {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 10px;
   color: var(--text-primary);
+  font-size: 0.95rem;
   font-family: inherit;
   transition: all 0.2s;
 }
@@ -100,12 +101,12 @@
 
 .saveBtn {
   background: var(--accent-primary);
-  color: white;
+  color: #ffffff;
   border: none;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
+  padding: 1.2rem 2.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: 12px;
   cursor: pointer;
   align-self: flex-start;
   transition: all 0.2s;
@@ -152,6 +153,7 @@
   .formGroup input[type="text"],
   .formGroup input[type="email"],
   .formGroup input[type="password"],
+  .formGroup input[type="number"],
   .formGroup select,
   .formGroup textarea {
     min-height: 48px;

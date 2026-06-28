@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import styles from '../settings/settings.module.css';
+import dashboardStyles from '../../dashboard/dashboard.module.css';
 
 export default function RoyaltySettings() {
   const [saving, setSaving] = useState(false);
@@ -60,8 +61,10 @@ export default function RoyaltySettings() {
 
   return (
     <div className={styles.container}>
-      <h2>Royalty & Commission Settings</h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Configure the global commission rates and payout rules for vendors.</p>
+      <div className={dashboardStyles.pageHeader}>
+        <h1>Royalty & Commission Settings</h1>
+        <p>Configure the global commission rates and payout rules for vendors.</p>
+      </div>
 
       {message && (
         <div className={styles.successBox}>

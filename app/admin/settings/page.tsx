@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import styles from './settings.module.css';
+import dashboardStyles from '../../dashboard/dashboard.module.css';
 
 export default function WebsiteSettings() {
   const [loading, setLoading] = useState(true);
@@ -236,8 +237,10 @@ export default function WebsiteSettings() {
 
   return (
     <div className={styles.container}>
-      <h2>Website Customization</h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Update your website's appearance and text dynamically.</p>
+      <div className={dashboardStyles.pageHeader}>
+        <h1>Website Customization</h1>
+        <p>Update your website's appearance and text dynamically.</p>
+      </div>
 
       {message.text && (
         <div className={message.type === 'success' ? styles.successBox : styles.errorBox}>
