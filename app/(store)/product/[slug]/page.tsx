@@ -84,6 +84,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </ul>
 
             <ProductActions 
+              productId={product.id}
               downloadUrl={product.compiledFileUrl || product.sourceFileUrl || '#'} 
               productTitle={product.title} 
               isLoggedIn={!!session}

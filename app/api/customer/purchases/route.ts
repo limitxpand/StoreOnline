@@ -57,3 +57,53 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { productId } = await req.json();
+    if (!productId) {
+      return NextResponse.json({ error: "Product ID required" }, { status: 400 });
+    }
+
+    // Check if transaction already exists
+    const existing = await prisma.transaction.findFirst({
+      where: {
+        userId: session.user.id,
+        productId: productId,
+        status: "completed"
+      }
+    });
+
+    if (existing) {
+      return NextResponse.json({ message: "Already purchased", transaction: existing });
+    }
+
+    // Fetch product to get price, though we treat it as 0 for download
+    const product = await prisma.product.findUnique({
+      where: { id: productId }
+    });
+
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    const transaction = await prisma.transaction.create({
+      data: {
+        userId: session.user.id,
+        productId: productId,
+        amount: product.price || 0,
+        status: "completed"
+      }
+    });
+
+    return NextResponse.json({ message: "Purchase registered", transaction }, { status: 201 });
+  } catch (error: any) {
+    console.error("Purchase registration error:", error);
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+  }
+}
