@@ -11,6 +11,7 @@ export default async function AdminDashboard() {
     totalUsers,
     pendingProducts,
     pendingWithdrawalsCount,
+    openTicketsCount,
     totalSalesAgg,
     platformRevenueAgg
   ] = await Promise.all([
@@ -19,6 +20,7 @@ export default async function AdminDashboard() {
     prisma.user.count(),
     prisma.product.count({ where: { status: 'pending' } }),
     prisma.withdrawal.count({ where: { status: 'pending' } }),
+    prisma.ticket.count({ where: { status: 'open' } }),
     prisma.transaction.aggregate({
       where: { status: 'completed' },
       _sum: { amount: true }
@@ -58,7 +60,12 @@ export default async function AdminDashboard() {
           </div>
         </Link>
         <Link href="/admin/pending-products" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', ...({ ':hover': { transform: 'scale(1.02)' } } as any) }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', position: 'relative', ...({ ':hover': { transform: 'scale(1.02)' } } as any) }}>
+            {pendingProducts > 0 && (
+              <div style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--danger)', color: 'white', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', boxShadow: '0 0 10px rgba(239, 68, 68, 0.5)' }}>
+                {pendingProducts}
+              </div>
+            )}
             <div className={styles.statIcon} style={{ background: 'rgba(245, 158, 11, 0.1)', color: 'var(--warning)' }}>⏳</div>
             <div className={styles.statInfo}>
               <h3>Pending Source Codes</h3>
@@ -67,11 +74,30 @@ export default async function AdminDashboard() {
           </div>
         </Link>
         <Link href="/admin/withdrawals" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', ...({ ':hover': { transform: 'scale(1.02)' } } as any) }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', position: 'relative', ...({ ':hover': { transform: 'scale(1.02)' } } as any) }}>
+            {pendingWithdrawalsCount > 0 && (
+              <div style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--danger)', color: 'white', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', boxShadow: '0 0 10px rgba(239, 68, 68, 0.5)' }}>
+                {pendingWithdrawalsCount}
+              </div>
+            )}
             <div className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.1)', color: 'var(--accent-neon)' }}>💸</div>
             <div className={styles.statInfo}>
               <h3>Pending Payouts</h3>
               <p>{pendingWithdrawalsCount}</p>
+            </div>
+          </div>
+        </Link>
+        <Link href="/admin/support" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', position: 'relative', ...({ ':hover': { transform: 'scale(1.02)' } } as any) }}>
+            {openTicketsCount > 0 && (
+              <div style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--danger)', color: 'white', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', boxShadow: '0 0 10px rgba(239, 68, 68, 0.5)' }}>
+                {openTicketsCount}
+              </div>
+            )}
+            <div className={styles.statIcon} style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)' }}>💬</div>
+            <div className={styles.statInfo}>
+              <h3>Open Tickets</h3>
+              <p>{openTicketsCount}</p>
             </div>
           </div>
         </Link>

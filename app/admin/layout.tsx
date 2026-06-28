@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import styles from '../dashboard/dashboard.module.css';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function AdminLayout({
   children,
@@ -9,6 +10,25 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [notifications, setNotifications] = useState({ pendingProducts: 0, openTickets: 0, pendingWithdrawals: 0, total: 0 });
+
+  useEffect(() => {
+    if (pathname === '/admin/login') return;
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch('/api/admin/notifications');
+        if (res.ok) {
+          const data = await res.json();
+          setNotifications(data);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 15000); // Check every 15 seconds
+    return () => clearInterval(interval);
+  }, [pathname]);
 
   if (pathname === '/admin/login') {
     return <div style={{ minHeight: '100vh', background: 'var(--bg-dark)' }}>{children}</div>;
@@ -27,8 +47,11 @@ export default function AdminLayout({
           <Link href="/admin/dashboard" className={styles.navLink}>
             <span className={styles.icon}>📈</span> Overview
           </Link>
-          <Link href="/admin/pending-products" className={styles.navLink}>
-            <span className={styles.icon}>🔍</span> Review Products
+          <Link href="/admin/pending-products" className={styles.navLink} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div><span className={styles.icon}>🔍</span> Review Products</div>
+            {notifications.pendingProducts > 0 && (
+              <span style={{ background: 'var(--danger)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 600 }}>{notifications.pendingProducts}</span>
+            )}
           </Link>
           <Link href="/admin/products" className={styles.navLink}>
             <span className={styles.icon}>🛍️</span> Manage Products
@@ -36,8 +59,11 @@ export default function AdminLayout({
           <Link href="/admin/users" className={styles.navLink}>
             <span className={styles.icon}>👥</span> Manage Users
           </Link>
-          <Link href="/admin/support" className={styles.navLink}>
-            <span className={styles.icon}>💬</span> Support Tickets
+          <Link href="/admin/support" className={styles.navLink} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div><span className={styles.icon}>💬</span> Support Tickets</div>
+            {notifications.openTickets > 0 && (
+              <span style={{ background: 'var(--danger)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 600 }}>{notifications.openTickets}</span>
+            )}
           </Link>
           <Link href="/admin/licenses" className={styles.navLink}>
             <span className={styles.icon}>🔑</span> Manage Licenses
@@ -45,8 +71,11 @@ export default function AdminLayout({
           <Link href="/admin/royalty-settings" className={styles.navLink}>
             <span className={styles.icon}>💰</span> Royalty Rules
           </Link>
-          <Link href="/admin/withdrawals" className={styles.navLink}>
-            <span className={styles.icon}>💸</span> Withdrawals
+          <Link href="/admin/withdrawals" className={styles.navLink} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div><span className={styles.icon}>💸</span> Withdrawals</div>
+            {notifications.pendingWithdrawals > 0 && (
+              <span style={{ background: 'var(--danger)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 600 }}>{notifications.pendingWithdrawals}</span>
+            )}
           </Link>
           <div className={styles.divider}></div>
           <Link href="/admin/payments" className={styles.navLink}>
@@ -85,7 +114,14 @@ export default function AdminLayout({
       {/* Main Content Area */}
       <main className={styles.mainContent}>
         <header className={styles.topbar}>
-          <div className={styles.pageTitle}>Admin Control Panel</div>
+          <div className={styles.pageTitle} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            Admin Control Panel
+            {notifications.total > 0 && (
+              <span style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid var(--danger)', color: 'var(--danger)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600 }}>
+                {notifications.total} New Notifications
+              </span>
+            )}
+          </div>
           <div className={styles.userMenu}>
             <div className={styles.avatar} style={{ background: 'var(--danger)' }}>A</div>
             <span>Super Admin</span>

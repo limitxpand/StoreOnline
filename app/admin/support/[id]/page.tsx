@@ -13,7 +13,7 @@ export default function AdminSupportTicketPage({ params }: { params: Promise<{ i
 
   const fetchTicket = async () => {
     try {
-      const res = await fetch(`/api/admin/support/${id}`);
+      const res = await fetch(`/api/admin/support/${id}/message`);
       if (res.ok) {
         const data = await res.json();
         setTicket(data);
