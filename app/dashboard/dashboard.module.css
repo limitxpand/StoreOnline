@@ -255,3 +255,27 @@
     padding: 0 1rem;
   }
 }
+
+@media (max-width: 768px) {
+  .statCard {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .statIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+  .statInfo h3 {
+    font-size: 0.8rem;
+  }
+  .statInfo p {
+    font-size: 1.25rem;
+  }
+  .panelTitle {
+    font-size: 1rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+  }
+}
+

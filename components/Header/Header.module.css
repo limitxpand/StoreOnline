@@ -159,8 +159,12 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    height: 60px; /* More compact mobile header */
+  }
   .container {
     padding: 0 1rem;
+    height: 100%;
   }
   .searchContainer {
     display: none;

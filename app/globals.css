@@ -238,6 +238,19 @@ html:not([data-theme='light']) .theme-logo-dark {
 }
 
 @media (max-width: 768px) {
+  html, body {
+    font-size: 14px; /* Scaled down base font size for mobile */
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .global-product-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
   .popupGrid {
     grid-template-columns: 1fr;
   }
