@@ -35,11 +35,18 @@ export interface RoyaltySettings {
   autoApprovePayouts: boolean;
 }
 
+export interface PaymentMethod {
+  id: string;
+  type: 'smart_contract' | 'deposit_address';
+  network: 'BEP20' | 'TRC20';
+  address: string;
+  currency: string;
+}
+
 export interface PaymentSettings {
   enableCrypto: boolean;
   walletConnectProjectId: string;
-  adminWalletAddress: string;
-  cryptoCurrency: string;
+  paymentMethods: PaymentMethod[];
 }
 
 export interface AppSettings {
@@ -85,8 +92,15 @@ const defaultSettings: AppSettings = {
   payment: {
     enableCrypto: true,
     walletConnectProjectId: "fa5abff71a69afa7834481216b781e88",
-    adminWalletAddress: "", // Needs to be configured by admin
-    cryptoCurrency: "USDT" // USDT, ETH, BNB
+    paymentMethods: [
+      {
+        id: "default-sc-bep20",
+        type: "smart_contract",
+        network: "BEP20",
+        address: "", // Configured by admin
+        currency: "USDT"
+      }
+    ]
   }
 };
 
@@ -129,7 +143,8 @@ export async function saveSettings(newSettings: Partial<AppSettings>) {
       ...current,
       ...newSettings,
       website: { ...current.website, ...newSettings.website },
-      royalty: { ...current.royalty, ...newSettings.royalty }
+      royalty: { ...current.royalty, ...newSettings.royalty },
+      payment: { ...current.payment, ...newSettings.payment }
     };
     
     await prisma.setting.upsert({

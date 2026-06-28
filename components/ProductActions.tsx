@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../app/(store)/product/[slug]/product.module.css';
-import WalletConnectButton from './WalletConnectButton';
+import CryptoPaymentModal from './CryptoPaymentModal';
 
 export default function ProductActions({ 
   productId, 
@@ -24,6 +24,7 @@ export default function ProductActions({
   paymentSettings?: any
 }) {
   const [copied, setCopied] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showAdModal, setShowAdModal] = useState(false);
   const [adWatched, setAdWatched] = useState(false);
   const [timeLeft, setTimeLeft] = useState(demoAdTimer);
@@ -114,14 +115,32 @@ export default function ProductActions({
           
           {/* Show Buy Now Button if price > 0 */}
           {price > 0 && (
-            paymentSettings?.enableCrypto && paymentSettings?.walletConnectProjectId ? (
-              <WalletConnectButton 
-                price={price} 
-                cryptoCurrency={paymentSettings.cryptoCurrency}
-                adminWalletAddress={paymentSettings.adminWalletAddress}
-                walletConnectProjectId={paymentSettings.walletConnectProjectId}
-                onSuccess={(txHash) => triggerDownload(txHash)}
-              />
+            paymentSettings?.enableCrypto && paymentSettings?.paymentMethods?.length > 0 ? (
+              <>
+                <button 
+                  onClick={() => setShowPaymentModal(true)}
+                  className={styles.buyBtn} 
+                  style={{
+                    background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+                    color: 'white', border: 'none', cursor: 'pointer',
+                    boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)'
+                  }}
+                >
+                  <span style={{ fontSize: '1.2rem', marginRight: '8px' }}>💎</span> 
+                  Buy Now with Crypto
+                </button>
+                <CryptoPaymentModal
+                  isOpen={showPaymentModal}
+                  onClose={() => setShowPaymentModal(false)}
+                  price={price}
+                  productId={productId}
+                  paymentMethods={paymentSettings.paymentMethods}
+                  walletConnectProjectId={paymentSettings.walletConnectProjectId}
+                  onSuccess={(txHash) => {
+                    if (txHash) triggerDownload(txHash);
+                  }}
+                />
+              </>
             ) : (
               <button 
                 className={styles.buyBtn} 

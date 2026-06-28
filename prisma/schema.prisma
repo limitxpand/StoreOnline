@@ -81,6 +81,8 @@ model Transaction {
   productId String
   amount    Float
   status    String   @default("completed") // completed, pending, failed
+  txHash    String?
+  network   String?
   createdAt DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
