@@ -3,6 +3,7 @@ import earningsStyles from './earnings.module.css';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { getRoyaltySettings } from "@/lib/settings";
 import { redirect } from "next/navigation";
 import WithdrawButton from './WithdrawButton';
 
@@ -16,6 +17,7 @@ export default async function Earnings() {
   }
 
   const developerId = session.user.id;
+  const royaltySettings = await getRoyaltySettings();
 
   // Fetch all royalties for this developer
   const royalties = await prisma.royalty.findMany({
@@ -81,9 +83,13 @@ export default async function Earnings() {
         <div className={earningsStyles.withdrawSection}>
           <div>
             <h3 className={styles.panelTitle} style={{ borderBottom: 'none', marginBottom: '0.5rem' }}>Request Withdrawal</h3>
-            <p className={earningsStyles.withdrawHelp}>Minimum withdrawal amount is $50. Payments are made in crypto (USDT, BTC, ETH).</p>
+            <p className={earningsStyles.withdrawHelp}>
+              Minimum withdrawal amount is ${royaltySettings.minPayoutThreshold}. Payments are made in crypto (USDT, BTC, ETH) on a {royaltySettings.payoutSchedule} basis.
+              <br/>
+              <span style={{color: 'var(--accent-primary)', fontSize: '0.85rem'}}>Current Platform Commission: {royaltySettings.platformCommission}%</span>
+            </p>
           </div>
-          <WithdrawButton availableAmount={availableAmount} />
+          <WithdrawButton availableAmount={availableAmount} minThreshold={royaltySettings.minPayoutThreshold} />
         </div>
       </div>
 

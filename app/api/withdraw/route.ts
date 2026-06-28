@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { getRoyaltySettings } from "@/lib/settings";
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,8 +20,10 @@ export async function POST(req: NextRequest) {
 
     const availableAmount = pendingRoyalties.reduce((sum, r) => sum + r.royaltyAmount, 0);
 
-    if (availableAmount < 50) {
-      return NextResponse.json({ error: "Minimum withdrawal amount is $50" }, { status: 400 });
+    const royaltySettings = await getRoyaltySettings();
+
+    if (availableAmount < royaltySettings.minPayoutThreshold) {
+      return NextResponse.json({ error: `Minimum withdrawal amount is $${royaltySettings.minPayoutThreshold}` }, { status: 400 });
     }
 
     // Check if there's already a pending withdrawal
@@ -32,16 +35,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "You already have a pending withdrawal request." }, { status: 400 });
     }
 
+    const withdrawalStatus = royaltySettings.autoApprovePayouts ? 'completed' : 'pending';
+
     // Create withdrawal
-    await prisma.withdrawal.create({
+    const withdrawal = await prisma.withdrawal.create({
       data: {
         developerId,
         amount: availableAmount,
-        status: 'pending'
+        status: withdrawalStatus
       }
     });
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    if (withdrawalStatus === 'completed') {
+      // Mark all pending royalties as paid
+      await prisma.royalty.updateMany({
+        where: { developerId, status: 'pending' },
+        data: { status: 'paid' }
+      });
+    }
+
+    return NextResponse.json({ success: true, status: withdrawalStatus }, { status: 200 });
 
   } catch (error: any) {
     console.error("Withdrawal error:", error);

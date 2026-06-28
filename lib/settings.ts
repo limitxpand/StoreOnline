@@ -28,8 +28,16 @@ export interface WebsiteSettings {
   enableDemoAd?: boolean;
 }
 
+export interface RoyaltySettings {
+  platformCommission: number;
+  minPayoutThreshold: number;
+  payoutSchedule: string;
+  autoApprovePayouts: boolean;
+}
+
 export interface AppSettings {
   website: WebsiteSettings;
+  royalty: RoyaltySettings;
 }
 
 const defaultSettings: AppSettings = {
@@ -59,6 +67,12 @@ const defaultSettings: AppSettings = {
     demoAdsenseCode: "",
     demoAdTimer: 15,
     enableDemoAd: false
+  },
+  royalty: {
+    platformCommission: 15,
+    minPayoutThreshold: 50,
+    payoutSchedule: "weekly",
+    autoApprovePayouts: false
   }
 };
 
@@ -81,14 +95,22 @@ export async function getSettings(): Promise<AppSettings> {
 
 export async function getWebsiteSettings(): Promise<WebsiteSettings> {
   const settings = await getSettings();
-  return settings.website;
+  return settings.website || defaultSettings.website;
+}
+
+export async function getRoyaltySettings(): Promise<RoyaltySettings> {
+  const settings = await getSettings();
+  return settings.royalty || defaultSettings.royalty;
 }
 
 export async function saveSettings(newSettings: Partial<AppSettings>) {
   try {
     const current = await getSettings();
     const updated = {
-      website: { ...current.website, ...newSettings.website }
+      ...current,
+      ...newSettings,
+      website: { ...current.website, ...newSettings.website },
+      royalty: { ...current.royalty, ...newSettings.royalty }
     };
     
     await prisma.setting.upsert({

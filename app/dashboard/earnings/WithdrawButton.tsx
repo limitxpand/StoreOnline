@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import earningsStyles from './earnings.module.css';
 
-export default function WithdrawButton({ availableAmount }: { availableAmount: number }) {
+export default function WithdrawButton({ availableAmount, minThreshold }: { availableAmount: number, minThreshold: number }) {
   const [loading, setLoading] = useState(false);
 
   const handleWithdraw = async () => {
-    if (availableAmount < 50) {
-      alert('Minimum withdrawal amount is $50.');
+    if (availableAmount < minThreshold) {
+      alert(`Minimum withdrawal amount is $${minThreshold}.`);
       return;
     }
 

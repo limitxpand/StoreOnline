@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { getRoyaltySettings } from "@/lib/settings";
 
 export async function GET(req: NextRequest) {
   try {
@@ -100,6 +101,24 @@ export async function POST(req: NextRequest) {
         status: "completed"
       }
     });
+
+    if (product.price > 0 && product.developerId) {
+      const royaltySettings = await getRoyaltySettings();
+      const platformFeePct = royaltySettings.platformCommission / 100;
+      const platformFee = product.price * platformFeePct;
+      const royaltyAmount = product.price - platformFee;
+
+      await prisma.royalty.create({
+        data: {
+          transactionId: transaction.id,
+          developerId: product.developerId,
+          saleAmount: product.price,
+          platformFee: platformFee,
+          royaltyAmount: royaltyAmount,
+          status: "pending"
+        }
+      });
+    }
 
     return NextResponse.json({ message: "Purchase registered", transaction }, { status: 201 });
   } catch (error: any) {

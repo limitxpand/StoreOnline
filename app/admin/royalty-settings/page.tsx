@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../settings/settings.module.css';
 
 export default function RoyaltySettings() {
@@ -11,6 +11,22 @@ export default function RoyaltySettings() {
     payoutSchedule: 'weekly',
     autoApprovePayouts: false
   });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/admin/royalty-settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.settings) {
+          setSettings(data.settings);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -18,14 +34,28 @@ export default function RoyaltySettings() {
     setSettings({ ...settings, [name]: val });
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/admin/royalty-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('Royalty settings saved successfully.');
+      } else {
+        setMessage(data.error || 'Failed to save settings.');
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage('An error occurred while saving.');
+    } finally {
       setSaving(false);
-      setMessage('Royalty settings saved successfully.');
       setTimeout(() => setMessage(''), 3000);
-    }, 800);
+    }
   };
 
   return (
@@ -39,6 +69,9 @@ export default function RoyaltySettings() {
         </div>
       )}
 
+      {loading ? (
+        <p>Loading settings...</p>
+      ) : (
       <form onSubmit={handleSave} className={styles.form}>
         <div className={styles.section}>
           <h3>Revenue Share</h3>
@@ -109,6 +142,7 @@ export default function RoyaltySettings() {
           {saving ? 'Saving...' : 'Save Settings'}
         </button>
       </form>
+      )}
     </div>
   );
 }
