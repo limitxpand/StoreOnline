@@ -52,21 +52,14 @@ export default function ProductActions({
       return;
     }
     
-    if (price > 0 && (!paymentSettings?.enableCrypto || !paymentSettings?.walletConnectProjectId)) {
-      alert("Payments are currently offline. Please contact support.");
-      return;
-    }
-    
-    // For free products
-    if (price === 0 && demoAdsenseCode && !adWatched) {
+    // Show ad if configured
+    if (demoAdsenseCode && !adWatched) {
       setShowAdModal(true);
       setTimeLeft(demoAdTimer);
       return;
     }
     
-    if (price === 0) {
-      triggerDownload();
-    }
+    triggerDownload();
   };
 
   const triggerDownload = async (txHash?: string) => {
@@ -109,33 +102,37 @@ export default function ProductActions({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
       {isLoggedIn ? (
-        price > 0 ? (
-          paymentSettings?.enableCrypto && paymentSettings?.walletConnectProjectId ? (
-            <WalletConnectButton 
-              price={price} 
-              cryptoCurrency={paymentSettings.cryptoCurrency}
-              adminWalletAddress={paymentSettings.adminWalletAddress}
-              walletConnectProjectId={paymentSettings.walletConnectProjectId}
-              onSuccess={(txHash) => triggerDownload(txHash)}
-            />
-          ) : (
-            <button 
-              className={styles.buyBtn} 
-              style={{ textAlign: 'center', background: '#374151', border: 'none', cursor: 'not-allowed', color: 'var(--text-primary)' }}
-              disabled
-            >
-              🔒 Purchasing Temporarily Disabled
-            </button>
-          )
-        ) : (
+        <>
+          {/* Always show the Free Demo Download Button */}
           <button 
             onClick={handleDownloadClick}
             className={styles.buyBtn} 
             style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }}
           >
-            {demoAdsenseCode && !adWatched ? '🎁 View our Sponsor to unlock your Free Demo' : '⬇️ Direct Download'}
+            {demoAdsenseCode && !adWatched ? '🎁 View our Sponsor to unlock your Free Demo' : '⬇️ Download Free Demo'}
           </button>
-        )
+          
+          {/* Show Buy Now Button if price > 0 */}
+          {price > 0 && (
+            paymentSettings?.enableCrypto && paymentSettings?.walletConnectProjectId ? (
+              <WalletConnectButton 
+                price={price} 
+                cryptoCurrency={paymentSettings.cryptoCurrency}
+                adminWalletAddress={paymentSettings.adminWalletAddress}
+                walletConnectProjectId={paymentSettings.walletConnectProjectId}
+                onSuccess={(txHash) => triggerDownload(txHash)}
+              />
+            ) : (
+              <button 
+                className={styles.buyBtn} 
+                style={{ textAlign: 'center', background: '#374151', border: 'none', cursor: 'not-allowed', color: 'var(--text-primary)' }}
+                disabled
+              >
+                🔒 Purchasing Temporarily Disabled
+              </button>
+            )
+          )}
+        </>
       ) : (
         <button 
           onClick={() => router.push('/login')}
