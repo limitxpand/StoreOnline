@@ -84,6 +84,9 @@ export default function AdminLayout({
           <Link href="/admin/pending-payments" className={styles.navLink}>
             <span className={styles.icon}>📝</span> Pending Payments
           </Link>
+          <Link href="/admin/payment-history" className={styles.navLink}>
+            <span className={styles.icon}>📋</span> Payment History
+          </Link>
           <Link href="/admin/seo-ads" className={styles.navLink}>
             <span className={styles.icon}>🚀</span> SEO & Ads
           </Link>
