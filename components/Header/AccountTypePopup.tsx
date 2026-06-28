@@ -14,7 +14,7 @@ export default function AccountTypePopup({ onClose }: { onClose: () => void }) {
       zIndex: 9999
     }}>
       <div style={{
-        background: 'var(--bg-card)',
+        background: 'var(--bg-secondary)',
         padding: '2.5rem',
         borderRadius: '16px',
         maxWidth: '650px',
@@ -28,7 +28,7 @@ export default function AccountTypePopup({ onClose }: { onClose: () => void }) {
           style={{ 
             position: 'absolute', 
             top: '15px', right: '15px', 
-            background: 'var(--bg-main)', 
+            background: 'var(--bg-primary)', 
             border: '1px solid var(--border-color)', 
             fontSize: '1.2rem', 
             cursor: 'pointer', 
@@ -51,7 +51,7 @@ export default function AccountTypePopup({ onClose }: { onClose: () => void }) {
           {/* Buyer Card */}
           <div style={{ 
             padding: '2rem 1.5rem', 
-            background: 'var(--bg-main)',
+            background: 'var(--bg-primary)',
             border: '1px solid var(--border-color)', 
             borderRadius: '12px', 
             textAlign: 'center',
@@ -92,7 +92,7 @@ export default function AccountTypePopup({ onClose }: { onClose: () => void }) {
           {/* Seller Card */}
           <div style={{ 
             padding: '2rem 1.5rem', 
-            background: 'var(--bg-main)',
+            background: 'var(--bg-primary)',
             border: '1px solid var(--border-color)', 
             borderRadius: '12px', 
             textAlign: 'center',

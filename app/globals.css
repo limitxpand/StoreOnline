@@ -193,3 +193,4 @@ html:not([data-theme='light']) .theme-logo-dark {
 .table-responsive table {
   min-width: 600px;
 }
+@media (max-width: 768px) { body { padding-bottom: 70px; } }
