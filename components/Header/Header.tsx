@@ -12,6 +12,8 @@ import AdminLogoutButton from './AdminLogoutButton';
 import RegisterButton from './RegisterButton';
 import ThemeToggle from './ThemeToggle';
 import MobileNav from './MobileNav';
+import MobileCategoryMenu from './MobileCategoryMenu';
+import { prisma } from '@/lib/prisma';
 
 export default async function Header() {
   const settings = await getWebsiteSettings();
@@ -25,6 +27,10 @@ export default async function Header() {
   const adminToken = cookieStore.get('admin_token');
   const isAdmin = !!adminToken;
   
+  const categories = await prisma.category.findMany({
+    orderBy: { name: 'asc' }
+  });
+  
   let dashboardLink = '/dashboard';
   if (isAdmin) {
     dashboardLink = '/admin/dashboard';
@@ -36,6 +42,7 @@ export default async function Header() {
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.logo}>
+          <MobileCategoryMenu categories={categories} />
           <Link href="/">
             {(settings.logoUrl || settings.logoLightUrl) ? (
               <>
