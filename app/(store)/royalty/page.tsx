@@ -69,7 +69,7 @@ export default function RoyaltyProgram() {
             </div>
           </div>
 
-          <div style={{ background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.8))', padding: '3rem', borderRadius: '16px', border: '1px solid var(--border-color)', textAlign: 'center' }}>
+          <div style={{ background: 'var(--hero-bg)', padding: '3rem', borderRadius: '16px', border: '1px solid var(--border-color)', textAlign: 'center' }}>
             <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Ready to monetize your code?</h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', maxWidth: '500px', margin: '0 auto 2rem auto' }}>
               Upload your MQL4, MQL5, or APK source code today. Once approved by our admins, it goes live in the marketplace immediately.

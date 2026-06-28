@@ -10,7 +10,7 @@ export default function BlogListing() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
       <main style={{ padding: '4rem 5%', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ color: 'white', fontSize: '3rem', marginBottom: '1rem', textAlign: 'center' }}>Trading Insights & <span className="gradient-text">News</span></h1>
+        <h1 style={{ color: 'var(--text-primary)', fontSize: '3rem', marginBottom: '1rem', textAlign: 'center' }}>Trading Insights & <span className="gradient-text">News</span></h1>
         <p style={{ color: 'var(--text-secondary)', textAlign: 'center', fontSize: '1.2rem', marginBottom: '3rem' }}>Discover the best EAs, trading strategies, and platform updates.</p>
 
         {/* Top Ad */}
@@ -26,7 +26,7 @@ export default function BlogListing() {
               </div>
               <div style={{ padding: '1.5rem' }}>
                 <span style={{ color: 'var(--accent-neon)', fontSize: '0.85rem', fontWeight: '600' }}>MARKET RESEARCH</span>
-                <h3 style={{ color: 'white', fontSize: '1.4rem', margin: '0.5rem 0' }}>Top 5 MT5 Expert Advisors in 2026</h3>
+                <h3 style={{ color: 'var(--text-primary)', fontSize: '1.4rem', margin: '0.5rem 0' }}>Top 5 MT5 Expert Advisors in 2026</h3>
                 <p style={{ color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: '1rem' }}>We analyzed the best-performing automated trading bots of the year. See which ones passed our strict risk-management tests...</p>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Published on Oct 24, 2026 • 5 min read</span>
               </div>
@@ -41,7 +41,7 @@ export default function BlogListing() {
               </div>
               <div style={{ padding: '1.5rem' }}>
                 <span style={{ color: 'var(--success)', fontSize: '0.85rem', fontWeight: '600' }}>SECURITY</span>
-                <h3 style={{ color: 'white', fontSize: '1.4rem', margin: '0.5rem 0' }}>Why License Protection Matters for Developers</h3>
+                <h3 style={{ color: 'var(--text-primary)', fontSize: '1.4rem', margin: '0.5rem 0' }}>Why License Protection Matters for Developers</h3>
                 <p style={{ color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: '1rem' }}>Piracy ruins the software industry. Learn how Store Online's built-in Hardware Lock protects your source code and boosts sales...</p>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Published on Oct 20, 2026 • 4 min read</span>
               </div>
