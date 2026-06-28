@@ -4,8 +4,11 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import AdBanner from '@/components/AdBanner';
+import { getWebsiteSettings } from '@/lib/settings';
 
 export default async function CustomerDashboard() {
+  const settings = await getWebsiteSettings();
   const session = await getServerSession(authOptions);
   
   if (!session || !session.user) {
@@ -110,6 +113,12 @@ export default async function CustomerDashboard() {
           </div>
         )}
       </div>
+
+      {settings.enableAdsense && (
+        <div style={{ marginTop: '3rem', width: '100%' }}>
+          <AdBanner slotId="customer_dashboard_bottom" />
+        </div>
+      )}
     </div>
   );
 }

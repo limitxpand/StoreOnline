@@ -2,6 +2,8 @@ import Header from '@/components/Header/Header';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import ProductCard from '@/components/ProductCard/ProductCard';
 import styles from './category.module.css';
+import AdBanner from '@/components/AdBanner';
+import { getWebsiteSettings } from '@/lib/settings';
 
 import { prisma } from '@/lib/prisma';
 
@@ -9,6 +11,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const resolvedParams = await params;
   const slug = resolvedParams.slug.join('/'); // handle if there are multiple parts somehow, or just take first
   const catSlug = resolvedParams.slug[resolvedParams.slug.length - 1]; // take the last part as the actual category slug
+
+  const settings = await getWebsiteSettings();
 
   // Try to find the category
   const category = await prisma.category.findUnique({
@@ -58,6 +62,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       {products.length === 0 && (
         <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)', border: '1px dashed var(--border-color)', borderRadius: '12px' }}>
           No products found in this category yet.
+        </div>
+      )}
+
+      {settings.enableAdsense && (
+        <div style={{ marginTop: '3rem', width: '100%' }}>
+          <AdBanner slotId="category_bottom" />
         </div>
       )}
     </>

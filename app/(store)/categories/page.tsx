@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import Header from '@/components/Header/Header';
 import Sidebar from '@/components/Sidebar/Sidebar';
+import AdBanner from '@/components/AdBanner';
+import { getWebsiteSettings } from '@/lib/settings';
 
-
-export default function AllCategories() {
+export default async function AllCategories() {
+  const settings = await getWebsiteSettings();
   const allCategories = [
     { name: 'MT5 Expert Advisors', slug: '/category/mt5/expert-advisors', icon: '📈', count: 124 },
     { name: 'MT5 Indicators', slug: '/category/mt5/indicators', icon: '📉', count: 89 },
@@ -51,6 +53,12 @@ export default function AllCategories() {
       <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)', border: '1px dashed var(--border-color)', borderRadius: '12px', marginTop: '2rem' }}>
         More categories coming soon...
       </div>
+
+      {settings.enableAdsense && (
+        <div style={{ marginTop: '3rem', width: '100%' }}>
+          <AdBanner slotId="categories_bottom" />
+        </div>
+      )}
     </>
   );
 }
