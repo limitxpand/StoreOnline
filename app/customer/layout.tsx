@@ -3,6 +3,7 @@ import AdBanner from '../../components/AdBanner';
 import styles from '../dashboard/dashboard.module.css';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import CustomerNav from './CustomerNav';
 
 export default async function CustomerLayout({
   children,
@@ -20,27 +21,7 @@ export default async function CustomerLayout({
           <span className={styles.roleBadge} style={{ color: 'var(--accent-secondary)', borderColor: 'rgba(14, 165, 233, 0.2)', background: 'rgba(14, 165, 233, 0.1)' }}>Customer</span>
         </div>
         
-        <nav className={styles.nav}>
-          <Link href="/customer/dashboard" className={styles.navLink}>
-            <span className={styles.icon}>📦</span> Already Downloaded Products
-          </Link>
-          <Link href="/customer/licenses" className={styles.navLink}>
-            <span className={styles.icon}>🔑</span> Licenses & Downloads
-          </Link>
-          <Link href="/customer/support" className={styles.navLink}>
-            <span className={styles.icon}>💬</span> Live Support
-          </Link>
-          <Link href="/customer/settings" className={styles.navLink}>
-            <span className={styles.icon}>⚙️</span> Account Settings
-          </Link>
-          <div className={styles.divider}></div>
-          <Link href="/" className={styles.navLink}>
-            <span className={styles.icon}>🔙</span> Back to Store
-          </Link>
-          <Link href="/login" className={`${styles.navLink} ${styles.logoutBtn}`}>
-            <span className={styles.icon}>🚪</span> Logout
-          </Link>
-        </nav>
+        <CustomerNav styles={styles} />
 
         {/* Sidebar Ad Placement */}
         <div style={{ padding: '1rem', marginTop: 'auto' }}>

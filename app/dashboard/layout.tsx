@@ -3,6 +3,7 @@ import AdBanner from '../../components/AdBanner';
 import styles from './dashboard.module.css';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import DashboardNav from './DashboardNav';
 
 export default async function DashboardLayout({
   children,
@@ -21,33 +22,7 @@ export default async function DashboardLayout({
           <span className={styles.roleBadge}>Contributor</span>
         </div>
         
-        <nav className={styles.nav}>
-          <Link href="/dashboard" className={styles.navLink}>
-            <span className={styles.icon}>📊</span> Overview
-          </Link>
-          <Link href="/dashboard/upload" className={styles.navLink}>
-            <span className={styles.icon}>📤</span> Upload Code
-          </Link>
-          <Link href="/dashboard/upload-apk" className={styles.navLink}>
-            <span className={styles.icon}>📱</span> Upload APK
-          </Link>
-          <Link href="/dashboard/earnings" className={styles.navLink}>
-            <span className={styles.icon}>💰</span> Earnings & Royalty
-          </Link>
-          <Link href="/dashboard/support" className={styles.navLink}>
-            <span className={styles.icon}>💬</span> Live Support
-          </Link>
-          <Link href="/dashboard/settings" className={styles.navLink}>
-            <span className={styles.icon}>⚙️</span> Account & Payment Settings
-          </Link>
-          <div className={styles.divider}></div>
-          <Link href="/" className={styles.navLink}>
-            <span className={styles.icon}>🔙</span> Back to Store
-          </Link>
-          <Link href="/login" className={`${styles.navLink} ${styles.logoutBtn}`}>
-            <span className={styles.icon}>🚪</span> Logout
-          </Link>
-        </nav>
+        <DashboardNav styles={styles} />
 
         {/* Sidebar Ad Placement */}
         <div style={{ padding: '1rem', marginTop: 'auto' }}>
