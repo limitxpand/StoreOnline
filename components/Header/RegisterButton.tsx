@@ -2,12 +2,20 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-export default function RegisterButton({ className }: { className: string }) {
+export default function RegisterButton({ className, text = "Register", isLink = false }: { className?: string, text?: string, isLink?: boolean }) {
   const [showPopup, setShowPopup] = useState(false);
 
   return (
     <>
-      <button className={className} onClick={() => setShowPopup(true)} style={{ fontFamily: 'inherit', fontSize: 'inherit', cursor: 'pointer' }}>Register</button>
+      <button 
+        className={className} 
+        onClick={() => setShowPopup(true)} 
+        style={isLink ? { 
+          fontFamily: 'inherit', fontSize: 'inherit', cursor: 'pointer', background: 'none', border: 'none', padding: 0, color: 'var(--accent-primary)', textDecoration: 'underline' 
+        } : { fontFamily: 'inherit', fontSize: 'inherit', cursor: 'pointer' }}
+      >
+        {text}
+      </button>
       
       {showPopup && (
         <div style={{

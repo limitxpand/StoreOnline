@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import RegisterButton from '@/components/Header/RegisterButton';
 import styles from '@/app/auth.module.css';
 
 export default function Login() {
@@ -117,7 +118,7 @@ export default function Login() {
         </form>
 
         <div className={styles.switchText}>
-          Don't have an account? <Link href="/register">Sign up</Link>
+          Don't have an account? <RegisterButton text="Sign up" isLink={true} />
         </div>
       </div>
     </div>
