@@ -36,6 +36,9 @@ export default function AdminLayout({
           <Link href="/admin/users" className={styles.navLink}>
             <span className={styles.icon}>👥</span> Manage Users
           </Link>
+          <Link href="/admin/support" className={styles.navLink}>
+            <span className={styles.icon}>💬</span> Support Tickets
+          </Link>
           <Link href="/admin/licenses" className={styles.navLink}>
             <span className={styles.icon}>🔑</span> Manage Licenses
           </Link>

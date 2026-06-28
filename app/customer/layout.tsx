@@ -22,10 +22,13 @@ export default async function CustomerLayout({
         
         <nav className={styles.nav}>
           <Link href="/customer/dashboard" className={styles.navLink}>
-            <span className={styles.icon}>📦</span> Purchased Products
+            <span className={styles.icon}>📦</span> Already Downloaded Products
           </Link>
           <Link href="/customer/licenses" className={styles.navLink}>
             <span className={styles.icon}>🔑</span> Licenses & Downloads
+          </Link>
+          <Link href="/customer/support" className={styles.navLink}>
+            <span className={styles.icon}>💬</span> Live Support
           </Link>
           <Link href="/customer/settings" className={styles.navLink}>
             <span className={styles.icon}>⚙️</span> Account Settings

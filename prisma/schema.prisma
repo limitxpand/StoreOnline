@@ -36,6 +36,8 @@ model User {
   licenses     License[]
   withdrawals  Withdrawal[]
   royalties    Royalty[]
+  tickets      Ticket[]
+  ticketMessages TicketMessage[]
 }
 
 model Category {
@@ -124,3 +126,26 @@ model Setting {
   id    String @id @default("global")
   data  Json
 }
+
+model Ticket {
+  id        String   @id @default(cuid())
+  subject   String
+  status    String   @default("open") // open, resolved
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  messages  TicketMessage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TicketMessage {
+  id        String   @id @default(cuid())
+  content   String
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderId  String   
+  sender    User     @relation(fields: [senderId], references: [id])
+  isAdmin   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+

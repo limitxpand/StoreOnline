@@ -4,7 +4,6 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import AccountSecurity from "@/components/AccountSecurity";
 
 export default async function CustomerDashboard() {
   const session = await getServerSession(authOptions);
@@ -60,8 +59,8 @@ export default async function CustomerDashboard() {
   return (
     <div>
       <div className={styles.pageHeader}>
-        <h1>My Purchased Products</h1>
-        <p>View all the products you have purchased from Store Online.</p>
+        <h1>Already Downloaded Products</h1>
+        <p>View all the products you have downloaded from Store Online.</p>
         {currentUser?.uid && (
           <div style={{ marginTop: '1rem', display: 'inline-block', background: 'var(--bg-tertiary)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
             <strong>Your Buyer UID:</strong> <span style={{ color: 'var(--accent-neon)', fontFamily: 'monospace' }}>{currentUser.uid}</span>
@@ -111,8 +110,6 @@ export default async function CustomerDashboard() {
           </div>
         )}
       </div>
-      
-      <AccountSecurity email={session.user.email!} />
     </div>
   );
 }
