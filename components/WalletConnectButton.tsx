@@ -31,17 +31,19 @@ let web3ModalInitialized = false;
 
 // Inner component to safely use hooks after initialization
 function InnerWalletButton({ 
-  price, 
+  price,
+  cryptoCurrency,
   adminWalletAddress, 
   onSuccess 
 }: { 
   price: number;
+  cryptoCurrency: string;
   adminWalletAddress: string;
   onSuccess: (txHash: string) => void;
 }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const { open } = useWeb3Modal();
-  const { isConnected } = useWeb3ModalAccount();
+  const { isConnected, chainId } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
 
   const handlePay = async () => {
@@ -57,20 +59,57 @@ function InnerWalletButton({
       const provider = new BrowserProvider(walletProvider as any);
       const signer = await provider.getSigner();
 
-      // Basic calculation
-      let demoPriceStr = price.toString();
-      if (price > 10) {
-        demoPriceStr = (price / 1000).toFixed(4); // just for safe demo purposes
+      let txHash = '';
+
+      if (cryptoCurrency === 'USDT') {
+        // Enforce Binance Smart Chain (chainId 56)
+        if (chainId !== 56) {
+          alert('Please switch your wallet to Binance Smart Chain (BSC) to pay with BEP20 USDT.');
+          open({ view: 'Networks' });
+          setIsProcessing(false);
+          return;
+        }
+
+        // BEP20 USDT Contract Address
+        const USDT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
+        
+        // Minimal ABI for ERC20 transfer
+        const erc20Abi = [
+          "function transfer(address to, uint256 amount) returns (bool)",
+          "function decimals() view returns (uint8)"
+        ];
+        
+        const { Contract } = await import('ethers');
+        const usdtContract = new Contract(USDT_ADDRESS, erc20Abi, signer);
+        
+        // USDT on BSC uses 18 decimals
+        const amountToPay = parseUnits(price.toString(), 18);
+        
+        console.log('Initiating USDT Transfer...');
+        const tx = await usdtContract.transfer(adminWalletAddress, amountToPay);
+        console.log('USDT Transaction sent:', tx.hash);
+        await tx.wait(1);
+        txHash = tx.hash;
+
+      } else {
+        // Native Transfer (BNB or ETH)
+        // Basic calculation for demo
+        let demoPriceStr = price.toString();
+        if (price > 10) {
+          demoPriceStr = (price / 1000).toFixed(4); // just for safe demo purposes
+        }
+
+        const tx = await signer.sendTransaction({
+          to: adminWalletAddress,
+          value: parseUnits(demoPriceStr, 18)
+        });
+
+        console.log('Transaction sent:', tx.hash);
+        await tx.wait(1);
+        txHash = tx.hash;
       }
 
-      const tx = await signer.sendTransaction({
-        to: adminWalletAddress,
-        value: parseUnits(demoPriceStr, 18)
-      });
-
-      console.log('Transaction sent:', tx.hash);
-      await tx.wait(1);
-      onSuccess(tx.hash);
+      onSuccess(txHash);
     } catch (err: any) {
       console.error("Payment failed", err);
       alert("Payment failed or was rejected. " + (err.message || ''));
@@ -172,6 +211,7 @@ export default function WalletConnectButton({
   return (
     <InnerWalletButton 
       price={price}
+      cryptoCurrency={cryptoCurrency}
       adminWalletAddress={adminWalletAddress}
       onSuccess={onSuccess}
     />
