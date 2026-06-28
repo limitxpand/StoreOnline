@@ -117,7 +117,7 @@ export default function ProductActions({
         onClick={handleShare}
         style={{ 
           background: 'var(--bg-tertiary)', 
-          color: 'white', 
+          color: 'var(--text-primary)', 
           border: '1px solid var(--border-color)', 
           padding: '0.8rem', 
           borderRadius: '8px', 

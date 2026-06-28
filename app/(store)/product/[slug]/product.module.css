@@ -24,7 +24,7 @@
 .logo h2 {
   font-size: 1.5rem;
   font-weight: 800;
-  color: white;
+  color: var(--text-primary);
 }
 
 .navLinks {
@@ -122,7 +122,7 @@
 .title {
   font-size: 2.5rem;
   font-weight: 800;
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
@@ -160,7 +160,7 @@
 }
 
 .features li {
-  color: white;
+  color: var(--text-primary);
   font-weight: 500;
   display: flex;
   align-items: center;

@@ -153,7 +153,7 @@ export default function SellerSettings() {
                 borderRadius: '8px',
                 border: '1px solid var(--border-color)',
                 background: 'var(--bg-tertiary)',
-                color: 'white'
+                color: 'var(--text-primary)'
               }}
             />
           </div>
@@ -236,7 +236,7 @@ export default function SellerSettings() {
             disabled={resetStatus.loading}
             style={{
               background: 'transparent',
-              color: 'white',
+              color: 'var(--text-primary)',
               padding: '0.8rem',
               border: '1px solid var(--border-color)',
               borderRadius: '8px',
