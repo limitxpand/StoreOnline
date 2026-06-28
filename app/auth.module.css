@@ -150,3 +150,23 @@
   color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  .authCard {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  .input {
+    min-height: 48px;
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+  .submitBtn {
+    min-height: 48px;
+  }
+}
+

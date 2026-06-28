@@ -72,6 +72,39 @@
   }
 }
 
+@media (max-width: 768px) {
+  .main {
+    padding: 1rem;
+    padding-bottom: 70px;
+  }
+  .productGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
+  .price {
+    font-size: 1.75rem;
+  }
+  .thumbnails {
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  .thumb {
+    flex-shrink: 0;
+    width: 70px;
+    height: 50px;
+  }
+  .actionBtns {
+    flex-direction: column;
+  }
+  .buyBtn, .cartBtn {
+    width: 100%;
+  }
+}
+
 .imageColumn {
   display: flex;
   flex-direction: column;

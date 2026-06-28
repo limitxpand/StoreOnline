@@ -193,7 +193,12 @@ html:not([data-theme='light']) .theme-logo-dark {
 .table-responsive table {
   min-width: 600px;
 }
-@media (max-width: 768px) { body { padding-bottom: 70px; } }
+@media (max-width: 768px) { 
+  body { 
+    padding-bottom: 60px; /* Adjusted for compact MobileNav */
+  } 
+}
+
 
 /* Popup Styles */
 .popupOverlay {
@@ -240,6 +245,9 @@ html:not([data-theme='light']) .theme-logo-dark {
 @media (max-width: 768px) {
   html, body {
     font-size: 14px; /* Scaled down base font size for mobile */
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
   }
 
   .container {

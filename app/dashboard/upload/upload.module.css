@@ -243,3 +243,34 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .inputGroup input,
+  .inputGroup select,
+  .inputGroup textarea {
+    min-height: 48px;
+    font-size: 16px;
+  }
+  .fileDropzone {
+    padding: 2rem 1rem;
+  }
+  .successCard {
+    padding: 2rem 1rem;
+  }
+  .successIcon {
+    font-size: 3.5rem;
+  }
+  .successTitle {
+    font-size: 1.5rem;
+  }
+  .submitBtn {
+    min-height: 48px;
+    font-size: 1rem;
+    padding: 1rem;
+  }
+}
+
