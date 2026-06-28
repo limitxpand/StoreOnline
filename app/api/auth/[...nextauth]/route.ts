@@ -72,6 +72,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Please verify your email address to log in.');
         }
 
+        if (user.isBanned) {
+          throw new Error('Your account has been banned. Please contact support.');
+        }
+
         return {
           id: user.id,
           email: user.email,
