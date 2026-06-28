@@ -1,131 +1,145 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../settings/settings.module.css';
+import dashboardStyles from '../../dashboard/dashboard.module.css';
 
 export default function PaymentSettings() {
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState({ text: '', type: '' });
   const [settings, setSettings] = useState({
-    cryptoEnabled: true,
-    nowpaymentsApiKey: 'NP_XXXXXXXXXXXXXXXXXXXXXXX',
-    btcWalletAddress: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
-    fiatEnabled: false,
-    stripeSecretKey: '',
-    stripePublishableKey: ''
+    enableCrypto: false,
+    walletConnectProjectId: '',
+    adminWalletAddress: '',
+    cryptoCurrency: 'USDT'
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    fetch('/api/admin/payment-settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.settings) {
+          setSettings({
+            enableCrypto: data.settings.enableCrypto ?? false,
+            walletConnectProjectId: data.settings.walletConnectProjectId ?? '',
+            adminWalletAddress: data.settings.adminWalletAddress ?? '',
+            cryptoCurrency: data.settings.cryptoCurrency ?? 'USDT'
+          });
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
     setSettings({ ...settings, [name]: val });
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setTimeout(() => {
+    setMessage({ text: '', type: '' });
+    
+    try {
+      const res = await fetch('/api/admin/payment-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage({ text: 'Payment gateways saved successfully.', type: 'success' });
+      } else {
+        setMessage({ text: data.message || 'Failed to save settings.', type: 'error' });
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage({ text: 'An error occurred while saving.', type: 'error' });
+    } finally {
       setSaving(false);
-      setMessage('Payment gateways saved successfully.');
-      setTimeout(() => setMessage(''), 3000);
-    }, 800);
+      setTimeout(() => setMessage({ text: '', type: '' }), 4000);
+    }
   };
+
+  if (loading) return <div>Loading settings...</div>;
 
   return (
     <div className={styles.container}>
-      <h2>Payment Gateways Configuration</h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Manage how your marketplace accepts payments from customers.</p>
+      <div className={dashboardStyles.pageHeader}>
+        <h1>Payment Gateways Configuration</h1>
+        <p>Manage how your marketplace accepts payments from customers.</p>
+      </div>
 
-      {message && (
-        <div className={styles.successBox}>
-          {message}
+      {message.text && (
+        <div className={message.type === 'success' ? styles.successBox : styles.errorBox}>
+          {message.text}
         </div>
       )}
 
       <form onSubmit={handleSave} className={styles.form}>
         <div className={styles.section}>
-          <h3>Crypto Payments (NowPayments)</h3>
+          <h3>Web3 Crypto Payments (WalletConnect)</h3>
           
           <div className={styles.checkboxGroup}>
             <input 
               type="checkbox" 
-              id="cryptoEnabled" 
-              name="cryptoEnabled" 
-              checked={settings.cryptoEnabled} 
+              id="enableCrypto" 
+              name="enableCrypto" 
+              checked={settings.enableCrypto} 
               onChange={handleChange} 
             />
-            <label htmlFor="cryptoEnabled">Enable Crypto Payments</label>
+            <label htmlFor="enableCrypto">Enable Direct Crypto Payments</label>
           </div>
 
-          {settings.cryptoEnabled && (
+          {settings.enableCrypto && (
             <>
-              <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
-                <label>NowPayments API Key</label>
+              <div className={styles.formGroup} style={{ marginTop: '1.5rem' }}>
+                <label>WalletConnect Project ID</label>
                 <input 
                   type="password" 
-                  name="nowpaymentsApiKey" 
-                  value={settings.nowpaymentsApiKey} 
+                  name="walletConnectProjectId" 
+                  value={settings.walletConnectProjectId} 
                   onChange={handleChange} 
+                  placeholder="Get this from cloud.walletconnect.com"
                   required 
                 />
+                <small style={{ color: 'var(--text-secondary)' }}>Required to enable Web3Modal for mobile wallet connections.</small>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>Backup Receiving BTC Wallet</label>
-                <input 
-                  type="text" 
-                  name="btcWalletAddress" 
-                  value={settings.btcWalletAddress} 
-                  onChange={handleChange} 
-                  required 
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        <div className={styles.section}>
-          <h3>Fiat Payments (Credit/Debit Card)</h3>
-          
-          <div className={styles.checkboxGroup}>
-            <input 
-              type="checkbox" 
-              id="fiatEnabled" 
-              name="fiatEnabled" 
-              checked={settings.fiatEnabled} 
-              onChange={handleChange} 
-            />
-            <label htmlFor="fiatEnabled">Enable Stripe Payments</label>
-          </div>
-
-          {settings.fiatEnabled && (
-            <>
-              <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
-                <label>Stripe Publishable Key</label>
-                <input 
-                  type="text" 
-                  name="stripePublishableKey" 
-                  value={settings.stripePublishableKey} 
-                  onChange={handleChange} 
-                  required 
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Stripe Secret Key</label>
-                <input 
-                  type="password" 
-                  name="stripeSecretKey" 
-                  value={settings.stripeSecretKey} 
-                  onChange={handleChange} 
-                  required 
-                />
+              <div className={styles.row}>
+                <div className={styles.formGroup}>
+                  <label>Receiving Wallet Address</label>
+                  <input 
+                    type="text" 
+                    name="adminWalletAddress" 
+                    value={settings.adminWalletAddress} 
+                    onChange={handleChange} 
+                    placeholder="0x..."
+                    required 
+                  />
+                  <small style={{ color: 'var(--text-secondary)' }}>Your wallet address where funds will be sent.</small>
+                </div>
+                
+                <div className={styles.formGroup}>
+                  <label>Accepted Cryptocurrency</label>
+                  <select name="cryptoCurrency" value={settings.cryptoCurrency} onChange={handleChange}>
+                    <option value="USDT">USDT (Tether)</option>
+                    <option value="ETH">Ethereum (ETH)</option>
+                    <option value="BNB">Binance Coin (BNB)</option>
+                  </select>
+                </div>
               </div>
             </>
           )}
         </div>
 
         <button type="submit" className={styles.saveBtn} disabled={saving}>
-          {saving ? 'Saving...' : 'Save Settings'}
+          {saving ? 'Saving...' : 'Save Configuration'}
         </button>
       </form>
     </div>

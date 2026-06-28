@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../app/(store)/product/[slug]/product.module.css';
+import WalletConnectButton from './WalletConnectButton';
 
 export default function ProductActions({ 
   productId, 
@@ -9,14 +10,18 @@ export default function ProductActions({
   productTitle, 
   isLoggedIn,
   demoAdsenseCode,
-  demoAdTimer = 15
+  demoAdTimer = 15,
+  price = 0,
+  paymentSettings
 }: { 
   productId: string, 
   downloadUrl: string, 
   productTitle: string, 
   isLoggedIn?: boolean,
   demoAdsenseCode?: string,
-  demoAdTimer?: number
+  demoAdTimer?: number,
+  price?: number,
+  paymentSettings?: any
 }) {
   const [copied, setCopied] = useState(false);
   const [showAdModal, setShowAdModal] = useState(false);
@@ -47,22 +52,30 @@ export default function ProductActions({
       return;
     }
     
-    if (demoAdsenseCode && !adWatched) {
+    if (price > 0 && (!paymentSettings?.enableCrypto || !paymentSettings?.walletConnectProjectId)) {
+      alert("Payments are currently offline. Please contact support.");
+      return;
+    }
+    
+    // For free products
+    if (price === 0 && demoAdsenseCode && !adWatched) {
       setShowAdModal(true);
       setTimeLeft(demoAdTimer);
       return;
     }
     
-    triggerDownload();
+    if (price === 0) {
+      triggerDownload();
+    }
   };
 
-  const triggerDownload = async () => {
+  const triggerDownload = async (txHash?: string) => {
     try {
       // Register purchase/download
       await fetch('/api/customer/purchases', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId })
+        body: JSON.stringify({ productId, txHash })
       });
       
       // Trigger download
@@ -96,13 +109,33 @@ export default function ProductActions({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
       {isLoggedIn ? (
-        <button 
-          onClick={handleDownloadClick}
-          className={styles.buyBtn} 
-          style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }}
-        >
-          {demoAdsenseCode && !adWatched ? '🎁 View our Sponsor to unlock your Free Demo' : '⬇️ Direct Download'}
-        </button>
+        price > 0 ? (
+          paymentSettings?.enableCrypto && paymentSettings?.walletConnectProjectId ? (
+            <WalletConnectButton 
+              price={price} 
+              cryptoCurrency={paymentSettings.cryptoCurrency}
+              adminWalletAddress={paymentSettings.adminWalletAddress}
+              walletConnectProjectId={paymentSettings.walletConnectProjectId}
+              onSuccess={(txHash) => triggerDownload(txHash)}
+            />
+          ) : (
+            <button 
+              className={styles.buyBtn} 
+              style={{ textAlign: 'center', background: '#374151', border: 'none', cursor: 'not-allowed', color: 'var(--text-primary)' }}
+              disabled
+            >
+              🔒 Purchasing Temporarily Disabled
+            </button>
+          )
+        ) : (
+          <button 
+            onClick={handleDownloadClick}
+            className={styles.buyBtn} 
+            style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }}
+          >
+            {demoAdsenseCode && !adWatched ? '🎁 View our Sponsor to unlock your Free Demo' : '⬇️ Direct Download'}
+          </button>
+        )
       ) : (
         <button 
           onClick={() => router.push('/login')}

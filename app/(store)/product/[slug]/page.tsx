@@ -7,12 +7,13 @@ import ProductActions from '@/components/ProductActions';
 
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getWebsiteSettings } from '@/lib/settings';
+import { getWebsiteSettings, getPaymentSettings } from '@/lib/settings';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const session = await getServerSession(authOptions);
   const settings = await getWebsiteSettings();
+  const paymentSettings = await getPaymentSettings();
   
   const product = await prisma.product.findUnique({
     where: { slug: resolvedParams.slug },
@@ -103,6 +104,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               isLoggedIn={!!session}
               demoAdsenseCode={settings.enableDemoAd ? settings.demoAdsenseCode : undefined}
               demoAdTimer={settings.demoAdTimer}
+              price={product.price}
+              paymentSettings={paymentSettings}
             />
 
             {/* AdSense Placement */}

@@ -35,9 +35,17 @@ export interface RoyaltySettings {
   autoApprovePayouts: boolean;
 }
 
+export interface PaymentSettings {
+  enableCrypto: boolean;
+  walletConnectProjectId: string;
+  adminWalletAddress: string;
+  cryptoCurrency: string;
+}
+
 export interface AppSettings {
   website: WebsiteSettings;
   royalty: RoyaltySettings;
+  payment: PaymentSettings;
 }
 
 const defaultSettings: AppSettings = {
@@ -73,6 +81,12 @@ const defaultSettings: AppSettings = {
     minPayoutThreshold: 50,
     payoutSchedule: "weekly",
     autoApprovePayouts: false
+  },
+  payment: {
+    enableCrypto: false,
+    walletConnectProjectId: "",
+    adminWalletAddress: "",
+    cryptoCurrency: "USDT" // USDT, ETH, BNB
   }
 };
 
@@ -101,6 +115,11 @@ export async function getWebsiteSettings(): Promise<WebsiteSettings> {
 export async function getRoyaltySettings(): Promise<RoyaltySettings> {
   const settings = await getSettings();
   return settings.royalty || defaultSettings.royalty;
+}
+
+export async function getPaymentSettings(): Promise<PaymentSettings> {
+  const settings = await getSettings();
+  return settings.payment || defaultSettings.payment;
 }
 
 export async function saveSettings(newSettings: Partial<AppSettings>) {
