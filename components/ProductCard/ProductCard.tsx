@@ -30,6 +30,9 @@ export default function ProductCard({
       <div className={styles.imageContainer}>
         {/* Using a placeholder div instead of Image for MVP scaffolding */}
         <div className={styles.imagePlaceholder} style={{ backgroundImage: `url(${image})` }}>
+          <div className={styles.demoBadge}>
+            <span style={{fontSize: '1rem'}}>⏱️</span> 20 Days Free Demo
+          </div>
           <span className={styles.badge}>{type}</span>
           <button className={styles.wishlistBtn}>♡</button>
         </div>

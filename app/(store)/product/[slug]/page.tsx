@@ -77,11 +77,22 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </p>
 
             <ul className={styles.features}>
+              <li>✅ 20 Days Free Demo (Full Access)</li>
               <li>✅ Ready for {product.platform}</li>
               <li>✅ Instant Download</li>
               <li>✅ Safe & Verified Source</li>
               <li>✅ Free Updates</li>
             </ul>
+
+            <div style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
+              <h4 style={{ color: 'var(--accent-primary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>⏱️</span> 20 Days Free Trial
+              </h4>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                You can download and use this {product.platform} {product.category?.name} completely free for 20 days without any limitations. 
+                To continue using it after the trial period, simply click the <strong>Live Chat</strong> button inside the {product.platform} terminal EA/Indicator panel to make your payment securely.
+              </p>
+            </div>
 
             <ProductActions 
               productId={product.id}
