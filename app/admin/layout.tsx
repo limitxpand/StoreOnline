@@ -11,6 +11,7 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [notifications, setNotifications] = useState({ pendingProducts: 0, openTickets: 0, pendingWithdrawals: 0, total: 0 });
+  const [injectionUrl, setInjectionUrl] = useState('https://dashboard-ff4p.vercel.app/');
 
   useEffect(() => {
     if (pathname === '/admin/login') return;
@@ -25,7 +26,23 @@ export default function AdminLayout({
         console.error(e);
       }
     };
+    
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch('/api/admin/settings');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.settings?.injectionModuleUrl) {
+            setInjectionUrl(data.settings.injectionModuleUrl);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
     fetchNotifications();
+    fetchSettings();
     const interval = setInterval(fetchNotifications, 15000); // Check every 15 seconds
     return () => clearInterval(interval);
   }, [pathname]);
@@ -68,6 +85,9 @@ export default function AdminLayout({
           <Link href="/admin/licenses" className={styles.navLink}>
             <span className={styles.icon}>🔑</span> Manage Licenses
           </Link>
+          <a href={injectionUrl} target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
+            <span className={styles.icon}>💉</span> Injection Module
+          </a>
           <Link href="/admin/royalty-settings" className={styles.navLink}>
             <span className={styles.icon}>💰</span> Royalty Rules
           </Link>
@@ -93,6 +113,9 @@ export default function AdminLayout({
           <div className={styles.divider}></div>
           <Link href="/admin/settings" className={styles.navLink}>
             <span className={styles.icon}>⚙️</span> Site Settings
+          </Link>
+          <Link href="/admin/database-settings" className={styles.navLink}>
+            <span className={styles.icon}>🗄️</span> Database Setting
           </Link>
           <Link href="/admin/categories" className={styles.navLink}>
             <span className={styles.icon}>📁</span> Categories

@@ -26,6 +26,7 @@ export interface WebsiteSettings {
   demoAdsenseCode?: string;
   demoAdTimer?: number;
   enableDemoAd?: boolean;
+  injectionModuleUrl?: string;
 }
 
 export interface RoyaltySettings {
@@ -81,7 +82,8 @@ const defaultSettings: AppSettings = {
     floatingLogoShadow: false,
     demoAdsenseCode: "",
     demoAdTimer: 15,
-    enableDemoAd: false
+    enableDemoAd: false,
+    injectionModuleUrl: "https://dashboard-ff4p.vercel.app/"
   },
   royalty: {
     platformCommission: 15,

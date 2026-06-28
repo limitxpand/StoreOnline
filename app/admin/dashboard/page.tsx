@@ -1,5 +1,6 @@
 import styles from '../../dashboard/dashboard.module.css';
 import { prisma } from '@/lib/prisma';
+import { getWebsiteSettings } from '@/lib/settings';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -34,6 +35,9 @@ export default async function AdminDashboard() {
 
   const totalSales = totalSalesAgg._sum.amount || 0;
   const platformRevenue = platformRevenueAgg._sum.platformFee || 0;
+  
+  const settings = await getWebsiteSettings();
+  const injectionUrl = settings.injectionModuleUrl || 'https://dashboard-ff4p.vercel.app/';
 
   return (
     <div>
@@ -70,6 +74,15 @@ export default async function AdminDashboard() {
             </div>
           </div>
         </Link>
+        <a href={injectionUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', border: '1px solid var(--accent-primary)', ...({ ':hover': { transform: 'scale(1.02)' } } as any) }}>
+            <div className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.1)', color: 'var(--accent-primary)' }}>💉</div>
+            <div className={styles.statInfo}>
+              <h3>Injection Module</h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Launch External Dashboard</p>
+            </div>
+          </div>
+        </a>
         <Link href="/admin/pending-products" style={{ textDecoration: 'none', color: 'inherit' }}>
           <div className={styles.statCard} style={{ cursor: 'pointer', transition: 'transform 0.2s', position: 'relative', ...({ ':hover': { transform: 'scale(1.02)' } } as any) }}>
             {pendingProducts > 0 && (

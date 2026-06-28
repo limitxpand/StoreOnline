@@ -26,7 +26,8 @@ export default function WebsiteSettings() {
     logoRemoveBg: false,
     floatingLogoRadius: 'none',
     floatingLogoRemoveBg: false,
-    floatingLogoShadow: false
+    floatingLogoShadow: false,
+    injectionModuleUrl: 'https://dashboard-ff4p.vercel.app/'
   });
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
 
@@ -260,6 +261,11 @@ export default function WebsiteSettings() {
           <div className={styles.formGroup}>
             <label>Contact Email</label>
             <input type="email" name="contactEmail" value={settings.contactEmail} onChange={handleChange} required />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Injection Module URL</label>
+            <input type="url" name="injectionModuleUrl" value={settings.injectionModuleUrl} onChange={handleChange} />
           </div>
         </div>
 
