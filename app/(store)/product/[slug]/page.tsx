@@ -3,6 +3,7 @@ import AdBanner from '@/components/AdBanner';
 import styles from './product.module.css';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
+import ProductButtons from './ProductButtons';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
@@ -65,7 +66,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div className={styles.priceBlock}>
-              <span className={styles.price}>${product.price.toFixed(2)}</span>
+              <span className={styles.price}>Free</span>
+              <span style={{ marginLeft: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem', textDecoration: 'line-through' }}>
+                ${product.price.toFixed(2)}
+              </span>
             </div>
 
             <p className={styles.description}>
@@ -74,19 +78,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
             <ul className={styles.features}>
               <li>✅ Ready for {product.platform}</li>
-              <li>✅ Instant Delivery</li>
+              <li>✅ Instant Direct Download</li>
               <li>✅ Protected via Custom License Module</li>
               <li>✅ Free Updates</li>
             </ul>
 
-            <Link href={`/checkout/${resolvedParams.slug}`} className={styles.buyBtn}>
-              Buy Now with Crypto
-            </Link>
-
-            <div className={styles.guarantee}>
-              <span style={{ fontSize: '1.2rem' }}>🛡️</span>
-              <span>Secure checkout provided by Cryptomus. Instant license delivery.</span>
-            </div>
+            <ProductButtons downloadUrl={product.compiledFileUrl || product.sourceFileUrl || '#'} />
 
             {/* AdSense Placement */}
             <div style={{ width: '100%', marginTop: '2rem' }}>
