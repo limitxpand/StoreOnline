@@ -9,6 +9,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { cookies } from 'next/headers';
 import LogoutButton from './LogoutButton';
 import AdminLogoutButton from './AdminLogoutButton';
+import RegisterButton from './RegisterButton';
 
 export default async function Header() {
   const settings = await getWebsiteSettings();
@@ -92,7 +93,7 @@ export default async function Header() {
           ) : (
             <>
               <Link href="/login" className={styles.loginBtn}>Login</Link>
-              <Link href="/register" className={styles.registerBtn}>Register</Link>
+              <RegisterButton className={styles.registerBtn} />
             </>
           )}
         </div>
