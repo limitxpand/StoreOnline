@@ -15,11 +15,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
   const filter = typeof resolvedParams?.filter === 'string' ? resolvedParams.filter : 'all';
 
   const whereClause: any = { status: 'published' };
-  
+
   if (search) {
     whereClause.OR = [
       { title: { contains: search, mode: 'insensitive' } },
-      { description: { contains: search, mode: 'insensitive' } }
+      { description: { contains: search, mode: 'insensitive' } },
+      { developer: { uid: { contains: search, mode: 'insensitive' } } }
     ];
   }
 
@@ -91,7 +92,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
                     key={product.id}
                     title={product.title}
                     slug={product.slug}
-                    category={product.category.name}
+                    category={product.category?.name || 'Uncategorized'}
                     type={product.platform}
                     price={product.price}
                     rating={5.0} // Placeholder until review model exists

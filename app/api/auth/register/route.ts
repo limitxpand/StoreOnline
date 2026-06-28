@@ -35,6 +35,10 @@ export async function POST(req: Request) {
     // Generate Verification Token
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
+    // Generate UID
+    const randomId = Math.floor(100000 + Math.random() * 900000).toString();
+    const uid = `UID-${randomId}`;
+
     // Create user
     const user = await prisma.user.create({
       data: {
@@ -44,6 +48,7 @@ export async function POST(req: Request) {
         role: dbRole,
         isVerified: false,
         verificationToken,
+        uid,
       },
     });
 

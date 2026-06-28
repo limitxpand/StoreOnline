@@ -19,7 +19,8 @@ export default async function AdminSellersPage({
         OR: [
           { name: { contains: q, mode: 'insensitive' } },
           { email: { contains: q, mode: 'insensitive' } },
-          { bep20Address: { contains: q, mode: 'insensitive' } }
+          { bep20Address: { contains: q, mode: 'insensitive' } },
+          { uid: { contains: q, mode: 'insensitive' } }
         ]
       } : {})
     },
@@ -44,7 +45,7 @@ export default async function AdminSellersPage({
       </div>
 
       <div style={{ marginBottom: '2rem' }}>
-        <AdminSearch placeholder="Search by name, email, or BEP-20 address..." />
+        <AdminSearch placeholder="Search by name, email, UID, or BEP-20 address..." />
       </div>
 
       <div className={styles.panel}>
@@ -53,6 +54,7 @@ export default async function AdminSellersPage({
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
                 <th style={{ padding: '1rem 0' }}>Seller Name</th>
+                <th style={{ padding: '1rem 0' }}>UID</th>
                 <th style={{ padding: '1rem 0' }}>Email</th>
                 <th style={{ padding: '1rem 0' }}>Products</th>
                 <th style={{ padding: '1rem 0' }}>BEP-20 Address (USDT/BNB)</th>
@@ -69,6 +71,9 @@ export default async function AdminSellersPage({
                       </div>
                       <span style={{ fontWeight: '500' }}>{seller.name || 'Unknown'}</span>
                     </div>
+                  </td>
+                  <td style={{ padding: '1rem 0' }}>
+                    <span style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{seller.uid || '-'}</span>
                   </td>
                   <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{seller.email}</td>
                   <td style={{ padding: '1rem 0' }}>

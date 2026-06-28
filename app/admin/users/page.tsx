@@ -17,7 +17,8 @@ export default async function UserManagement({
       OR: [
         { name: { contains: q, mode: 'insensitive' } },
         { email: { contains: q, mode: 'insensitive' } },
-        { username: { contains: q, mode: 'insensitive' } }
+        { username: { contains: q, mode: 'insensitive' } },
+        { uid: { contains: q, mode: 'insensitive' } }
       ]
     } : {},
     include: {
@@ -34,14 +35,15 @@ export default async function UserManagement({
       <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Manage all registered users across the platform.</p>
 
       <div style={{ marginBottom: '2rem' }}>
-        <AdminSearch placeholder="Search by name, email, or username..." />
+        <AdminSearch placeholder="Search by name, email, username, or UID..." />
       </div>
 
       <div className={styles.section}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-              <th style={{ padding: '1rem 0' }}>Name / Email</th>
+            <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
+              <th style={{ padding: '1rem 0' }}>User</th>
+              <th style={{ padding: '1rem 0' }}>UID</th>
               <th style={{ padding: '1rem 0' }}>Role</th>
               <th style={{ padding: '1rem 0' }}>Purchases</th>
               <th style={{ padding: '1rem 0', textAlign: 'right' }}>Actions</th>
@@ -50,13 +52,16 @@ export default async function UserManagement({
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--text-muted)' }}>No users found.</td>
+                <td colSpan={5} style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--text-muted)' }}>No users found.</td>
               </tr>
             ) : users.map(u => (
               <tr key={u.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                 <td style={{ padding: '1rem 0' }}>
                   <div style={{ fontWeight: 500 }}>{u.name || u.username || 'Unnamed'}</div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{u.email}</div>
+                </td>
+                <td style={{ padding: '1rem 0' }}>
+                  <span style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{u.uid || '-'}</span>
                 </td>
                 <td style={{ padding: '1rem 0' }}>
                   <span style={{ 

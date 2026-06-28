@@ -19,7 +19,8 @@ export default async function BuyersManagement({
         OR: [
           { name: { contains: q, mode: 'insensitive' } },
           { email: { contains: q, mode: 'insensitive' } },
-          { username: { contains: q, mode: 'insensitive' } }
+          { username: { contains: q, mode: 'insensitive' } },
+          { uid: { contains: q, mode: 'insensitive' } }
         ]
       } : {})
     },
@@ -37,7 +38,7 @@ export default async function BuyersManagement({
       <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>View and search all registered buyers (customers) on the platform.</p>
 
       <div style={{ marginBottom: '2rem' }}>
-        <AdminSearch placeholder="Search by name, email, or username..." />
+        <AdminSearch placeholder="Search by name, email, username, or UID..." />
       </div>
 
       <div className={styles.section}>
@@ -45,6 +46,7 @@ export default async function BuyersManagement({
           <thead>
             <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
               <th style={{ padding: '1rem 0' }}>Name / Email</th>
+              <th style={{ padding: '1rem 0' }}>UID</th>
               <th style={{ padding: '1rem 0' }}>Total Purchases</th>
               <th style={{ padding: '1rem 0', textAlign: 'right' }}>Actions</th>
             </tr>
@@ -59,6 +61,9 @@ export default async function BuyersManagement({
                 <td style={{ padding: '1rem 0' }}>
                   <div style={{ fontWeight: 500 }}>{u.name || u.username || 'Unnamed'}</div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{u.email}</div>
+                </td>
+                <td style={{ padding: '1rem 0' }}>
+                  <span style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{u.uid || '-'}</span>
                 </td>
                 <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{u._count.transactions} items</td>
                 <td style={{ padding: '1rem 0', textAlign: 'right' }}>

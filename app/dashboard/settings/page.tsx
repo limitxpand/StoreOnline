@@ -7,6 +7,7 @@ export default function SellerSettings() {
   const { data: session } = useSession();
   const [bep20Address, setBep20Address] = useState('');
   const [bep20QrUrl, setBep20QrUrl] = useState('');
+  const [uid, setUid] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
@@ -22,6 +23,7 @@ export default function SellerSettings() {
         const data = await res.json();
         setBep20Address(data.bep20Address || '');
         setBep20QrUrl(data.bep20QrUrl || '');
+        setUid(data.uid || '');
       }
     } catch (error) {
       console.error('Failed to load profile');
@@ -38,7 +40,7 @@ export default function SellerSettings() {
     formData.append('file', file);
     
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch('/api/upload-image', {
         method: 'POST',
         body: formData
       });
@@ -85,6 +87,11 @@ export default function SellerSettings() {
       <div className={styles.pageHeader}>
         <h1>Payment Settings</h1>
         <p>Update your BEP-20 (USDT/BNB) details to receive royalties.</p>
+        {uid && (
+          <div style={{ marginTop: '1rem', display: 'inline-block', background: 'var(--bg-tertiary)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+            <strong>Your Store UID:</strong> <span style={{ color: 'var(--accent-neon)', fontFamily: 'monospace' }}>{uid}</span>
+          </div>
+        )}
       </div>
 
       <div className={styles.panel} style={{ maxWidth: '600px' }}>

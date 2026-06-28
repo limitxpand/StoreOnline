@@ -12,6 +12,11 @@ export default async function CustomerDashboard() {
     redirect("/login");
   }
 
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { uid: true }
+  });
+
   // Fetch all completed transactions for this user
   const transactions = await prisma.transaction.findMany({
     where: { 
@@ -55,6 +60,11 @@ export default async function CustomerDashboard() {
       <div className={styles.pageHeader}>
         <h1>My Purchased Products</h1>
         <p>View all the products you have purchased from Store Online.</p>
+        {currentUser?.uid && (
+          <div style={{ marginTop: '1rem', display: 'inline-block', background: 'var(--bg-tertiary)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+            <strong>Your Buyer UID:</strong> <span style={{ color: 'var(--accent-neon)', fontFamily: 'monospace' }}>{currentUser.uid}</span>
+          </div>
+        )}
       </div>
 
       <div className={styles.panel}>
