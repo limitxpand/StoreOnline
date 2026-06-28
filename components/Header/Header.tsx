@@ -10,6 +10,7 @@ import { cookies } from 'next/headers';
 import LogoutButton from './LogoutButton';
 import AdminLogoutButton from './AdminLogoutButton';
 import RegisterButton from './RegisterButton';
+import ThemeToggle from './ThemeToggle';
 
 export default async function Header() {
   const settings = await getWebsiteSettings();
@@ -70,11 +71,13 @@ export default async function Header() {
             <Link href="/royalty" style={{ color: 'var(--accent-secondary)', textDecoration: 'none', transition: 'color 0.2s' }}>Royalty Program</Link>
             <Link href="/blog" style={{ color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.2s' }}>Blog</Link>
           </div>
-          <button className={styles.iconBtn}>🌙</button>
-          <div className={styles.cartContainer}>
-            <button className={styles.iconBtn}>🛒</button>
-            <span className={styles.cartBadge}>3</span>
-          </div>
+          <ThemeToggle className={styles.iconBtn} />
+          <Link href="/cart" style={{ textDecoration: 'none' }}>
+            <div className={styles.cartContainer}>
+              <button className={styles.iconBtn} style={{ background: 'transparent', border: 'none' }}>🛒</button>
+              <span className={styles.cartBadge}>0</span>
+            </div>
+          </Link>
           
           {isAdmin ? (
             <>

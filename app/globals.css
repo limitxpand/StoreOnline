@@ -130,3 +130,23 @@ button {
     flex-direction: column;
   }
 }
+[data-theme='light'] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --accent-primary: #4338ca;
+  --accent-secondary: #0284c7;
+  --accent-neon: #2563eb;
+  --accent-neon-glow: rgba(37, 99, 235, 0.2);
+  
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+
+  --border-color: rgba(15, 23, 42, 0.1);
+}
