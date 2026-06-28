@@ -5,8 +5,12 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import ProductActions from '@/components/ProductActions';
 
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
+  const session = await getServerSession(authOptions);
   
   const product = await prisma.product.findUnique({
     where: { slug: resolvedParams.slug },
@@ -56,7 +60,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
           {/* Right Column - Info */}
           <div className={styles.infoColumn}>
-            <span className={styles.categoryBadge}>{product.platform} {product.category?.name}</span>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <span className={styles.categoryBadge}>{product.platform} {product.category?.name}</span>
+              {product.pid && <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontFamily: 'monospace' }}>PID: {product.pid}</span>}
+            </div>
             <h1 className={styles.title}>{product.title}</h1>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>By {product.developer?.name || 'Unknown'}</p>
             
@@ -79,6 +86,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <ProductActions 
               downloadUrl={product.compiledFileUrl || product.sourceFileUrl || '#'} 
               productTitle={product.title} 
+              isLoggedIn={!!session}
             />
 
             {/* AdSense Placement */}

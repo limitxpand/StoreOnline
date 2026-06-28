@@ -69,9 +69,19 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Generate unique PID
+    let isPidUnique = false;
+    let pid = '';
+    while (!isPidUnique) {
+      pid = `PID-${Math.floor(100000 + Math.random() * 900000)}`;
+      const existing = await prisma.product.findUnique({ where: { pid } });
+      if (!existing) isPidUnique = true;
+    }
+
     // Insert Product into Database
     const product = await prisma.product.create({
       data: {
+        pid,
         title,
         description,
         price,

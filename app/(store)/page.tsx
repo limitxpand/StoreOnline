@@ -20,7 +20,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
     whereClause.OR = [
       { title: { contains: search, mode: 'insensitive' } },
       { description: { contains: search, mode: 'insensitive' } },
-      { developer: { uid: { contains: search, mode: 'insensitive' } } }
+      { developer: { uid: { contains: search, mode: 'insensitive' } } },
+      { pid: { contains: search, mode: 'insensitive' } }
     ];
   }
 

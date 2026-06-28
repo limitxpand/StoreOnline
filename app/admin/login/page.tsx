@@ -12,11 +12,13 @@ export default function AdminLogin() {
   // Login state
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Forgot state
   const [secretCode, setSecretCode] = useState('');
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,14 +109,34 @@ export default function AdminLogin() {
 
             <div className={styles.formGroup}>
               <label htmlFor="password">Password</label>
-              <input 
-                type="password" 
-                id="password" 
-                className={styles.input} 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required 
-              />
+              <div style={{ position: 'relative' }}>
+                <input 
+                  type={showPassword ? "text" : "password"}
+                  id="password" 
+                  className={styles.input} 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required 
+                  style={{ paddingRight: '40px' }}
+                />
+                <button 
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    fontSize: '1.2rem'
+                  }}
+                >
+                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              </div>
             </div>
 
             <button type="submit" className={styles.submitBtn} disabled={loading} style={{ background: 'linear-gradient(90deg, #ef4444, #b91c1c)' }}>
@@ -150,14 +172,34 @@ export default function AdminLogin() {
 
             <div className={styles.formGroup}>
               <label htmlFor="newPassword">New Password</label>
-              <input 
-                type="password" 
-                id="newPassword" 
-                className={styles.input} 
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required 
-              />
+              <div style={{ position: 'relative' }}>
+                <input 
+                  type={showNewPassword ? "text" : "password"}
+                  id="newPassword" 
+                  className={styles.input} 
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required 
+                  style={{ paddingRight: '40px' }}
+                />
+                <button 
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    fontSize: '1.2rem'
+                  }}
+                >
+                  {showNewPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              </div>
             </div>
 
             <button type="submit" className={styles.submitBtn} disabled={loading} style={{ background: 'linear-gradient(90deg, #10b981, #047857)' }}>

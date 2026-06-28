@@ -28,6 +28,7 @@ export default async function CustomerDashboard() {
       product: {
         select: {
           id: true,
+          pid: true,
           title: true,
           logoUrl: true,
           sourceFileUrl: true,
@@ -82,7 +83,8 @@ export default async function CustomerDashboard() {
                   {!purchase.product.logoUrl && <span style={{ fontSize: '3rem' }}>📦</span>}
                 </div>
                 <div style={{ padding: '1.5rem' }}>
-                  <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'white' }}>{purchase.product.title}</h3>
+                  <h3 style={{ fontSize: '1.1rem', marginBottom: '0.2rem', color: 'white' }}>{purchase.product.title}</h3>
+                  {purchase.product.pid && <div style={{ fontSize: '0.85rem', fontFamily: 'monospace', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>{purchase.product.pid}</div>}
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Platform: {purchase.product.platform} • Developer: {purchase.product.developer.name}</p>
                   
                   {purchase.licenseKey && (

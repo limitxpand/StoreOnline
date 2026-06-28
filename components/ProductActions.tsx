@@ -1,9 +1,11 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from '../app/(store)/product/[slug]/product.module.css';
 
-export default function ProductActions({ downloadUrl, productTitle }: { downloadUrl: string, productTitle: string }) {
+export default function ProductActions({ downloadUrl, productTitle, isLoggedIn }: { downloadUrl: string, productTitle: string, isLoggedIn?: boolean }) {
   const [copied, setCopied] = useState(false);
+  const router = useRouter();
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -13,14 +15,24 @@ export default function ProductActions({ downloadUrl, productTitle }: { download
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
-      <a 
-        href={downloadUrl} 
-        download
-        className={styles.buyBtn} 
-        style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', textDecoration: 'none' }}
-      >
-        ⬇️ Direct Download
-      </a>
+      {isLoggedIn ? (
+        <a 
+          href={downloadUrl} 
+          download
+          className={styles.buyBtn} 
+          style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', textDecoration: 'none' }}
+        >
+          ⬇️ Direct Download
+        </a>
+      ) : (
+        <button 
+          onClick={() => router.push('/login')}
+          className={styles.buyBtn} 
+          style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer' }}
+        >
+          🔒 Login to Download
+        </button>
+      )}
       
       <button 
         onClick={handleShare}

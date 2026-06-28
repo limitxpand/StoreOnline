@@ -71,6 +71,7 @@ export default function ProductManagement() {
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+              <th style={{ padding: '1rem 0' }}>PID</th>
               <th style={{ padding: '1rem 0' }}>Product</th>
               <th style={{ padding: '1rem 0' }}>Category</th>
               <th style={{ padding: '1rem 0' }}>Developer</th>
@@ -82,6 +83,7 @@ export default function ProductManagement() {
           <tbody>
             {products.map(p => (
               <tr key={p.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                <td style={{ padding: '1rem 0', fontFamily: 'monospace', color: 'var(--accent-primary)' }}>{p.pid || 'N/A'}</td>
                 <td style={{ padding: '1rem 0', fontWeight: 500 }}>{p.title}</td>
                 <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{p.platform} {p.category?.name}</td>
                 <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{p.developer?.name}</td>

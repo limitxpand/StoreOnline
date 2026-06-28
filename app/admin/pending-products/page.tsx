@@ -4,6 +4,7 @@ import styles from '../../dashboard/dashboard.module.css';
 
 interface Product {
   id: string;
+  pid: string;
   title: string;
   platform: string;
   sourceFileUrl: string;
@@ -113,7 +114,7 @@ export default function PendingProducts() {
       <div style={{ marginBottom: '2rem' }}>
         <input
           type="text"
-          placeholder="Search by product title or developer..."
+          placeholder="Search by PID, title, or developer..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{
@@ -129,7 +130,7 @@ export default function PendingProducts() {
       </div>
 
       <div className={styles.panel}>
-        {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.developer.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
+        {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.developer.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.pid?.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
           <p>No pending products match your search.</p>
         ) : (
         <div style={{ overflowX: 'auto' }}>
@@ -142,7 +143,7 @@ export default function PendingProducts() {
               </tr>
             </thead>
             <tbody>
-              {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.developer.name.toLowerCase().includes(searchQuery.toLowerCase())).map(product => {
+              {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.developer.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.pid?.toLowerCase().includes(searchQuery.toLowerCase())).map(product => {
                 return (
                   <tr key={product.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                     <td style={{ padding: '1rem 0' }}>
@@ -154,6 +155,7 @@ export default function PendingProducts() {
                         />
                         <div>
                           <div style={{ fontWeight: '500', color: 'white' }}>{product.title}</div>
+                          {product.pid && <div style={{ fontSize: '0.85rem', fontFamily: 'monospace', color: 'var(--accent-primary)' }}>{product.pid}</div>}
                           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>By {product.developer.name} • {product.platform}</div>
                         </div>
                       </div>

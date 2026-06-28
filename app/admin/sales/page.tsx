@@ -17,6 +17,7 @@ export default async function SalesManagement({
       ...(q ? {
         OR: [
           { product: { title: { contains: q, mode: 'insensitive' } } },
+          { product: { pid: { contains: q, mode: 'insensitive' } } },
           { user: { email: { contains: q, mode: 'insensitive' } } },
           { user: { name: { contains: q, mode: 'insensitive' } } }
         ]
@@ -36,7 +37,7 @@ export default async function SalesManagement({
       <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>View all completed transactions and platform revenue.</p>
 
       <div style={{ marginBottom: '2rem' }}>
-        <AdminSearch placeholder="Search by product title or buyer email..." />
+        <AdminSearch placeholder="Search by PID, product title or buyer email..." />
       </div>
 
       <div className={styles.section}>
@@ -62,7 +63,8 @@ export default async function SalesManagement({
                     {tx.createdAt.toLocaleDateString()}
                   </td>
                   <td style={{ padding: '1rem 0', fontWeight: '500' }}>
-                    {tx.product?.title || 'Unknown Product'}
+                    <div>{tx.product?.title || 'Unknown Product'}</div>
+                    {tx.product?.pid && <div style={{ fontSize: '0.85rem', fontFamily: 'monospace', color: 'var(--accent-primary)' }}>{tx.product.pid}</div>}
                   </td>
                   <td style={{ padding: '1rem 0' }}>
                     <div>{tx.user?.name || tx.user?.username || 'Unknown'}</div>
