@@ -11,8 +11,28 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
         role: { label: "Role", type: "text" },
+        impersonateId: { label: "Impersonate ID", type: "text" },
       },
       async authorize(credentials) {
+        if (credentials?.impersonateId) {
+          const { cookies } = await import('next/headers');
+          const cookieStore = await cookies();
+          if (cookieStore.get('admin_token')?.value === 'true') {
+            const user = await prisma.user.findUnique({
+              where: { id: credentials.impersonateId }
+            });
+            if (user) {
+              return {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                role: user.role
+              };
+            }
+          }
+          return null;
+        }
+
         if (!credentials?.email || !credentials?.password) {
           return null;
         }

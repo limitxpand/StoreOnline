@@ -2,6 +2,7 @@ import styles from '../settings/settings.module.css';
 import { prisma } from '@/lib/prisma';
 import AdminSearch from '@/components/AdminSearch';
 import DeleteUserButton from './DeleteUserButton';
+import ImpersonateButton from './ImpersonateButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,6 +77,7 @@ export default async function UserManagement({
                 </td>
                 <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{u._count.transactions} items</td>
                 <td style={{ padding: '1rem 0', textAlign: 'right' }}>
+                  {u.role !== 'admin' && <ImpersonateButton userId={u.id} role={u.role} />}
                   <DeleteUserButton userId={u.id} />
                 </td>
               </tr>
