@@ -20,7 +20,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
       <header style={{ height: '80px', backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{ fontSize: '1.5rem' }}>🛒</span>
-          <h2 style={{ color: 'white' }}>Store <span className="gradient-text">Online</span></h2>
+          <h2 style={{ color: 'var(--text-primary)' }}>Store <span className="gradient-text">Online</span></h2>
         </div>
         <nav style={{ display: 'flex', gap: '2rem' }}>
           <Link href="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>Home</Link>
@@ -33,7 +33,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
           ← Back to all posts
         </Link>
         
-        <h1 style={{ color: 'white', fontSize: '3rem', marginBottom: '1.5rem', lineHeight: '1.2' }}>{title}</h1>
+        <h1 style={{ color: 'var(--text-primary)', fontSize: '3rem', marginBottom: '1.5rem', lineHeight: '1.2' }}>{title}</h1>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--text-muted)', marginBottom: '3rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '2rem' }}>
           <span>By Admin</span>
@@ -48,7 +48,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
             Welcome to our comprehensive guide on the {title}. In the fast-paced world of algorithmic trading, finding reliable software can make the difference between consistent profits and blown accounts.
           </p>
           
-          <h2 style={{ color: 'white', fontSize: '1.8rem', marginTop: '3rem', marginBottom: '1rem' }}>Why Automated Trading?</h2>
+          <h2 style={{ color: 'var(--text-primary)', fontSize: '1.8rem', marginTop: '3rem', marginBottom: '1rem' }}>Why Automated Trading?</h2>
           <p style={{ marginBottom: '1.5rem' }}>
             Automated trading systems remove the psychological barriers of manual trading. They execute trades based on pre-defined algorithms 24/5.
           </p>
@@ -56,7 +56,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
           {/* In-content Ad */}
           <AdBanner slotId="blog_in_content" className="my-8" />
 
-          <h2 style={{ color: 'white', fontSize: '1.8rem', marginTop: '3rem', marginBottom: '1rem' }}>Our Testing Methodology</h2>
+          <h2 style={{ color: 'var(--text-primary)', fontSize: '1.8rem', marginTop: '3rem', marginBottom: '1rem' }}>Our Testing Methodology</h2>
           <p style={{ marginBottom: '1.5rem' }}>
             Before recommending any software on the Store Online marketplace, we subject them to rigorous testing, including:
           </p>

@@ -24,7 +24,7 @@ export default function AdminLicenses() {
             <tbody>
               <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
                 <td style={{ padding: '1rem 0', fontFamily: 'monospace', color: 'var(--accent-neon)' }}>STORE-8F2A-B9X1-L0QZ</td>
-                <td style={{ padding: '1rem 0', fontWeight: '500', color: 'white' }}>Gold Scalper Pro EA</td>
+                <td style={{ padding: '1rem 0', fontWeight: '500', color: 'var(--text-primary)' }}>Gold Scalper Pro EA</td>
                 <td style={{ padding: '1rem 0' }}>John Doe</td>
                 <td style={{ padding: '1rem 0', fontFamily: 'monospace', fontSize: '0.85rem' }}>BFEBFBFF000906EA</td>
                 <td style={{ padding: '1rem 0' }}>
@@ -33,7 +33,7 @@ export default function AdminLicenses() {
                 <td style={{ padding: '1rem 0', display: 'flex', gap: '0.5rem' }}>
                   <button style={{ 
                     background: 'var(--bg-tertiary)', 
-                    color: 'white', border: '1px solid var(--border-color)', padding: '0.4rem 0.8rem', 
+                    color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '0.4rem 0.8rem', 
                     borderRadius: '6px', fontSize: '0.85rem', cursor: 'pointer'
                   }}>Reset HWID</button>
                   <button style={{ 
@@ -45,7 +45,7 @@ export default function AdminLicenses() {
               </tr>
               <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
                 <td style={{ padding: '1rem 0', fontFamily: 'monospace', color: 'var(--text-muted)' }}>STORE-4R9M-Z2P8-K7W3</td>
-                <td style={{ padding: '1rem 0', fontWeight: '500', color: 'white' }}>Quantum Indicator</td>
+                <td style={{ padding: '1rem 0', fontWeight: '500', color: 'var(--text-primary)' }}>Quantum Indicator</td>
                 <td style={{ padding: '1rem 0' }}>Jane Smith</td>
                 <td style={{ padding: '1rem 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Not Locked</td>
                 <td style={{ padding: '1rem 0' }}>
@@ -54,7 +54,7 @@ export default function AdminLicenses() {
                 <td style={{ padding: '1rem 0', display: 'flex', gap: '0.5rem' }}>
                   <button style={{ 
                     background: 'var(--bg-tertiary)', 
-                    color: 'white', border: '1px solid var(--border-color)', padding: '0.4rem 0.8rem', 
+                    color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '0.4rem 0.8rem', 
                     borderRadius: '6px', fontSize: '0.85rem', cursor: 'pointer'
                   }}>Restore</button>
                 </td>

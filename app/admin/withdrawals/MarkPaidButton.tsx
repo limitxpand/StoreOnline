@@ -32,7 +32,7 @@ export default function MarkPaidButton({ withdrawalId }: { withdrawalId: string 
       disabled={loading}
       style={{ 
         background: 'var(--success)', 
-        color: 'white', border: 'none', padding: '0.5rem 1rem', 
+        color: 'var(--text-primary)', border: 'none', padding: '0.5rem 1rem', 
         borderRadius: '6px', fontWeight: '600', cursor: 'pointer',
         opacity: loading ? 0.7 : 1
       }}

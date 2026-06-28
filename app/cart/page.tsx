@@ -28,7 +28,7 @@ export default function CartPage() {
               style={{ 
                 padding: '0.8rem 2rem', 
                 background: 'var(--accent-primary)', 
-                color: 'white', 
+                color: 'var(--text-primary)', 
                 borderRadius: '8px',
                 fontWeight: 600,
                 display: 'inline-block'

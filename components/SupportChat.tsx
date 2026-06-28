@@ -96,7 +96,7 @@ export default function SupportChat({ ticketId, userRole }: { ticketId: string, 
                 padding: '1rem', 
                 borderRadius: '12px', 
                 background: isMe ? 'var(--accent-primary)' : 'var(--bg-dark)',
-                color: 'white',
+                color: 'var(--text-primary)',
                 border: isMe ? 'none' : '1px solid var(--border-color)'
               }}>
                 <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>{msg.content}</div>
@@ -118,7 +118,7 @@ export default function SupportChat({ ticketId, userRole }: { ticketId: string, 
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type your message..."
-            style={{ flex: 1, padding: '1rem', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid var(--border-color)', color: 'white' }}
+            style={{ flex: 1, padding: '1rem', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
           />
           <button 
             type="submit"

@@ -273,7 +273,7 @@ export default function SeoAdsManagement() {
             disabled={saving}
             style={{ 
               background: 'linear-gradient(135deg, #10b981, #059669)', 
-              color: 'white', 
+              color: 'var(--text-primary)', 
               border: 'none', 
               padding: '1rem 2rem', 
               fontSize: '1rem', 

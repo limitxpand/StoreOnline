@@ -6,7 +6,7 @@ export default async function VerifyEmailPage({ searchParams }: { searchParams: 
 
   if (!token) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', color: 'white' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', color: 'var(--text-primary)' }}>
         <div style={{ textAlign: 'center', padding: '2rem', background: '#111', borderRadius: '12px', border: '1px solid #333' }}>
           <h1 style={{ color: '#ef4444', marginBottom: '1rem' }}>Invalid Request</h1>
           <p>No verification token was provided.</p>
@@ -22,7 +22,7 @@ export default async function VerifyEmailPage({ searchParams }: { searchParams: 
 
   if (!user) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', color: 'white' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', color: 'var(--text-primary)' }}>
         <div style={{ textAlign: 'center', padding: '2rem', background: '#111', borderRadius: '12px', border: '1px solid #333' }}>
           <h1 style={{ color: '#ef4444', marginBottom: '1rem' }}>Verification Failed</h1>
           <p>The verification link is invalid or has already been used.</p>
@@ -42,7 +42,7 @@ export default async function VerifyEmailPage({ searchParams }: { searchParams: 
   });
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', color: 'white' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', color: 'var(--text-primary)' }}>
       <div style={{ textAlign: 'center', padding: '3rem', background: '#111', borderRadius: '12px', border: '1px solid #333', maxWidth: '500px' }}>
         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>✅</div>
         <h1 style={{ color: '#10b981', marginBottom: '1rem' }}>Email Verified!</h1>
@@ -51,7 +51,7 @@ export default async function VerifyEmailPage({ searchParams }: { searchParams: 
           display: 'inline-block', 
           marginTop: '2rem', 
           background: '#4F46E5', 
-          color: 'white', 
+          color: 'var(--text-primary)', 
           padding: '0.75rem 2rem', 
           borderRadius: '8px',
           textDecoration: 'none',

@@ -153,7 +153,7 @@ function ResetPasswordForm() {
 
 export default function ResetPassword() {
   return (
-    <Suspense fallback={<div className={styles.container}><div className={styles.background}></div><div style={{color: 'white', position: 'relative', zIndex: 1}}>Loading...</div></div>}>
+    <Suspense fallback={<div className={styles.container}><div className={styles.background}></div><div style={{color: 'var(--text-primary)', position: 'relative', zIndex: 1}}>Loading...</div></div>}>
       <ResetPasswordForm />
     </Suspense>
   );

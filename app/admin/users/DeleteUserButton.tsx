@@ -34,7 +34,7 @@ export default function DeleteUserButton({ userId }: { userId: string }) {
       disabled={loading}
       style={{ 
         background: 'var(--danger)', 
-        color: 'white', 
+        color: 'var(--text-primary)', 
         border: 'none', 
         padding: '0.4rem 0.8rem', 
         borderRadius: '4px', 

@@ -114,7 +114,7 @@ export default function AdminSupportTicketPage({ params }: { params: Promise<{ i
                 padding: '1rem', 
                 borderRadius: '12px', 
                 background: isAdmin ? 'var(--accent-primary)' : 'var(--bg-dark)',
-                color: 'white',
+                color: 'var(--text-primary)',
                 border: isAdmin ? 'none' : '1px solid var(--border-color)'
               }}>
                 <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>{msg.content}</div>
@@ -135,7 +135,7 @@ export default function AdminSupportTicketPage({ params }: { params: Promise<{ i
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={ticket.status === 'resolved' ? "Reply to reopen ticket..." : "Type your reply..."}
-          style={{ flex: 1, padding: '1rem', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid var(--border-color)', color: 'white' }}
+          style={{ flex: 1, padding: '1rem', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
         />
         <button 
           type="submit"

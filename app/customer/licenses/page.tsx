@@ -22,7 +22,7 @@ export default function CustomerLicenses() {
             </thead>
             <tbody>
               <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                <td style={{ padding: '1rem 0', fontWeight: '500', color: 'white' }}>Gold Scalper Pro EA</td>
+                <td style={{ padding: '1rem 0', fontWeight: '500', color: 'var(--text-primary)' }}>Gold Scalper Pro EA</td>
                 <td style={{ padding: '1rem 0', fontFamily: 'monospace', color: 'var(--accent-neon)' }}>STORE-8F2A-B9X1-L0QZ</td>
                 <td style={{ padding: '1rem 0' }}>1 / 2</td>
                 <td style={{ padding: '1rem 0' }}>
@@ -31,13 +31,13 @@ export default function CustomerLicenses() {
                 <td style={{ padding: '1rem 0' }}>
                   <button style={{ 
                     background: 'var(--accent-secondary)', 
-                    color: 'white', border: 'none', padding: '0.5rem 1rem', 
+                    color: 'var(--text-primary)', border: 'none', padding: '0.5rem 1rem', 
                     borderRadius: '6px', fontWeight: '600', cursor: 'pointer'
                   }}>Download .ex5</button>
                 </td>
               </tr>
               <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                <td style={{ padding: '1rem 0', fontWeight: '500', color: 'white' }}>Quantum Indicator</td>
+                <td style={{ padding: '1rem 0', fontWeight: '500', color: 'var(--text-primary)' }}>Quantum Indicator</td>
                 <td style={{ padding: '1rem 0', fontFamily: 'monospace', color: 'var(--accent-neon)' }}>STORE-4R9M-Z2P8-K7W3</td>
                 <td style={{ padding: '1rem 0' }}>1 / 1</td>
                 <td style={{ padding: '1rem 0' }}>

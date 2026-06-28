@@ -55,7 +55,7 @@ export default function AccountSecurity({ email }: { email: string }) {
             disabled={resetStatus.loading}
             style={{
               background: 'transparent',
-              color: 'white',
+              color: 'var(--text-primary)',
               padding: '0.8rem',
               border: '1px solid var(--border-color)',
               borderRadius: '8px',

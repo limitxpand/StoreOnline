@@ -25,7 +25,7 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-  color: white;
+  color: var(--text-primary);
 }
 
 .roleBadge {
@@ -143,7 +143,7 @@
 .pageHeader h1 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
@@ -190,7 +190,7 @@
 .statInfo p {
   font-size: 1.5rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
 }
 
 .panel {
@@ -204,8 +204,54 @@
 .panelTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+  }
+  
+  .brand {
+    padding: 0.5rem;
+    border-bottom: none;
+  }
+  
+  .nav {
+    display: none; /* Hide sidebar links on mobile by default, maybe add a hamburger toggle later */
+  }
+  
+  .logoutBtn {
+    margin-top: 0;
+  }
+  
+  .content {
+    padding: 1rem;
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .panel {
+    padding: 1rem;
+  }
+  
+  .topbar {
+    padding: 0 1rem;
+  }
 }

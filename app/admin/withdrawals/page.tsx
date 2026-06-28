@@ -63,7 +63,7 @@ export default async function Withdrawals({
                 {withdrawals.map(w => (
                   <tr key={w.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                     <td style={{ padding: '1rem 0' }}>{w.createdAt.toLocaleDateString()}</td>
-                    <td style={{ padding: '1rem 0', fontWeight: '500', color: 'white' }}>
+                    <td style={{ padding: '1rem 0', fontWeight: '500', color: 'var(--text-primary)' }}>
                       {w.developer.name || w.developer.username} <br/>
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{w.developer.email}</span>
                     </td>

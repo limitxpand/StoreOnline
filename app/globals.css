@@ -181,3 +181,15 @@ html:not([data-theme='light']) .theme-logo-light {
 html:not([data-theme='light']) .theme-logo-dark {
   display: block !important;
 }
+
+/* Mobile Responsiveness Helpers */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}
+
+.table-responsive table {
+  min-width: 600px;
+}

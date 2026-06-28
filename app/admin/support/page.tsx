@@ -37,7 +37,7 @@ export default function AdminSupportPage() {
         <select 
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          style={{ padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'white' }}
+          style={{ padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
         >
           <option value="">All Tickets</option>
           <option value="open">Open</option>
@@ -86,7 +86,7 @@ export default function AdminSupportPage() {
                     {new Date(ticket.updatedAt).toLocaleDateString()}
                   </td>
                   <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
-                    <Link href={`/admin/support/${ticket.id}`} style={{ padding: '6px 12px', background: 'var(--bg-dark)', borderRadius: '6px', color: 'white', textDecoration: 'none', fontSize: '0.85rem', border: '1px solid var(--border-color)' }}>
+                    <Link href={`/admin/support/${ticket.id}`} style={{ padding: '6px 12px', background: 'var(--bg-tertiary)', borderRadius: '6px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '0.85rem', border: '1px solid var(--border-color)' }}>
                       View
                     </Link>
                   </td>

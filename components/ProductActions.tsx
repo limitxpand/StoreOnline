@@ -99,7 +99,7 @@ export default function ProductActions({
         <button 
           onClick={handleDownloadClick}
           className={styles.buyBtn} 
-          style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer', color: 'white' }}
+          style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }}
         >
           {demoAdsenseCode && !adWatched ? '🎁 View our Sponsor to unlock your Free Demo' : '⬇️ Direct Download'}
         </button>
@@ -137,7 +137,7 @@ export default function ProductActions({
       {showAdModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ maxWidth: '800px', width: '90%', position: 'relative' }}>
-            <h3 style={{ color: 'white', marginBottom: '1rem', textAlign: 'center' }}>
+            <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', textAlign: 'center' }}>
               {timeLeft > 0 ? `Your download will be ready in ${timeLeft} seconds...` : 'Your download is ready!'}
             </h3>
             
@@ -152,7 +152,7 @@ export default function ProductActions({
             <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
               <button 
                 onClick={() => setShowAdModal(false)}
-                style={{ padding: '0.8rem 1.5rem', background: '#374151', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+                style={{ padding: '0.8rem 1.5rem', background: '#374151', color: 'var(--text-primary)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
               >
                 Cancel
               </button>
@@ -162,7 +162,7 @@ export default function ProductActions({
                 style={{ 
                   padding: '0.8rem 1.5rem', 
                   background: timeLeft > 0 ? '#4b5563' : 'linear-gradient(90deg, #10b981, #047857)', 
-                  color: 'white', 
+                  color: 'var(--text-primary)', 
                   border: 'none', 
                   borderRadius: '8px', 
                   cursor: timeLeft > 0 ? 'not-allowed' : 'pointer',

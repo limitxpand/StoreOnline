@@ -89,7 +89,7 @@ export default function SupportClient({ userRole }: { userRole: 'customer' | 'de
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 required
-                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid var(--border-color)', color: 'white' }}
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
                 placeholder="Briefly describe your issue..."
               />
             </div>
@@ -101,7 +101,7 @@ export default function SupportClient({ userRole }: { userRole: 'customer' | 'de
                 onChange={(e) => setMessage(e.target.value)}
                 required
                 rows={4}
-                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid var(--border-color)', color: 'white', resize: 'vertical' }}
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', resize: 'vertical' }}
                 placeholder="Provide more details..."
               />
             </div>
@@ -152,7 +152,7 @@ export default function SupportClient({ userRole }: { userRole: 'customer' | 'de
                     {new Date(ticket.updatedAt).toLocaleDateString()}
                   </td>
                   <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
-                    <Link href={`${baseUrl}/${ticket.id}`} style={{ padding: '6px 12px', background: 'var(--bg-dark)', borderRadius: '6px', color: 'white', textDecoration: 'none', fontSize: '0.85rem', border: '1px solid var(--border-color)' }}>
+                    <Link href={`${baseUrl}/${ticket.id}`} style={{ padding: '6px 12px', background: 'var(--bg-tertiary)', borderRadius: '6px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '0.85rem', border: '1px solid var(--border-color)' }}>
                       View
                     </Link>
                   </td>

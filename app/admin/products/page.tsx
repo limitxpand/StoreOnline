@@ -111,7 +111,7 @@ export default function ProductManagement() {
                   {p.status === 'published' && (
                     <button 
                       onClick={() => handleUpdateStatus(p.id, 'pending')}
-                      style={{ background: 'var(--text-muted)', color: 'white', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', marginRight: '0.5rem' }}
+                      style={{ background: 'var(--text-muted)', color: 'var(--text-primary)', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', marginRight: '0.5rem' }}
                     >
                       Unpublish
                     </button>

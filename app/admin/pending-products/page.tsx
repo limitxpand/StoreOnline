@@ -124,7 +124,7 @@ export default function PendingProducts() {
             borderRadius: '8px',
             border: '1px solid var(--border-color)',
             background: 'var(--bg-tertiary)',
-            color: 'white'
+            color: 'var(--text-primary)'
           }}
         />
       </div>
@@ -154,7 +154,7 @@ export default function PendingProducts() {
                           style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover', background: 'var(--bg-tertiary)' }} 
                         />
                         <div>
-                          <div style={{ fontWeight: '500', color: 'white' }}>{product.title}</div>
+                          <div style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{product.title}</div>
                           {product.pid && <div style={{ fontSize: '0.85rem', fontFamily: 'monospace', color: 'var(--accent-primary)' }}>{product.pid}</div>}
                           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>By {product.developer.name} • {product.platform}</div>
                         </div>
@@ -165,7 +165,7 @@ export default function PendingProducts() {
                         display: 'inline-block',
                         background: 'var(--bg-tertiary)', 
                         textDecoration: 'none',
-                        color: 'white', border: '1px solid var(--border-color)', padding: '0.4rem 0.8rem', 
+                        color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '0.4rem 0.8rem', 
                         borderRadius: '6px', fontSize: '0.85rem', cursor: 'pointer'
                       }}>⬇️ Download File</a>
                     </td>
@@ -191,7 +191,7 @@ export default function PendingProducts() {
                             onClick={() => handleApprove(product.id, false)}
                             style={{ 
                               background: 'var(--success)', 
-                              color: 'white', 
+                              color: 'var(--text-primary)', 
                               border: 'none', 
                               padding: '0.4rem 0.8rem', 
                               borderRadius: '6px', fontWeight: '600', cursor: 'pointer' 

@@ -40,7 +40,7 @@ export default function BanToggle({ userId, isBanned }: { userId: string, isBann
       disabled={loading}
       style={{ 
         background: isBanned ? 'var(--success)' : 'var(--warning)', 
-        color: 'white', 
+        color: 'var(--text-primary)', 
         border: 'none', 
         padding: '0.4rem 0.8rem', 
         borderRadius: '4px', 

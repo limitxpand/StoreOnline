@@ -45,7 +45,7 @@ export default function AdminSearch({ placeholder = 'Search...' }: { placeholder
           borderRadius: '8px',
           border: '1px solid var(--border-color)',
           background: 'var(--bg-tertiary)',
-          color: 'white'
+          color: 'var(--text-primary)'
         }}
       />
       <button 

@@ -35,9 +35,9 @@ export default async function ContributorProducts({ searchParams }: { searchPara
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-        <a href="/dashboard/products" style={{ padding: '0.5rem 1rem', background: statusFilter === 'all' ? 'var(--primary-color)' : 'var(--bg-tertiary)', color: 'white', borderRadius: '4px', textDecoration: 'none' }}>All</a>
-        <a href="/dashboard/products?status=active" style={{ padding: '0.5rem 1rem', background: statusFilter === 'active' ? 'var(--primary-color)' : 'var(--bg-tertiary)', color: 'white', borderRadius: '4px', textDecoration: 'none' }}>Active</a>
-        <a href="/dashboard/products?status=pending" style={{ padding: '0.5rem 1rem', background: statusFilter === 'pending' ? 'var(--primary-color)' : 'var(--bg-tertiary)', color: 'white', borderRadius: '4px', textDecoration: 'none' }}>Pending</a>
+        <a href="/dashboard/products" style={{ padding: '0.5rem 1rem', background: statusFilter === 'all' ? 'var(--primary-color)' : 'var(--bg-tertiary)', color: 'var(--text-primary)', borderRadius: '4px', textDecoration: 'none' }}>All</a>
+        <a href="/dashboard/products?status=active" style={{ padding: '0.5rem 1rem', background: statusFilter === 'active' ? 'var(--primary-color)' : 'var(--bg-tertiary)', color: 'var(--text-primary)', borderRadius: '4px', textDecoration: 'none' }}>Active</a>
+        <a href="/dashboard/products?status=pending" style={{ padding: '0.5rem 1rem', background: statusFilter === 'pending' ? 'var(--primary-color)' : 'var(--bg-tertiary)', color: 'var(--text-primary)', borderRadius: '4px', textDecoration: 'none' }}>Pending</a>
       </div>
 
       <div className={styles.panel}>

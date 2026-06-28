@@ -78,7 +78,7 @@ export default function CategoryManagement() {
           </div>
           <div className={styles.formGroup} style={{ width: '150px', marginBottom: 0 }}>
             <label>Platform</label>
-            <select value={newCatPlatform} onChange={e => setNewCatPlatform(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'white' }}>
+            <select value={newCatPlatform} onChange={e => setNewCatPlatform(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
               <option value="MT4">MT4</option>
               <option value="MT5">MT5</option>
               <option value="Android">Android</option>

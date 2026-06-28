@@ -77,7 +77,7 @@ export default function RoyaltyProgram() {
             <Link href="/register" style={{
               display: 'inline-block',
               background: 'var(--accent-primary)',
-              color: 'white',
+              color: 'var(--text-primary)',
               padding: '1rem 2.5rem',
               borderRadius: '8px',
               textDecoration: 'none',
