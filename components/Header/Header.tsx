@@ -36,17 +36,31 @@ export default async function Header() {
       <div className={styles.container}>
         <div className={styles.logo}>
           <Link href="/">
-            {settings.logoUrl ? (
-              <img 
-                src={settings.logoUrl} 
-                alt={settings.siteName} 
-                style={{ 
-                  maxHeight: '45px', 
-                  objectFit: 'contain',
-                  borderRadius: settings.logoRadius === 'circle' ? '50%' : settings.logoRadius === 'rounded' ? '8px' : '0',
-                  mixBlendMode: settings.logoRemoveBg ? 'multiply' : 'normal'
-                }} 
-              />
+            {(settings.logoUrl || settings.logoLightUrl) ? (
+              <>
+                <img 
+                  src={settings.logoUrl || settings.logoLightUrl} 
+                  alt={settings.siteName} 
+                  style={{ 
+                    maxHeight: '45px', 
+                    objectFit: 'contain',
+                    borderRadius: settings.logoRadius === 'circle' ? '50%' : settings.logoRadius === 'rounded' ? '8px' : '0',
+                    mixBlendMode: settings.logoRemoveBg ? 'multiply' : 'normal'
+                  }} 
+                  className="theme-logo-dark"
+                />
+                <img 
+                  src={settings.logoLightUrl || settings.logoUrl} 
+                  alt={settings.siteName} 
+                  style={{ 
+                    maxHeight: '45px', 
+                    objectFit: 'contain',
+                    borderRadius: settings.logoRadius === 'circle' ? '50%' : settings.logoRadius === 'rounded' ? '8px' : '0',
+                    mixBlendMode: settings.logoRemoveBg ? 'multiply' : 'normal'
+                  }} 
+                  className="theme-logo-light"
+                />
+              </>
             ) : (
               <>
                 <span className={styles.logoIcon}>🛒</span>
@@ -71,7 +85,7 @@ export default async function Header() {
             <Link href="/royalty" style={{ color: 'var(--accent-secondary)', textDecoration: 'none', transition: 'color 0.2s' }}>Royalty Program</Link>
             <Link href="/blog" style={{ color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.2s' }}>Blog</Link>
           </div>
-          <ThemeToggle className={styles.iconBtn} />
+          <ThemeToggle className={styles.iconBtn} faviconDark={settings.faviconUrl} faviconLight={settings.faviconLightUrl} />
           <Link href="/cart" style={{ textDecoration: 'none' }}>
             <div className={styles.cartContainer}>
               <button className={styles.iconBtn} style={{ background: 'transparent', border: 'none' }}>🛒</button>

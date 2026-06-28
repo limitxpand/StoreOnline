@@ -13,8 +13,11 @@ export interface WebsiteSettings {
   ogImageUrl?: string;
   adsenseClientId?: string;
   logoUrl?: string;
+  logoLightUrl?: string;
   faviconUrl?: string;
+  faviconLightUrl?: string;
   floatingLogoUrl?: string;
+  floatingLogoLightUrl?: string;
   logoRadius?: 'none' | 'rounded' | 'circle';
   logoRemoveBg?: boolean;
   floatingLogoRadius?: 'none' | 'rounded' | 'circle';
@@ -43,8 +46,11 @@ const defaultSettings: AppSettings = {
     ogImageUrl: "https://storeonline.in/og-image.jpg",
     adsenseClientId: "",
     logoUrl: "",
+    logoLightUrl: "",
     faviconUrl: "",
+    faviconLightUrl: "",
     floatingLogoUrl: "",
+    floatingLogoLightUrl: "",
     logoRadius: "none",
     logoRemoveBg: false,
     floatingLogoRadius: "none",

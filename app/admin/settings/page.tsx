@@ -16,8 +16,11 @@ export default function WebsiteSettings() {
     enableAdsense: true,
     contactEmail: '',
     logoUrl: '',
+    logoLightUrl: '',
     faviconUrl: '',
+    faviconLightUrl: '',
     floatingLogoUrl: '',
+    floatingLogoLightUrl: '',
     logoRadius: 'none',
     logoRemoveBg: false,
     floatingLogoRadius: 'none',
@@ -110,12 +113,12 @@ export default function WebsiteSettings() {
       transition: 'all 0.3s ease'
     };
 
-    if (fieldName === 'logoUrl') {
+    if (fieldName.startsWith('logoUrl') || fieldName.startsWith('logoLightUrl')) {
       if (settings.logoRadius === 'rounded') style.borderRadius = '12px';
       else if (settings.logoRadius === 'circle') style.borderRadius = '50%';
       else style.borderRadius = '0';
       if (settings.logoRemoveBg) style.mixBlendMode = 'multiply';
-    } else if (fieldName === 'floatingLogoUrl') {
+    } else if (fieldName.startsWith('floatingLogoUrl') || fieldName.startsWith('floatingLogoLightUrl')) {
       if (settings.floatingLogoRadius === 'rounded') style.borderRadius = '12px';
       else if (settings.floatingLogoRadius === 'circle') style.borderRadius = '50%';
       else style.borderRadius = '0';
@@ -128,65 +131,79 @@ export default function WebsiteSettings() {
     return style;
   };
 
-  const renderImageUploader = (label: string, fieldName: string, recommendedSize: string, hasStyles = false) => {
-    const isUploading = uploading[fieldName];
-    const imageUrl = settings[fieldName as keyof typeof settings] as string;
+  const renderImageUploader = (label: string, fieldNameDark: string, fieldNameLight: string, recommendedSize: string, hasStyles = false) => {
+    const isUploadingDark = uploading[fieldNameDark];
+    const isUploadingLight = uploading[fieldNameLight];
+    const imageUrlDark = settings[fieldNameDark as keyof typeof settings] as string;
+    const imageUrlLight = settings[fieldNameLight as keyof typeof settings] as string;
+
+    const renderSingleUploader = (title: string, fieldName: string, isUploading: boolean, imageUrl: string) => (
+      <div style={{ flex: 1, minWidth: '300px', background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+        <h4 style={{ marginBottom: '1rem', color: 'var(--text-primary)', fontSize: '1rem' }}>{title}</h4>
+        {imageUrl ? (
+          <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+            <div style={{ padding: '1rem', background: title.includes('Light') ? '#f1f5f9' : '#0f172a', borderRadius: '8px', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+              <img src={imageUrl} alt={`${title} Preview`} style={getPreviewStyle(fieldName)} />
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <label style={{ cursor: 'pointer', background: 'var(--accent-primary)', color: 'white', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 500, display: 'inline-block', transition: 'background 0.2s', flex: 1, textAlign: 'center' }}>
+                {isUploading ? 'Uploading...' : 'Update'}
+                <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, fieldName)} style={{ display: 'none' }} disabled={isUploading} />
+              </label>
+              <button type="button" onClick={() => handleDeleteImage(fieldName)} disabled={isUploading} style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 500, transition: 'background 0.2s', flex: 1 }}>
+                Delete
+              </button>
+            </div>
+          </div>
+        ) : (
+          <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '120px', border: '2px dashed var(--border-color)', borderRadius: '12px', cursor: 'pointer', background: 'var(--bg-tertiary)', transition: 'all 0.3s ease' }}>
+            <span style={{ fontSize: '2rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>+</span>
+            <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{isUploading ? 'Uploading...' : `Upload ${title}`}</span>
+            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, fieldName)} style={{ display: 'none' }} disabled={isUploading} />
+          </label>
+        )}
+      </div>
+    );
 
     return (
-      <div className={styles.formGroup} style={{ marginBottom: '2rem' }}>
-        <label>{label} <span style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginLeft: '8px'}}>({recommendedSize})</span></label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'flex-start', marginTop: '0.5rem' }}>
-          {imageUrl ? (
-            <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
-              <img src={imageUrl} alt={`${label} Preview`} style={getPreviewStyle(fieldName)} />
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <label style={{ cursor: 'pointer', background: 'var(--accent-primary)', color: 'white', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 500, display: 'inline-block', transition: 'background 0.2s' }}>
-                  {isUploading ? 'Uploading...' : 'Update'}
-                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, fieldName)} style={{ display: 'none' }} disabled={isUploading} />
-                </label>
-                <button type="button" onClick={() => handleDeleteImage(fieldName)} disabled={isUploading} style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 500, transition: 'background 0.2s' }}>
-                  Delete
-                </button>
-              </div>
-              
-              {hasStyles && (
-                <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(0,0,0,0.15)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                   <h4 style={{marginBottom: '1rem', fontSize: '0.9rem', color: 'var(--text-secondary)'}}>Styling Options (Live Preview)</h4>
-                   <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-                      <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-                         <label style={{fontSize: '0.85rem', color: 'var(--text-secondary)'}}>Edge Style</label>
-                         <select 
-                           name={fieldName === 'logoUrl' ? 'logoRadius' : 'floatingLogoRadius'} 
-                           value={settings[fieldName === 'logoUrl' ? 'logoRadius' : 'floatingLogoRadius'] as string} 
-                           onChange={handleChange}
-                           style={{ padding: '0.5rem', borderRadius: '4px', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
-                         >
-                            <option value="none">Square (Default)</option>
-                            <option value="rounded">Rounded</option>
-                            <option value="circle">Circle</option>
-                         </select>
-                      </div>
-                      <div className={styles.checkboxGroup} style={{marginTop: '1.8rem'}}>
-                         <input type="checkbox" id={`${fieldName}-bg`} name={fieldName === 'logoUrl' ? 'logoRemoveBg' : 'floatingLogoRemoveBg'} checked={settings[fieldName === 'logoUrl' ? 'logoRemoveBg' : 'floatingLogoRemoveBg'] as boolean} onChange={handleChange} />
-                         <label htmlFor={`${fieldName}-bg`}>Remove Background (Multiply)</label>
-                      </div>
-                      {fieldName === 'floatingLogoUrl' && (
-                        <div className={styles.checkboxGroup} style={{marginTop: '1.8rem'}}>
-                           <input type="checkbox" id={`${fieldName}-shadow`} name="floatingLogoShadow" checked={settings.floatingLogoShadow as boolean} onChange={handleChange} />
-                           <label htmlFor={`${fieldName}-shadow`}>Add 3D Shadow</label>
-                        </div>
-                      )}
-                   </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <label style={{ cursor: 'pointer', background: 'var(--accent-primary)', color: 'white', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 500, display: 'inline-block', transition: 'background 0.2s' }}>
-              {isUploading ? 'Uploading...' : 'Upload Image'}
-              <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, fieldName)} style={{ display: 'none' }} disabled={isUploading} />
-            </label>
-          )}
+      <div className={styles.formGroup} style={{ marginBottom: '2.5rem' }}>
+        <label style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'block' }}>{label} <span style={{color: 'var(--text-secondary)', fontSize: '0.85rem', marginLeft: '8px'}}>({recommendedSize})</span></label>
+        
+        <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+          {renderSingleUploader('Dark Mode', fieldNameDark, isUploadingDark, imageUrlDark)}
+          {renderSingleUploader('Light Mode', fieldNameLight, isUploadingLight, imageUrlLight)}
         </div>
+        
+        {hasStyles && (
+          <div style={{ marginTop: '1.5rem', padding: '1.5rem', background: 'rgba(0,0,0,0.05)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+             <h4 style={{marginBottom: '1.5rem', fontSize: '1rem', color: 'var(--text-secondary)'}}>Global Styling Options (Applies to both)</h4>
+             <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                   <label style={{fontSize: '0.9rem', color: 'var(--text-secondary)'}}>Edge Style</label>
+                   <select 
+                     name={fieldNameDark === 'logoUrl' ? 'logoRadius' : 'floatingLogoRadius'} 
+                     value={settings[fieldNameDark === 'logoUrl' ? 'logoRadius' : 'floatingLogoRadius'] as string} 
+                     onChange={handleChange}
+                     style={{ padding: '0.6rem', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', minWidth: '150px' }}
+                   >
+                      <option value="none">Square (Default)</option>
+                      <option value="rounded">Rounded</option>
+                      <option value="circle">Circle</option>
+                   </select>
+                </div>
+                <div className={styles.checkboxGroup} style={{marginTop: '2rem'}}>
+                   <input type="checkbox" id={`${fieldNameDark}-bg`} name={fieldNameDark === 'logoUrl' ? 'logoRemoveBg' : 'floatingLogoRemoveBg'} checked={settings[fieldNameDark === 'logoUrl' ? 'logoRemoveBg' : 'floatingLogoRemoveBg'] as boolean} onChange={handleChange} />
+                   <label htmlFor={`${fieldNameDark}-bg`} style={{fontSize: '0.9rem'}}>Remove Background (Multiply)</label>
+                </div>
+                {fieldNameDark === 'floatingLogoUrl' && (
+                  <div className={styles.checkboxGroup} style={{marginTop: '2rem'}}>
+                     <input type="checkbox" id={`${fieldNameDark}-shadow`} name="floatingLogoShadow" checked={settings.floatingLogoShadow as boolean} onChange={handleChange} />
+                     <label htmlFor={`${fieldNameDark}-shadow`} style={{fontSize: '0.9rem'}}>Add 3D Shadow</label>
+                  </div>
+                )}
+             </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -246,9 +263,9 @@ export default function WebsiteSettings() {
         <div className={styles.section}>
           <h3>Logos and Branding</h3>
           
-          {renderImageUploader('Main Website Logo', 'logoUrl', 'Recommended height: 40-60px', true)}
-          {renderImageUploader('Website Favicon', 'faviconUrl', 'Recommended size: 32x32 pixels (PNG/ICO)', false)}
-          {renderImageUploader('Hero Floating Logo (Optional)', 'floatingLogoUrl', 'Recommended size: 200x200 pixels', true)}
+          {renderImageUploader('Main Website Logo', 'logoUrl', 'logoLightUrl', 'Recommended height: 40-60px', true)}
+          {renderImageUploader('Website Favicon', 'faviconUrl', 'faviconLightUrl', 'Recommended size: 32x32 pixels (PNG/ICO)', false)}
+          {renderImageUploader('Hero Floating Logo (Optional)', 'floatingLogoUrl', 'floatingLogoLightUrl', 'Recommended size: 200x200 pixels', true)}
         </div>
 
         <div className={styles.section}>

@@ -31,10 +31,10 @@ export async function generateMetadata(): Promise<Metadata> {
       title: settings.siteName || 'Store Online Marketplace',
       description: settings.metaDescription || 'Buy and sell premium license-protected software.',
     },
-    icons: settings.faviconUrl ? {
-      icon: settings.faviconUrl,
-      shortcut: settings.faviconUrl,
-      apple: settings.faviconUrl,
+    icons: (settings.faviconLightUrl || settings.faviconUrl) ? {
+      icon: settings.faviconLightUrl || settings.faviconUrl || '',
+      shortcut: settings.faviconLightUrl || settings.faviconUrl || '',
+      apple: settings.faviconLightUrl || settings.faviconUrl || '',
     } : undefined,
   };
 }
@@ -47,8 +47,19 @@ export default async function RootLayout({
   const settings = await getWebsiteSettings();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            try {
+              if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+              } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+              }
+            } catch (e) {}
+          `
+        }} />
         {settings.enableAdsense && settings.adsenseClientId && (
           <script 
             async 

@@ -62,22 +62,39 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               </div>
               <div className={styles.bannerGraphic}>
                 <div className={styles.glowCircle}></div>
-                {settings.floatingLogoUrl ? (
-                  <img 
-                    src={settings.floatingLogoUrl} 
-                    alt="Hero Banner Logo" 
-                    style={{ 
-                      width: '180px', 
-                      height: '180px', 
-                      objectFit: 'contain', 
-                      zIndex: 2, 
-                      position: 'relative',
-                      borderRadius: settings.floatingLogoRadius === 'circle' ? '50%' : settings.floatingLogoRadius === 'rounded' ? '12px' : '0',
-                      mixBlendMode: settings.floatingLogoRemoveBg ? 'multiply' : 'normal',
-                      filter: settings.floatingLogoShadow ? 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))' : 'none'
-                    }} 
-                    className={styles.floatingCart} 
-                  />
+                {(settings.floatingLogoUrl || settings.floatingLogoLightUrl) ? (
+                  <>
+                    <img 
+                      src={settings.floatingLogoUrl || settings.floatingLogoLightUrl} 
+                      alt="Hero Banner Logo" 
+                      style={{ 
+                        width: '180px', 
+                        height: '180px', 
+                        objectFit: 'contain', 
+                        zIndex: 2, 
+                        position: 'relative',
+                        borderRadius: settings.floatingLogoRadius === 'circle' ? '50%' : settings.floatingLogoRadius === 'rounded' ? '12px' : '0',
+                        mixBlendMode: settings.floatingLogoRemoveBg ? 'multiply' : 'normal',
+                        filter: settings.floatingLogoShadow ? 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))' : 'none'
+                      }} 
+                      className={`${styles.floatingCart} theme-logo-dark`} 
+                    />
+                    <img 
+                      src={settings.floatingLogoLightUrl || settings.floatingLogoUrl} 
+                      alt="Hero Banner Logo Light" 
+                      style={{ 
+                        width: '180px', 
+                        height: '180px', 
+                        objectFit: 'contain', 
+                        zIndex: 2, 
+                        position: 'relative',
+                        borderRadius: settings.floatingLogoRadius === 'circle' ? '50%' : settings.floatingLogoRadius === 'rounded' ? '12px' : '0',
+                        mixBlendMode: settings.floatingLogoRemoveBg ? 'multiply' : 'normal',
+                        filter: settings.floatingLogoShadow ? 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))' : 'none'
+                      }} 
+                      className={`${styles.floatingCart} theme-logo-light`} 
+                    />
+                  </>
                 ) : (
                   <div className={styles.floatingCart}>🛒</div>
                 )}
