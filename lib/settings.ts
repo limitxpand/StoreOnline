@@ -83,9 +83,9 @@ const defaultSettings: AppSettings = {
     autoApprovePayouts: false
   },
   payment: {
-    enableCrypto: false,
-    walletConnectProjectId: "",
-    adminWalletAddress: "",
+    enableCrypto: true,
+    walletConnectProjectId: "fa5abff71a69afa7834481216b781e88",
+    adminWalletAddress: "", // Needs to be configured by admin
     cryptoCurrency: "USDT" // USDT, ETH, BNB
   }
 };
