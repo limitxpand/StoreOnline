@@ -10,6 +10,8 @@ export default function SellerSettings() {
   const [uid, setUid] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [hasInitialData, setHasInitialData] = useState(false);
+  const [resetStatus, setResetStatus] = useState({ loading: false, message: '', type: '' });
   const [message, setMessage] = useState({ text: '', type: '' });
 
   useEffect(() => {
@@ -24,6 +26,9 @@ export default function SellerSettings() {
         setBep20Address(data.bep20Address || '');
         setBep20QrUrl(data.bep20QrUrl || '');
         setUid(data.uid || '');
+        if (data.bep20Address || data.bep20QrUrl) {
+          setHasInitialData(true);
+        }
       }
     } catch (error) {
       console.error('Failed to load profile');
@@ -38,6 +43,9 @@ export default function SellerSettings() {
     
     const formData = new FormData();
     formData.append('file', file);
+    if (bep20QrUrl) {
+      formData.append('oldFileUrl', bep20QrUrl);
+    }
     
     try {
       const res = await fetch('/api/upload-image', {
@@ -70,6 +78,7 @@ export default function SellerSettings() {
       const data = await res.json();
       if (res.ok) {
         setMessage({ text: 'Settings saved successfully!', type: 'success' });
+        setHasInitialData(true);
       } else {
         setMessage({ text: data.error || 'Failed to save settings', type: 'error' });
       }
@@ -77,6 +86,26 @@ export default function SellerSettings() {
       setMessage({ text: 'Network error occurred', type: 'error' });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!session?.user?.email) return;
+    setResetStatus({ loading: true, message: '', type: '' });
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: session.user.email })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setResetStatus({ loading: false, message: 'Password reset link sent to your email via Resend!', type: 'success' });
+      } else {
+        setResetStatus({ loading: false, message: data.error || 'Failed to send link', type: 'error' });
+      }
+    } catch (error) {
+      setResetStatus({ loading: false, message: 'Network error', type: 'error' });
     }
   };
 
@@ -173,9 +202,53 @@ export default function SellerSettings() {
               opacity: saving ? 0.7 : 1
             }}
           >
-            {saving ? 'Saving...' : 'Save Payment Details'}
+            {saving ? 'Saving...' : hasInitialData ? 'Update Payment Details' : 'Save Payment Details'}
           </button>
         </form>
+      </div>
+
+      {/* Account Settings / Security Section */}
+      <div className={styles.pageHeader} style={{ marginTop: '3rem' }}>
+        <h1>Account Settings</h1>
+        <p>Manage your account security and password.</p>
+      </div>
+
+      <div className={styles.panel} style={{ maxWidth: '600px' }}>
+        {resetStatus.message && (
+          <div style={{
+            padding: '1rem', 
+            borderRadius: '8px', 
+            marginBottom: '1rem',
+            background: resetStatus.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+            color: resetStatus.type === 'success' ? 'var(--success)' : 'var(--danger)',
+            border: `1px solid ${resetStatus.type === 'success' ? 'var(--success)' : 'var(--danger)'}`
+          }}>
+            {resetStatus.message}
+          </div>
+        )}
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <p style={{ color: 'var(--text-secondary)' }}>
+            Need to change your password? Click the button below and we will email you a secure reset link via Resend.
+          </p>
+          <button 
+            onClick={handlePasswordReset}
+            disabled={resetStatus.loading}
+            style={{
+              background: 'transparent',
+              color: 'white',
+              padding: '0.8rem',
+              border: '1px solid var(--border-color)',
+              borderRadius: '8px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              opacity: resetStatus.loading ? 0.7 : 1,
+              width: 'fit-content'
+            }}
+          >
+            {resetStatus.loading ? 'Sending...' : 'Change Password / Forgot Password'}
+          </button>
+        </div>
       </div>
     </div>
   );

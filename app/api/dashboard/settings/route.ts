@@ -31,8 +31,19 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { bep20Address, bep20QrUrl } = body;
 
-    await prisma.user.update({
+    // Fetch user first to get their UID
+    const user = await prisma.user.findUnique({
       where: { id: session.user.id },
+      select: { uid: true }
+    });
+
+    if (!user || !user.uid) {
+      return NextResponse.json({ error: 'User UID not found' }, { status: 404 });
+    }
+
+    // Save changes using their UID as requested
+    await prisma.user.update({
+      where: { uid: user.uid },
       data: { bep20Address, bep20QrUrl }
     });
 

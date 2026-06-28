@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     
     // Parse files
     const file = formData.get("file") as File | null;
+    const oldFileUrl = formData.get("oldFileUrl") as string | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -30,6 +31,19 @@ export async function POST(req: NextRequest) {
 
     // Helper function to upload to Appwrite
     const uploadToAppwrite = async (f: File) => {
+      // Delete old file if exists
+      if (oldFileUrl) {
+        const fileIdMatch = oldFileUrl.match(/\/files\/([a-zA-Z0-9_\-]+)\/view/);
+        if (fileIdMatch && fileIdMatch[1]) {
+          try {
+            await storage.deleteFile(bucketId, fileIdMatch[1]);
+            console.log(`Deleted old QR code: ${fileIdMatch[1]}`);
+          } catch (deleteError) {
+            console.warn("Could not delete old file:", deleteError);
+          }
+        }
+      }
+
       const buffer = Buffer.from(await f.arrayBuffer());
       const inputFile = InputFile.fromBuffer(buffer, f.name);
       const uploadedFile = await storage.createFile(bucketId, ID.unique(), inputFile);

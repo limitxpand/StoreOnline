@@ -4,6 +4,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import AccountSecurity from "@/components/AccountSecurity";
 
 export default async function CustomerDashboard() {
   const session = await getServerSession(authOptions);
@@ -108,6 +109,8 @@ export default async function CustomerDashboard() {
           </div>
         )}
       </div>
+      
+      <AccountSecurity email={session.user.email!} />
     </div>
   );
 }
