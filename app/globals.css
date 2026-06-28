@@ -249,6 +249,27 @@ html:not([data-theme='light']) .theme-logo-dark {
     width: 100%;
     position: relative;
   }
+  
+  .popupOverlay {
+    padding: 1rem;
+    align-items: center; /* Center on mobile for better app feel */
+  }
+
+  .popupContent {
+    padding: 1.5rem;
+    max-width: 100%;
+    border-radius: 20px;
+    margin: 0;
+  }
+
+  .popupGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .popupCard {
+    padding: 1.5rem 1rem;
+  }
 
   .container {
     padding: 0 1rem;
@@ -257,16 +278,6 @@ html:not([data-theme='light']) .theme-logo-dark {
   .global-product-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.75rem !important;
-  }
-
-  .popupGrid {
-    grid-template-columns: 1fr;
-  }
-  .popupContent {
-    padding: 1.5rem;
-  }
-  .popupOverlay {
-    padding: 1rem;
   }
 }
 

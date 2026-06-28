@@ -6,7 +6,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 }
 
@@ -26,16 +26,15 @@
 .inputGroup input,
 .inputGroup select,
 .inputGroup textarea {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   padding: 0.85rem 1.2rem;
   border-radius: 12px;
   outline: none;
   font-family: inherit;
   font-size: 0.95rem;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
 }
 
 .inputGroup input:focus,
@@ -48,7 +47,7 @@
 
 .inputGroup select option {
   background: var(--bg-secondary);
-  color: white;
+  color: var(--text-primary);
 }
 
 .fileGroup {
@@ -65,13 +64,13 @@
 }
 
 .fileDropzone {
-  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border: 2px dashed var(--border-color);
   border-radius: 16px;
   padding: 3.5rem 2rem;
   text-align: center;
   position: relative;
   transition: all 0.3s ease;
-  background: linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%);
+  background: var(--bg-tertiary);
   overflow: hidden;
 }
 
@@ -136,8 +135,8 @@
 
 .submitBtn {
   margin-top: 1rem;
-  background: linear-gradient(135deg, var(--accent-primary) 0%, #6366f1 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  color: #ffffff;
   border: none;
   padding: 1.2rem;
   border-radius: 12px;

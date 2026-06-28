@@ -81,7 +81,7 @@
   padding: 0.85rem 1rem;
   border-radius: 10px;
   font-size: 1rem;
-  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed), background var(--transition-speed);
   outline: none;
 }
 
@@ -93,7 +93,7 @@
 .submitBtn {
   width: 100%;
   background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
+  color: #ffffff;
   border: none;
   padding: 1rem;
   border-radius: 10px;
