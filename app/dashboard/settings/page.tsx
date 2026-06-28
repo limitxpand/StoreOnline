@@ -114,8 +114,8 @@ export default function SellerSettings() {
   return (
     <div>
       <div className={styles.pageHeader}>
-        <h1>Payment Settings</h1>
-        <p>Update your BEP-20 (USDT/BNB) details to receive royalties.</p>
+        <h1>Account & Payment Settings</h1>
+        <p>Update your BEP-20 (USDT/BNB) details and manage your account.</p>
         {uid && (
           <div style={{ marginTop: '1rem', display: 'inline-block', background: 'var(--bg-tertiary)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
             <strong>Your Store UID:</strong> <span style={{ color: 'var(--accent-neon)', fontFamily: 'monospace' }}>{uid}</span>

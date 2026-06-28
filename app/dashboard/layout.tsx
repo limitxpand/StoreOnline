@@ -35,7 +35,7 @@ export default async function DashboardLayout({
             <span className={styles.icon}>💰</span> Earnings & Royalty
           </Link>
           <Link href="/dashboard/settings" className={styles.navLink}>
-            <span className={styles.icon}>⚙️</span> Payment Settings
+            <span className={styles.icon}>⚙️</span> Account & Payment Settings
           </Link>
           <div className={styles.divider}></div>
           <Link href="/" className={styles.navLink}>
