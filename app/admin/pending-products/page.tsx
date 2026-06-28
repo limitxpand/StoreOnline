@@ -21,6 +21,7 @@ export default function PendingProducts() {
   const [approving, setApproving] = useState<string | null>(null);
   const [autoInjecting, setAutoInjecting] = useState<string | null>(null);
   const [autoStatus, setAutoStatus] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchPendingProducts = async () => {
     try {
@@ -109,9 +110,27 @@ export default function PendingProducts() {
            <strong>Auto Option:</strong> Click "Auto Inject & Publish" to let the system do everything in one click!</p>
       </div>
 
+      <div style={{ marginBottom: '2rem' }}>
+        <input
+          type="text"
+          placeholder="Search by product title or developer..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            width: '100%',
+            maxWidth: '400px',
+            padding: '0.6rem 1rem',
+            borderRadius: '8px',
+            border: '1px solid var(--border-color)',
+            background: 'var(--bg-tertiary)',
+            color: 'white'
+          }}
+        />
+      </div>
+
       <div className={styles.panel}>
-        {products.length === 0 ? (
-          <p>No pending products to review.</p>
+        {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.developer.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
+          <p>No pending products match your search.</p>
         ) : (
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -123,7 +142,7 @@ export default function PendingProducts() {
               </tr>
             </thead>
             <tbody>
-              {products.map(product => {
+              {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.developer.name.toLowerCase().includes(searchQuery.toLowerCase())).map(product => {
                 return (
                   <tr key={product.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                     <td style={{ padding: '1rem 0' }}>

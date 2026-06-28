@@ -1,12 +1,28 @@
 import styles from '../../dashboard/dashboard.module.css';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import AdminSearch from '@/components/AdminSearch';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminSellersPage() {
+export default async function AdminSellersPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const q = typeof searchParams?.q === 'string' ? searchParams.q : '';
+
   const sellers = await prisma.user.findMany({
-    where: { role: 'developer' },
+    where: { 
+      role: 'developer',
+      ...(q ? {
+        OR: [
+          { name: { contains: q, mode: 'insensitive' } },
+          { email: { contains: q, mode: 'insensitive' } },
+          { bep20Address: { contains: q, mode: 'insensitive' } }
+        ]
+      } : {})
+    },
     include: {
       _count: {
         select: { products: true }
@@ -25,6 +41,10 @@ export default async function AdminSellersPage() {
           <h1>Sellers Directory</h1>
         </div>
         <p>View all sellers, their BEP-20 deposit addresses, and QR codes for manual payout.</p>
+      </div>
+
+      <div style={{ marginBottom: '2rem' }}>
+        <AdminSearch placeholder="Search by name, email, or BEP-20 address..." />
       </div>
 
       <div className={styles.panel}>

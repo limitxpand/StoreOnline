@@ -1,25 +1,28 @@
 import styles from '../settings/settings.module.css';
 import { prisma } from '@/lib/prisma';
 import AdminSearch from '@/components/AdminSearch';
-import DeleteUserButton from './DeleteUserButton';
+import DeleteUserButton from '../users/DeleteUserButton';
 
 export const dynamic = 'force-dynamic';
 
-export default async function UserManagement({
+export default async function BuyersManagement({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const q = typeof searchParams?.q === 'string' ? searchParams.q : '';
 
-  const users = await prisma.user.findMany({
-    where: q ? {
-      OR: [
-        { name: { contains: q, mode: 'insensitive' } },
-        { email: { contains: q, mode: 'insensitive' } },
-        { username: { contains: q, mode: 'insensitive' } }
-      ]
-    } : {},
+  const buyers = await prisma.user.findMany({
+    where: {
+      role: 'customer',
+      ...(q ? {
+        OR: [
+          { name: { contains: q, mode: 'insensitive' } },
+          { email: { contains: q, mode: 'insensitive' } },
+          { username: { contains: q, mode: 'insensitive' } }
+        ]
+      } : {})
+    },
     include: {
       _count: {
         select: { transactions: true }
@@ -30,8 +33,8 @@ export default async function UserManagement({
 
   return (
     <div className={styles.container}>
-      <h2>User Management</h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Manage all registered users across the platform.</p>
+      <h2>Buyers Directory</h2>
+      <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>View and search all registered buyers (customers) on the platform.</p>
 
       <div style={{ marginBottom: '2rem' }}>
         <AdminSearch placeholder="Search by name, email, or username..." />
@@ -42,32 +45,20 @@ export default async function UserManagement({
           <thead>
             <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
               <th style={{ padding: '1rem 0' }}>Name / Email</th>
-              <th style={{ padding: '1rem 0' }}>Role</th>
-              <th style={{ padding: '1rem 0' }}>Purchases</th>
+              <th style={{ padding: '1rem 0' }}>Total Purchases</th>
               <th style={{ padding: '1rem 0', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.length === 0 ? (
+            {buyers.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--text-muted)' }}>No users found.</td>
+                <td colSpan={3} style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--text-muted)' }}>No buyers found.</td>
               </tr>
-            ) : users.map(u => (
+            ) : buyers.map(u => (
               <tr key={u.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                 <td style={{ padding: '1rem 0' }}>
                   <div style={{ fontWeight: 500 }}>{u.name || u.username || 'Unnamed'}</div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{u.email}</div>
-                </td>
-                <td style={{ padding: '1rem 0' }}>
-                  <span style={{ 
-                    padding: '0.25rem 0.5rem', 
-                    borderRadius: '4px', 
-                    fontSize: '0.8rem',
-                    background: u.role === 'developer' ? 'rgba(59, 130, 246, 0.1)' : u.role === 'admin' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(255, 255, 255, 0.05)',
-                    color: u.role === 'developer' ? '#3b82f6' : u.role === 'admin' ? '#8b5cf6' : 'var(--text-secondary)'
-                  }}>
-                    {u.role.toUpperCase()}
-                  </span>
                 </td>
                 <td style={{ padding: '1rem 0', color: 'var(--text-secondary)' }}>{u._count.transactions} items</td>
                 <td style={{ padding: '1rem 0', textAlign: 'right' }}>
