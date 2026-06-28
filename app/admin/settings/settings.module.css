@@ -149,10 +149,9 @@
     flex-direction: column;
     gap: 1.5rem;
   }
-  .formGroup input[type=\
-text\],
-  .formGroup input[type=\email\],
-  .formGroup input[type=\password\],
+  .formGroup input[type="text"],
+  .formGroup input[type="email"],
+  .formGroup input[type="password"],
   .formGroup select,
   .formGroup textarea {
     min-height: 48px;
