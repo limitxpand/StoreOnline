@@ -179,11 +179,8 @@
   .logo {
     display: flex;
     align-items: center;
-  }
-  .logo > a {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    flex: 1;
+    justify-content: center;
   }
   .logoText {
     display: none;
