@@ -67,6 +67,7 @@
   font-weight: 800;
   line-height: 1.1;
   color: var(--text-primary);
+  word-break: break-word;
 }
 
 .bannerSubtitle {
@@ -227,7 +228,7 @@
   }
 
   .bannerTitle {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   .bannerSubtitle {
@@ -255,3 +256,29 @@
   }
 }
 
+.adminLoginBtn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 768px) {
+  .adminLoginBtn {
+    display: none !important;
+  }
+}

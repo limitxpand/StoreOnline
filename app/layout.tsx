@@ -52,10 +52,10 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{
           __html: `
             try {
-              if (localStorage.getItem('theme') === 'dark') {
-                document.documentElement.removeAttribute('data-theme');
-              } else {
+              if (localStorage.getItem('theme') === 'light') {
                 document.documentElement.setAttribute('data-theme', 'light');
+              } else {
+                document.documentElement.removeAttribute('data-theme');
               }
             } catch (e) {}
           `

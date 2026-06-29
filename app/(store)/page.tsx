@@ -148,26 +148,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
 
       <Link 
         href="/admin/dashboard" 
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          left: '20px',
-          zIndex: 1000,
-          background: 'rgba(15, 23, 42, 0.8)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid var(--border-color)',
-          color: 'var(--text-secondary)',
-          padding: '0.6rem 1rem',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontSize: '0.9rem',
-          fontWeight: 500,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          transition: 'all 0.2s ease',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-        }}
+        className={styles.adminLoginBtn}
       >
         <span>🛡️</span> Admin Login
       </Link>
