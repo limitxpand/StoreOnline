@@ -146,12 +146,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               </div>
             )}
 
-      <Link 
-        href="/admin/dashboard" 
-        className={styles.adminLoginBtn}
-      >
-        <span>🛡️</span> Admin Login
-      </Link>
     </div>
   );
 }
