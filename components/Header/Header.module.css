@@ -165,6 +165,7 @@
   .container {
     padding: 0 1rem;
     height: 100%;
+    position: relative;
   }
   .searchContainer {
     display: none;
@@ -174,6 +175,15 @@
   }
   .actions {
     gap: 0.5rem;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  .logo a {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
   .logoText {
     display: none;
