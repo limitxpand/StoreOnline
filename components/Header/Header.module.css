@@ -175,12 +175,17 @@
   }
   .actions {
     gap: 0.5rem;
+    margin-left: auto; /* Push actions to the right */
   }
   .logo {
     display: flex;
     align-items: center;
-    flex: 1;
-    justify-content: center;
+    /* Removed flex:1 and justify-content: center so hamburger stays on left */
+  }
+  .logo > a {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
   .logoText {
     display: none;
