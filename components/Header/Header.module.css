@@ -180,7 +180,7 @@
     display: flex;
     align-items: center;
   }
-  .logo a {
+  .logo > a {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
