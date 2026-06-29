@@ -163,7 +163,7 @@
     height: 60px; /* More compact mobile header */
   }
   .container {
-    padding: 0 1rem;
+    padding: 0 0.5rem;
     height: 100%;
     position: relative;
   }
