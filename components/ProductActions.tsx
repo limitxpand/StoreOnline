@@ -103,68 +103,60 @@ export default function ProductActions({
 
   return (
     <div className={styles.mobileActionBar}>
-      {isLoggedIn ? (
-        <>
-          {/* Always show the Free Demo Download Button */}
+      {/* Always show the Free Demo Download Button */}
+      <button 
+        onClick={handleDownloadClick}
+        className={styles.buyBtn} 
+        style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }}
+      >
+        {demoAdsenseCode && !adWatched ? '🎁 View our Sponsor to unlock your Free Demo' : '⬇️ Download Free Demo'}
+      </button>
+      
+      {/* Show Buy Now Button if price > 0 */}
+      {price > 0 && (
+        paymentSettings?.enableCrypto && paymentSettings?.paymentMethods?.length > 0 ? (
+          <>
+            <button 
+              onClick={() => {
+                if (!isLoggedIn) {
+                  router.push('/login');
+                  return;
+                }
+                setModalKey(Date.now());
+                setShowPaymentModal(true);
+              }}
+              className={styles.buyBtn} 
+              style={{
+                background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+                color: 'white', border: 'none', cursor: 'pointer',
+                boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)'
+              }}
+            >
+              <span style={{ fontSize: '1.2rem', marginRight: '8px' }}>💎</span> 
+              Buy Now with Crypto
+            </button>
+            <CryptoPaymentModal
+              key={modalKey}
+              isOpen={showPaymentModal}
+              onClose={() => setShowPaymentModal(false)}
+              price={price}
+              productId={productId}
+              paymentMethods={paymentSettings.paymentMethods}
+              walletConnectProjectId={paymentSettings.walletConnectProjectId}
+              onSuccess={(txHash) => {
+                if (txHash) triggerDownload(txHash);
+              }}
+            />
+          </>
+        ) : (
           <button 
-            onClick={handleDownloadClick}
             className={styles.buyBtn} 
-            style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer', color: 'var(--text-primary)' }}
+            style={{ textAlign: 'center', background: '#374151', border: 'none', cursor: 'not-allowed', color: 'var(--text-primary)' }}
+            disabled
           >
-            {demoAdsenseCode && !adWatched ? '🎁 View our Sponsor to unlock your Free Demo' : '⬇️ Download Free Demo'}
+            🔒 Purchasing Temporarily Disabled
           </button>
-          
-          {/* Show Buy Now Button if price > 0 */}
-          {price > 0 && (
-            paymentSettings?.enableCrypto && paymentSettings?.paymentMethods?.length > 0 ? (
-              <>
-                <button 
-                  onClick={() => {
-                    setModalKey(Date.now());
-                    setShowPaymentModal(true);
-                  }}
-                  className={styles.buyBtn} 
-                  style={{
-                    background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
-                    color: 'white', border: 'none', cursor: 'pointer',
-                    boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)'
-                  }}
-                >
-                  <span style={{ fontSize: '1.2rem', marginRight: '8px' }}>💎</span> 
-                  Buy Now with Crypto
-                </button>
-                <CryptoPaymentModal
-                  key={modalKey}
-                  isOpen={showPaymentModal}
-                  onClose={() => setShowPaymentModal(false)}
-                  price={price}
-                  productId={productId}
-                  paymentMethods={paymentSettings.paymentMethods}
-                  walletConnectProjectId={paymentSettings.walletConnectProjectId}
-                  onSuccess={(txHash) => {
-                    if (txHash) triggerDownload(txHash);
-                  }}
-                />
-              </>
-            ) : (
-              <button 
-                className={styles.buyBtn} 
-                style={{ textAlign: 'center', background: '#374151', border: 'none', cursor: 'not-allowed', color: 'var(--text-primary)' }}
-                disabled
-              >
-                🔒 Purchasing Temporarily Disabled
-              </button>
-            )
-          )}
-        </>
-      ) : (
-        <button 
-          onClick={() => router.push('/login')}
-          className={styles.buyBtn} 
-          style={{ textAlign: 'center', background: 'linear-gradient(90deg, #10b981, #047857)', border: 'none', cursor: 'pointer' }}
-        >
-          🔒 Login to Download
-        </button>
+        )
       )}
       
       <button 
