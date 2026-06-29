@@ -86,7 +86,8 @@ button {
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1rem;
+  overflow-x: hidden;
 }
 
 .glass-panel {
@@ -150,35 +151,17 @@ button {
   gap: 1.5rem;
 }
 
-/* Mobile Scrollable Carousel Utility */
+/* Mobile Grid Layout (2 columns) */
 .mobile-swipeable {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 1rem;
-  scrollbar-width: none; /* Firefox */
-}
-.mobile-swipeable::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-.mobile-swipeable > * {
-  flex: 0 0 calc(85vw - 2rem); /* Dynamic width for mobile */
-  scroll-snap-align: start;
 }
 
 @media (min-width: 768px) {
   .mobile-swipeable {
-    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    overflow-x: visible;
-    scroll-snap-type: none;
-    padding-bottom: 0;
-  }
-  .mobile-swipeable > * {
-    flex: none;
-    width: 100%;
+    gap: 1.5rem;
   }
 }
 

@@ -111,6 +111,13 @@ export default function MobileDrawer({ categories, dashboardLink, isAdmin }: Mob
                     <span className={styles.title}>Login / Register</span>
                   </Link>
                 )}
+                
+                {!isAdmin && (
+                  <Link href="/admin/dashboard" className={styles.mainNavItem} onClick={closeMenu}>
+                    <span className={styles.icon}>🛡️</span>
+                    <span className={styles.title}>Admin Login</span>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
