@@ -311,7 +311,7 @@ html:not([data-theme='light']) .theme-logo-dark {
   }
 
   .container {
-    padding: 0 1.25rem;
+    padding: 0 1rem;
   }
 
   .global-product-grid {
