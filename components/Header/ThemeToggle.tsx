@@ -21,14 +21,14 @@ export default function ThemeToggle({ className, faviconDark, faviconLight }: { 
   useEffect(() => {
     // Check local storage or system preference
     const storedTheme = localStorage.getItem('theme');
-    if (storedTheme === 'dark') {
-      setTheme('dark');
-      document.documentElement.removeAttribute('data-theme');
-      updateFavicon('dark');
-    } else {
+    if (storedTheme === 'light') {
       setTheme('light');
       document.documentElement.setAttribute('data-theme', 'light');
       updateFavicon('light');
+    } else {
+      setTheme('dark');
+      document.documentElement.removeAttribute('data-theme');
+      updateFavicon('dark');
     }
   }, [faviconDark, faviconLight]);
 

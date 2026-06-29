@@ -61,6 +61,7 @@
   font-weight: 700;
   letter-spacing: 1px;
   margin-bottom: 1rem;
+  white-space: normal;
 }
 
 .bannerTitle {
@@ -230,13 +231,14 @@
   }
 
   .bannerTitle {
-    font-size: 1.5rem; /* Even smaller font size */
+    font-size: 1.35rem; /* Compact for mobile */
     word-break: break-word;
     hyphens: auto;
   }
 
   .bannerSubtitle {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
   }
 
   .bannerFeatures {

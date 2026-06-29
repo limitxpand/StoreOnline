@@ -50,6 +50,7 @@ export default async function Header() {
                   alt={settings.siteName} 
                   style={{ 
                     maxHeight: '45px', 
+                    maxWidth: '180px',
                     objectFit: 'contain',
                     borderRadius: settings.logoRadius === 'circle' ? '50%' : settings.logoRadius === 'rounded' ? '8px' : '0',
                     mixBlendMode: settings.logoRemoveBg ? 'multiply' : 'normal'
@@ -61,6 +62,7 @@ export default async function Header() {
                   alt={settings.siteName} 
                   style={{ 
                     maxHeight: '45px', 
+                    maxWidth: '180px',
                     objectFit: 'contain',
                     borderRadius: settings.logoRadius === 'circle' ? '50%' : settings.logoRadius === 'rounded' ? '8px' : '0',
                     mixBlendMode: settings.logoRemoveBg ? 'multiply' : 'normal'
