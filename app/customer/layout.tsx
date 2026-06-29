@@ -14,11 +14,15 @@ export default async function CustomerLayout({
   const userName = session?.user?.name || "Customer";
   return (
     <div className={styles.layout}>
+      <input type="checkbox" id="mobile-menu-toggle" className={styles.mobileMenuToggle} />
+      <label htmlFor="mobile-menu-toggle" className={styles.mobileOverlay}></label>
+
       {/* Customer Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
           <h2><span className={styles.logoIcon}>🛍️</span> My <span className="gradient-text">Purchases</span></h2>
           <span className={styles.roleBadge} style={{ color: 'var(--accent-secondary)', borderColor: 'rgba(14, 165, 233, 0.2)', background: 'rgba(14, 165, 233, 0.1)' }}>Customer</span>
+          <label htmlFor="mobile-menu-toggle" className={styles.mobileCloseBtn}>✕</label>
         </div>
         
         <CustomerNav styles={styles} />
@@ -32,7 +36,10 @@ export default async function CustomerLayout({
       {/* Main Content Area */}
       <main className={styles.mainContent}>
         <header className={styles.topbar}>
-          <div className={styles.pageTitle}>Customer Portal</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <label htmlFor="mobile-menu-toggle" className={styles.mobileMenuBtn}>☰</label>
+            <div className={styles.pageTitle}>Customer Portal</div>
+          </div>
           <div className={styles.userMenu}>
             <div className={styles.avatar} style={{ background: 'var(--accent-secondary)' }}>
               {userName.charAt(0).toUpperCase()}

@@ -117,7 +117,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               <Link href="/categories" className={styles.viewAllBtn}>View All</Link>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+            <div className="global-product-grid mobile-swipeable">
               {featuredProducts.length === 0 ? (
                 <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1', color: 'var(--text-secondary)' }}>
                   No products found.

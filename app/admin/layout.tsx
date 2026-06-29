@@ -12,6 +12,7 @@ export default function AdminLayout({
   const pathname = usePathname();
   const [notifications, setNotifications] = useState({ pendingProducts: 0, openTickets: 0, pendingWithdrawals: 0, total: 0 });
   const [injectionUrl, setInjectionUrl] = useState('https://dashboard-ff4p.vercel.app/');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (pathname === '/admin/login') return;
@@ -53,11 +54,20 @@ export default function AdminLayout({
 
   return (
     <div className={styles.layout}>
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className={styles.mobileOverlay} 
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Admin Sidebar */}
-      <aside className={styles.sidebar}>
+      <aside className={`${styles.sidebar} ${isMobileMenuOpen ? styles.sidebarOpen : ''}`}>
         <div className={styles.brand}>
           <h2><span className={styles.logoIcon}>🛡️</span> Store <span className="gradient-text">Admin</span></h2>
           <span className={styles.roleBadge} style={{ color: 'var(--danger)', borderColor: 'rgba(239, 68, 68, 0.2)', background: 'rgba(239, 68, 68, 0.1)' }}>Super Admin</span>
+          <button className={styles.mobileCloseBtn} onClick={() => setIsMobileMenuOpen(false)}>✕</button>
         </div>
         
         <nav className={styles.nav}>
@@ -143,13 +153,16 @@ export default function AdminLayout({
       {/* Main Content Area */}
       <main className={styles.mainContent}>
         <header className={styles.topbar}>
-          <div className={styles.pageTitle} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            Admin Control Panel
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button className={styles.mobileMenuBtn} onClick={() => setIsMobileMenuOpen(true)}>☰</button>
+            <div className={styles.pageTitle} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              Admin Control Panel
             {notifications.total > 0 && (
               <span style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid var(--danger)', color: 'var(--danger)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600 }}>
                 {notifications.total} New Notifications
               </span>
             )}
+            </div>
           </div>
           <div className={styles.userMenu}>
             <div className={styles.avatar} style={{ background: 'var(--danger)' }}>A</div>

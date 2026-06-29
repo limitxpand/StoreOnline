@@ -11,8 +11,7 @@ import LogoutButton from './LogoutButton';
 import AdminLogoutButton from './AdminLogoutButton';
 import RegisterButton from './RegisterButton';
 import ThemeToggle from './ThemeToggle';
-import MobileNav from './MobileNav';
-import MobileCategoryMenu from './MobileCategoryMenu';
+import MobileDrawer from './MobileDrawer';
 import { prisma } from '@/lib/prisma';
 
 export default async function Header() {
@@ -42,7 +41,7 @@ export default async function Header() {
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.logo}>
-          <MobileCategoryMenu categories={categories} />
+          <MobileDrawer categories={categories} dashboardLink={(!session && !isAdmin) ? '/login' : dashboardLink} isAdmin={isAdmin} />
           <Link href="/">
             {(settings.logoUrl || settings.logoLightUrl) ? (
               <>
@@ -125,7 +124,6 @@ export default async function Header() {
           </div>
         </div>
       </div>
-      <MobileNav dashboardLink={(!session && !isAdmin) ? '/login' : dashboardLink} />
     </header>
   );
 }

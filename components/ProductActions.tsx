@@ -102,7 +102,7 @@ export default function ProductActions({
   ` : '';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
+    <div className={styles.mobileActionBar}>
       {isLoggedIn ? (
         <>
           {/* Always show the Free Demo Download Button */}
